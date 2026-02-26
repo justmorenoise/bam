@@ -26,28 +26,7 @@
 * **QR Quick-Share:** Generazione di codici QR dinamici per il trasferimento Desktop-to-Mobile.  
 * **Drag-and-Drop Systray:** Integrazione con la tray icon di Electron per generare link rapidi via trascinamento.
 
-## **3\. Modello di Business (Monetizzazione)**
-
-L'app adotta un modello **Freemium**.
-
-### **Versione Free (Ad-Supported)**
-
-* **Pubblicità:** Banner AdMob integrati nella dashboard e nella landing page.  
-* **Esperienza:** Annunci interstitial brevi al termine dei trasferimenti.  
-* **Limitazioni:** \* Velocità di segnalazione standard.  
-  * Limite giornaliero: Massimo 5 file condivisibili ogni 24 ore.
-
-### **Versione Premium (Abbonamento/Lifetime)**
-
-* **Zero Pubblicità:** Esperienza pulita per mittente e destinatario.  
-* **Double-Layer Encryption:** Attivazione della **Web Crypto API** per cifratura granulare.  
-* **Priorità di Banda (Signaling):** Accesso a server relay dedicati per handshake ultra-rapidi.  
-* **File Illimitati:** Nessuna restrizione sul numero di condivisioni.  
-* **Personalizzazione Link:** URL custom (es: bam.link/mio-progetto).  
-* **Gamification Pro:** Moltiplicatore di XP (1.5x) e badge esclusivi.  
-* **Ricevute di Consegna:** Lista file inviati nella Dashboard.
-
-## **4\. Tipologie di Utenti**
+## **3\. Tipologie di Utenti**
 
 ### **Utente Anonimo (Guest)**
 
@@ -104,5 +83,5 @@ L'app adotta un modello **Freemium**.
 * **Sicurezza:** Web Crypto API (AES-GCM, PBKDF2).  
 * **Desktop:** Electron.  
 * **Backend:** Supabase (Auth, Firestore-like Database, Realtime).  
-* **Ads:** Google AdMob.  
+* **Ads:** Google AdSense.
 * **P2P:** WebRTC.
