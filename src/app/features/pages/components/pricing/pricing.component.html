@@ -1,0 +1,90 @@
+<div class="min-h-screen p-6 lg:p-10">
+    <app-header></app-header>
+
+    <main class="max-w-5xl mx-auto">
+        <!-- Hero -->
+        <section class="text-center mt-16 mb-16">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{{ 'PRICING.HERO.LABEL' | translate }}</p>
+            <h1 class="text-5xl lg:text-6xl font-black mb-4 tracking-tight">
+                {{ 'PRICING.HERO.TITLE_1' | translate }} <span class="text-bam-primary">{{ 'PRICING.HERO.TITLE_HIGHLIGHT' | translate }}</span>
+            </h1>
+            <p class="text-lg text-slate-400 max-w-xl mx-auto">
+                {{ 'PRICING.HERO.SUBTITLE' | translate }}
+            </p>
+        </section>
+
+        <!-- Plans Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
+            @for (plan of data().plans; track plan.name) {
+                <div
+                        class="relative bg-slate-900 rounded-3xl p-8 flex flex-col"
+                        [class]="plan.highlight
+            ? 'border-2 border-bam-primary shadow-lg shadow-bam-primary/10'
+            : 'border border-slate-800'"
+                >
+                    <!-- Badge Consigliato -->
+                    @if (plan.highlight) {
+                        <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-bam-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full">
+              {{ 'PRICING.PLAN_BADGE' | translate }}
+            </span>
+                    }
+
+                    <!-- Plan Header -->
+                    <div class="mb-6">
+                        <h2 class="text-xl font-bold text-white">{{ plan.name }}</h2>
+                        <p class="text-sm text-slate-400">{{ plan.subtitle }}</p>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="mb-8">
+                        <span class="text-4xl font-black text-white">{{ plan.price }}</span>
+                        @if (plan.period) {
+                            <span class="text-slate-400 text-sm">{{ plan.period }}</span>
+                        }
+                    </div>
+
+                    <!-- Features -->
+                    <ul class="space-y-3 mb-8 flex-1">
+                        @for (feature of plan.features; track feature.text) {
+                            <li class="flex items-start gap-3 text-sm">
+                                @if (feature.included) {
+                                    <span class="text-green-400 font-bold">&#10003;</span>
+                                    <span class="text-slate-300">{{ feature.text }}</span>
+                                } @else {
+                                    <span class="text-slate-600 font-bold">&#10007;</span>
+                                    <span class="text-slate-600">{{ feature.text }}</span>
+                                }
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- CTA Button -->
+                    @if (plan.highlight) {
+                        <button class="btn btn-primary w-full" routerLink="/auth/register">
+                            {{ 'PRICING.CTA_PRIMARY' | translate }}
+                        </button>
+                    } @else {
+                        <button class="btn btn-secondary w-full" routerLink="/auth/register">
+                            {{ 'PRICING.CTA_FREE' | translate }}
+                        </button>
+                    }
+                </div>
+            }
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="mb-24">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4 text-center">{{ 'PRICING.FAQ_LABEL' | translate }}</p>
+            <h2 class="text-3xl font-black text-white text-center mb-10">{{ 'PRICING.FAQ_TITLE' | translate }}</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @for (faq of data().faqs; track faq.question) {
+                    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8">
+                        <h3 class="font-bold text-white mb-2">{{ faq.question }}</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">{{ faq.answer }}</p>
+                    </div>
+                }
+            </div>
+        </section>
+    </main>
+</div>

@@ -1,0 +1,69 @@
+<!-- Modal Overlay -->
+@if (modalService.modalState().isOpen) {
+    <div
+            class="modal-overlay"
+            (click)="onOverlayClick($event)">
+
+        <!-- Modal Card -->
+        <div class="modal-card">
+
+            <!-- Header -->
+            <div class="modal-header">
+                <div class="modal-icon" [ngClass]="getColorClass()">
+                    {{ getIcon() }}
+                </div>
+                <h2 class="modal-title">{{ modalService.modalState().config?.title }}</h2>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <p class="modal-message" [innerHTML]="modalService.modalState().config?.message"></p>
+
+                <!-- Double Confirm Input (se richiesto) -->
+                @if (modalService.modalState().config?.requiresDoubleConfirm) {
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-slate-400 mb-2">
+                            {{ 'MODAL.DOUBLE_CONFIRM_LABEL' | translate }} <strong
+                                class="text-red-500">{{ modalService.modalState().config?.doubleConfirmText }}</strong>
+                        </label>
+                        <input
+                                type="text"
+                                [(ngModel)]="doubleConfirmInput"
+                                class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                                [placeholder]="'MODAL.DOUBLE_CONFIRM_PLACEHOLDER' | translate"
+                                (keyup.enter)="isDoubleConfirmValid() && onConfirm()">
+                    </div>
+                }
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                @if (modalService.modalState().config?.type === 'confirm' || modalService.modalState().config?.type === 'premium') {
+                    <!-- Pulsanti Conferma/Annulla -->
+                    <button
+                            type="button"
+                            class="btn btn-secondary"
+                            (click)="onCancel()">
+                        {{ modalService.modalState().config?.cancelText || ('MODAL.CANCEL' | translate) }}
+                    </button>
+                    <button
+                            type="button"
+                            class="btn btn-danger"
+                            [disabled]="!isDoubleConfirmValid()"
+                            (click)="onConfirm()">
+                        {{ modalService.modalState().config?.confirmText || ('MODAL.CONFIRM' | translate) }}
+                    </button>
+                } @else {
+                    <!-- Pulsante singolo OK -->
+                    <button
+                            type="button"
+                            class="btn btn-primary btn-constrained"
+                            (click)="onConfirm()">
+                        {{ modalService.modalState().config?.confirmText || ('MODAL.OK' | translate) }}
+                    </button>
+                }
+            </div>
+
+        </div>
+    </div>
+}

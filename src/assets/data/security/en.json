@@ -1,0 +1,10 @@
+{
+  "features": [
+    { "icon": "🔐", "title": "Native WebRTC E2EE", "description": "DTLS 1.2+ encryption active by default on every transfer. No configuration required." },
+    { "icon": "🔑", "title": "Premium Password Encryption", "description": "AES-GCM 256-bit encryption with PBKDF2 key derivation via Web Crypto API." },
+    { "icon": "🧬", "title": "SHA-256 Integrity Verification", "description": "Hash calculated on the sender side and verified on the receiver side to guarantee zero tampering." },
+    { "icon": "☁️", "title": "Zero Cloud Storage", "description": "Files are never uploaded to servers. Only signaling metadata transits via Supabase." },
+    { "icon": "🔥", "title": "Burn-on-Read", "description": "Self-destructing link mode: the link expires after the first completed download." },
+    { "icon": "🛡️", "title": "GDPR Compliant", "description": "Full compliance with the European Data Protection Regulation." }
+  ]
+}

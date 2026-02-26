@@ -1,0 +1,190 @@
+<div class="min-h-screen p-6 lg:p-10">
+    <app-header></app-header>
+
+    <div class="p-6 lg:p-10 max-w-4xl mx-auto">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-black mb-2">{{ 'SETTINGS.TITLE' | translate }}</h1>
+            <p class="text-slate-400">{{ 'SETTINGS.SUBTITLE' | translate }}</p>
+        </div>
+
+        <!-- Profile Settings -->
+        <div class="card mb-6">
+            <h2 class="text-2xl font-black mb-6">{{ 'SETTINGS.PROFILE_SECTION' | translate }}</h2>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2 uppercase tracking-wide text-[10px]">{{ 'SETTINGS.EMAIL_LABEL' | translate }}</label>
+                    <input
+                            type="email"
+                            class="input"
+                            [value]="userProfile()?.email"
+                            disabled>
+                    <p class="text-xs text-slate-500 mt-1">{{ 'SETTINGS.EMAIL_HINT' | translate }}</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2 uppercase tracking-wide text-[10px]">{{ 'SETTINGS.FULL_NAME_LABEL' | translate }}</label>
+                    <input
+                            type="text"
+                            class="input"
+                            [value]="fullName()"
+                            (input)="fullName.set($any($event.target).value)"
+                            [placeholder]="'SETTINGS.FULL_NAME_PLACEHOLDER' | translate">
+                </div>
+
+                @if (profileMessage()) {
+                    <div class="p-3 rounded-xl"
+                         [ngClass]="profileMessage().includes('✅') ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'">
+                        <p class="text-sm font-medium">{{ profileMessage() }}</p>
+                    </div>
+                }
+
+                <button
+                        (click)="updateProfile()"
+                        [disabled]="isUpdatingProfile()"
+                        class="btn btn-primary w-full md:w-auto">
+                    @if (isUpdatingProfile()) {
+                        <span class="spinner"></span>
+                    }
+                    {{ 'SETTINGS.SAVE_BTN' | translate }}
+                </button>
+            </div>
+        </div>
+
+        <!-- Account Type -->
+        <div class="card mb-6">
+            <h2 class="text-2xl font-black mb-6">{{ 'SETTINGS.ACCOUNT_TYPE_SECTION' | translate }}</h2>
+
+            <div class="flex items-center justify-between">
+                <div>
+                    @if (userProfile()?.tier === 'premium') {
+                        <div class="flex items-center gap-2 mb-2">
+              <span class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full text-sm font-bold text-white">
+                ⭐ PREMIUM
+              </span>
+                        </div>
+                        <p class="text-slate-400">{{ 'SETTINGS.PREMIUM_ACTIVE' | translate }}</p>
+                    } @else {
+                        <div class="flex items-center gap-2 mb-2">
+              <span class="px-4 py-2 bg-slate-800 rounded-full text-sm font-bold text-slate-300">
+                FREE
+              </span>
+                        </div>
+                        <p class="text-slate-400 mb-4">{{ 'SETTINGS.FREE_DESC' | translate }}</p>
+                        <ul class="space-y-2 mb-4">
+                            <li class="flex items-center gap-2 text-slate-300 text-sm">
+                                <svg class="w-5 h-5 text-bam-primary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+                                {{ 'SETTINGS.FEATURE_UNLIMITED' | translate }}
+                            </li>
+                            <li class="flex items-center gap-2 text-slate-300 text-sm">
+                                <svg class="w-5 h-5 text-bam-primary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+                                {{ 'SETTINGS.FEATURE_PASSWORD' | translate }}
+                            </li>
+                            <li class="flex items-center gap-2 text-slate-300 text-sm">
+                                <svg class="w-5 h-5 text-bam-primary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 001.414 0l4-4z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+                                {{ 'SETTINGS.FEATURE_SEED' | translate }}
+                            </li>
+                        </ul>
+                    }
+                </div>
+                @if (userProfile()?.tier === 'free') {
+                    <button class="btn btn-primary px-6">
+                        {{ 'SETTINGS.UPGRADE_BTN' | translate }}
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Password Change -->
+        <div class="card mb-6">
+            <h2 class="text-2xl font-black mb-6">{{ 'SETTINGS.SECURITY_SECTION' | translate }}</h2>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2 uppercase tracking-wide text-[10px]">{{ 'SETTINGS.NEW_PASSWORD_LABEL' | translate }}</label>
+                    <input
+                            type="password"
+                            class="input"
+                            [value]="newPassword()"
+                            (input)="newPassword.set($any($event.target).value)"
+                            placeholder="••••••••">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2 uppercase tracking-wide text-[10px]">{{ 'SETTINGS.CONFIRM_PASSWORD_LABEL' | translate }}</label>
+                    <input
+                            type="password"
+                            class="input"
+                            [value]="confirmPassword()"
+                            (input)="confirmPassword.set($any($event.target).value)"
+                            placeholder="••••••••">
+                </div>
+
+                @if (passwordMessage()) {
+                    <div class="p-3 rounded-xl"
+                         [ngClass]="passwordMessage().includes('✅') ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'">
+                        <p class="text-sm font-medium">{{ passwordMessage() }}</p>
+                    </div>
+                }
+
+                <button
+                        (click)="updatePassword()"
+                        [disabled]="isUpdatingPassword()"
+                        class="btn btn-primary w-full md:w-auto">
+                    @if (isUpdatingPassword()) {
+                        <span class="spinner"></span>
+                    }
+                    {{ 'SETTINGS.CHANGE_PASSWORD_BTN' | translate }}
+                </button>
+            </div>
+        </div>
+
+        <!-- Account Actions -->
+        <div class="card mb-6">
+            <h2 class="text-2xl font-black mb-6">{{ 'SETTINGS.ACTIONS_SECTION' | translate }}</h2>
+
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 bg-slate-800/50 rounded-2xl border border-slate-700">
+                    <div>
+                        <h3 class="font-bold mb-1">{{ 'SETTINGS.LOGOUT_TITLE' | translate }}</h3>
+                        <p class="text-sm text-slate-400">{{ 'SETTINGS.LOGOUT_DESC' | translate }}</p>
+                    </div>
+                    <button (click)="logout()" class="btn btn-outline">
+                        {{ 'SETTINGS.LOGOUT_BTN' | translate }}
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-red-500/5 rounded-2xl border border-red-500/20">
+                    <div>
+                        <h3 class="font-bold text-red-400 mb-1">{{ 'SETTINGS.DELETE_ACCOUNT_TITLE' | translate }}</h3>
+                        <p class="text-sm text-slate-400">{{ 'SETTINGS.DELETE_ACCOUNT_DESC' | translate }}</p>
+                    </div>
+                    <button (click)="deleteAccount()"
+                            class="btn bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20">
+                        {{ 'SETTINGS.DELETE_ACCOUNT_BTN' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back to Dashboard -->
+        <div class="text-center">
+            <a routerLink="/dashboard" class="text-slate-400 hover:text-slate-300 transition-colors">
+                {{ 'SETTINGS.BACK_DASHBOARD' | translate }}
+            </a>
+        </div>
+    </div>
+</div>

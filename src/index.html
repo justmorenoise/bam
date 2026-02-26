@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Bam! - P2P File Sharing</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+          content="Bam! - Trasferimento file P2P sicuro, veloce e privato. Nessun caricamento su server cloud.">
+    <meta name="theme-color" content="#6366f1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <script>
+        if (typeof global === 'undefined') {
+            var global = window;
+        }
+        if (typeof process === 'undefined') {
+            var process = {
+                env: {NODE_DEBUG: undefined}, nextTick: function (fn) {
+                    setTimeout(fn, 0);
+                }
+            };
+        }
+    </script>
+    <script type="module">
+        import {Buffer} from 'https://cdn.jsdelivr.net/npm/buffer@6.0.3/+esm';
+
+        window.Buffer = Buffer;
+    </script>
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+</head>
+<body class="bg-bam-light dark:bg-bam-dark">
+<app-root></app-root>
+</body>
+</html>

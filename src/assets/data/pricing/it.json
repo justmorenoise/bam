@@ -1,0 +1,73 @@
+{
+  "plans": [
+    {
+      "name": "Anonimo",
+      "subtitle": "Senza registrazione",
+      "price": "Gratis",
+      "period": "",
+      "highlight": false,
+      "features": [
+        { "text": "Trasferimento P2P illimitato", "included": true },
+        { "text": "Dimensione file illimitata", "included": true },
+        { "text": "Crittografia E2EE nativa", "included": true },
+        { "text": "Verifica hash SHA-256", "included": true },
+        { "text": "5 file al giorno", "included": true },
+        { "text": "Link monouso", "included": true },
+        { "text": "Link persistenti", "included": false },
+        { "text": "Resume download", "included": false },
+        { "text": "Cifratura password", "included": false },
+        { "text": "URL personalizzati", "included": false },
+        { "text": "Ricevute di consegna", "included": false },
+        { "text": "Zero pubblicità", "included": false }
+      ]
+    },
+    {
+      "name": "Pro Free",
+      "subtitle": "Account registrato",
+      "price": "Gratis",
+      "period": "",
+      "highlight": false,
+      "features": [
+        { "text": "Trasferimento P2P illimitato", "included": true },
+        { "text": "Dimensione file illimitata", "included": true },
+        { "text": "Crittografia E2EE nativa", "included": true },
+        { "text": "Verifica hash SHA-256", "included": true },
+        { "text": "5 file al giorno", "included": true },
+        { "text": "Link monouso", "included": true },
+        { "text": "Link persistenti", "included": true },
+        { "text": "Resume download", "included": true },
+        { "text": "Cifratura password", "included": false },
+        { "text": "URL personalizzati", "included": false },
+        { "text": "Ricevute di consegna", "included": false },
+        { "text": "Zero pubblicità", "included": false }
+      ]
+    },
+    {
+      "name": "Pro Premium",
+      "subtitle": "Esperienza completa",
+      "price": "€4.99",
+      "period": "/mese",
+      "highlight": true,
+      "features": [
+        { "text": "Trasferimento P2P illimitato", "included": true },
+        { "text": "Dimensione file illimitata", "included": true },
+        { "text": "Crittografia E2EE nativa", "included": true },
+        { "text": "Verifica hash SHA-256", "included": true },
+        { "text": "File illimitati al giorno", "included": true },
+        { "text": "Link monouso", "included": true },
+        { "text": "Link persistenti", "included": true },
+        { "text": "Resume download", "included": true },
+        { "text": "Cifratura password AES-GCM", "included": true },
+        { "text": "URL personalizzati", "included": true },
+        { "text": "Ricevute di consegna PDF", "included": true },
+        { "text": "Zero pubblicità", "included": true }
+      ]
+    }
+  ],
+  "faqs": [
+    { "question": "Posso provare Premium gratuitamente?", "answer": "Sì, offriamo un periodo di prova gratuito di 7 giorni per tutti i nuovi utenti Premium." },
+    { "question": "Quali metodi di pagamento accettate?", "answer": "Accettiamo carte di credito/debito (Visa, Mastercard, American Express) e PayPal." },
+    { "question": "Posso cancellare in qualsiasi momento?", "answer": "Assolutamente sì. Puoi cancellare il tuo abbonamento in qualsiasi momento dalla pagina Impostazioni. Continuerai ad avere accesso Premium fino alla fine del periodo pagato." },
+    { "question": "Esiste un piano annuale?", "answer": "Sì, il piano annuale costa €49.99/anno, con un risparmio di circa il 17% rispetto al mensile." }
+  ]
+}

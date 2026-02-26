@@ -1,0 +1,26 @@
+{
+  "mission": [
+    { "icon": "🔐", "title": "Privacy First", "description": "I tuoi file non toccano mai i nostri server. La tua privacy non è una funzionalità, è il fondamento di Bam!." },
+    { "icon": "☁️", "title": "Zero Cloud", "description": "Nessun upload su server remoti. I dati viaggiano direttamente da browser a browser, senza intermediari." },
+    { "icon": "🌐", "title": "Rivoluzione P2P", "description": "WebRTC permette connessioni peer-to-peer native nel browser. Bam! sfrutta questa tecnologia per trasferimenti diretti e sicuri." }
+  ],
+  "steps": [
+    { "number": "1", "title": "Seleziona File", "description": "Scegli il file che vuoi condividere. Nessun limite di dimensione, qualsiasi formato." },
+    { "number": "2", "title": "Connessione P2P", "description": "Bam! genera un link unico. Quando il destinatario lo apre, si stabilisce una connessione WebRTC diretta." },
+    { "number": "3", "title": "Trasferimento Sicuro", "description": "Il file viene trasferito con crittografia end-to-end nativa. Nessun server intermedio." }
+  ],
+  "features": [
+    { "icon": "🔗", "title": "Peer-to-Peer Diretto", "description": "I file viaggiano direttamente dal mittente al destinatario tramite WebRTC, senza passare da server intermedi." },
+    { "icon": "🔒", "title": "Crittografia Nativa", "description": "Ogni trasferimento è protetto da crittografia end-to-end (DTLS 1.2+) integrata nel protocollo WebRTC." },
+    { "icon": "♾️", "title": "Nessun Limite di Dimensione", "description": "Trasferisci file di qualsiasi dimensione. Il chunking a 64KB garantisce stabilità anche con file enormi." },
+    { "icon": "⚡", "title": "Velocità Massima", "description": "Connessione diretta P2P senza colli di bottiglia. La velocità dipende solo dalla tua connessione." },
+    { "icon": "🛡️", "title": "Privacy Totale", "description": "Nessun file viene mai caricato sui nostri server. Zero accesso ai tuoi dati." },
+    { "icon": "🖥️", "title": "App Desktop", "description": "Agent Electron per seeding persistente, integrazione OS e notifiche native." }
+  ],
+  "roadmap": [
+    { "icon": "🔥", "title": "Burn-on-Read", "description": "Link autodistruttivi che scadono dopo il primo download completato." },
+    { "icon": "🌱", "title": "Seeding Persistente", "description": "Condivisione continua per permettere download multipli dallo stesso link." },
+    { "icon": "📱", "title": "QR Quick-Share", "description": "Codici QR dinamici per trasferimenti istantanei desktop-to-mobile." },
+    { "icon": "🎮", "title": "Gamification", "description": "Sistema XP, livelli e badge per premiare gli utenti attivi." }
+  ]
+}

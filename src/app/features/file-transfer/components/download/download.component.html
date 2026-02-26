@@ -1,0 +1,212 @@
+<div class="min-h-screen p-6 lg:p-10">
+    <app-header></app-header>
+
+    <div class="max-w-5xl mx-auto min-h-[80vh]">
+        <div class="w-full">
+            @if (isLoading()) {
+                <!-- Loading State -->
+                <div class="card text-center">
+                    <div class="spinner mx-auto mb-4"></div>
+                    <h2 class="text-2xl font-black mb-2">{{ 'DOWNLOAD.LOADING' | translate }}</h2>
+                    <p class="text-slate-400">{{ 'DOWNLOAD.LOADING_DESC' | translate }}</p>
+                </div>
+            } @else if (errorMessage()) {
+                <!-- Error State -->
+                <div class="card text-center">
+                    <div class="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="text-red-400">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-black mb-2 text-red-400">{{ 'DOWNLOAD.ERROR_TITLE' | translate }}</h2>
+                    <p class="text-slate-400 mb-6">{{ errorMessage() }}</p>
+                    <a routerLink="/" class="btn btn-outline">
+                        {{ 'DOWNLOAD.BACK_HOME' | translate }}
+                    </a>
+                </div>
+            } @else if (session()) {
+                <!-- File Info & Download -->
+                <div class="text-center mb-8">
+                    <app-ad-banner position="landing"></app-ad-banner>
+
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-bam-primary to-bam-secondary flex items-center justify-center mx-auto mb-4 shadow-lg shadow-bam-primary/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round" class="text-white">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-black mb-2 file-name">{{ session()!.fileInfo.name }}</h2>
+                    <p class="text-slate-400">{{ formatFileSize(session()!.fileInfo.size) }}</p>
+
+                    <div class="flex items-center justify-center gap-2 mt-4">
+                        @if (session()!.mode === 'burn') {
+                            <span class="px-3 py-1.5 bg-bam-primary/20 text-bam-primary rounded-xl text-xs font-bold uppercase">
+                                    {{ 'DOWNLOAD.MODE_BURN' | translate }}
+                                </span>
+                        } @else {
+                            <span class="px-3 py-1.5 bg-green-500/20 text-green-400 rounded-xl text-xs font-bold uppercase">
+                                  {{ 'DOWNLOAD.MODE_SEED' | translate }}
+                                </span>
+                        }
+                        @if (session()!.passwordProtected) {
+                            <span class="px-3 py-1.5 bg-blue-500/20 text-blue-400 rounded-xl text-xs font-bold uppercase">
+                                  {{ 'DOWNLOAD.MODE_PROTECTED' | translate }}
+                                </span>
+                        }
+                    </div>
+                </div>
+
+                <!-- Password Input (if required) -->
+                @if (session()!.passwordProtected && !isDownloading()) {
+                    <div class="mb-6">
+                        <label class="block text-sm font-bold text-slate-300 mb-2 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.PASSWORD_LABEL' | translate }}</label>
+                        <input
+                                type="password"
+                                class="input"
+                                [placeholder]="'DOWNLOAD.PASSWORD_PLACEHOLDER' | translate"
+                                [value]="password()"
+                                (input)="password.set($any($event.target).value)">
+                        <p class="text-xs text-slate-500 mt-1">{{ 'DOWNLOAD.PASSWORD_HINT' | translate }}</p>
+                    </div>
+                }
+
+                <!-- Connection Status -->
+                @if (isConnecting()) {
+                    <div class="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-2xl">
+                        <div class="flex items-center gap-3">
+                            <div class="spinner"></div>
+                            <div>
+                                <p class="font-bold text-blue-400">{{ 'DOWNLOAD.CONNECTING' | translate }}</p>
+                                <p class="text-sm text-slate-400">{{ 'DOWNLOAD.CONNECTING_DESC' | translate }}</p>
+                            </div>
+                        </div>
+                    </div>
+                } @else if (session()?.status === 'waiting') {
+                    <div class="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-amber-500 animate-pulse"></div>
+                            <div>
+                                <p class="font-bold text-amber-400">{{ 'DOWNLOAD.WAITING_SENDER' | translate }}</p>
+                                <p class="text-sm text-slate-400">{{ 'DOWNLOAD.WAITING_SENDER_DESC' | translate }}</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Download Completed -->
+                @if (isCompleted()) {
+                    <div class="mb-6 p-6 bg-green-500/10 border border-green-500/30 rounded-2xl text-center">
+                        <div class="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="text-green-400">
+                                <path d="M9 11l3 3L22 4"/>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H7l-4 4V4a2 2 0 0 1 2-2h11"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-black text-green-400 mb-2">{{ 'DOWNLOAD.COMPLETED_TITLE' | translate }}</h3>
+                        <div class="text-sm text-slate-300 space-y-1">
+                            <p><span
+                                    class="text-slate-500">{{ 'DOWNLOAD.FILE_LABEL' | translate }}</span> {{ session()!.fileInfo.name }}
+                            </p>
+                            <p><span
+                                    class="text-slate-500">{{ 'DOWNLOAD.SIZE_LABEL' | translate }}</span> {{ formatFileSize(session()!.fileInfo.size) }}
+                            </p>
+                            <p><span
+                                    class="text-slate-500">{{ 'DOWNLOAD.CREATED_LABEL' | translate }}</span> {{ session()!.createdAt | date:'short' }}
+                            </p>
+                            <p><span
+                                    class="text-slate-500">{{ 'DOWNLOAD.ELAPSED_LABEL' | translate }}</span> {{ elapsedSeconds() }}
+                                s</p>
+                            <p><span
+                                    class="text-slate-500">{{ 'DOWNLOAD.AVG_SPEED_LABEL' | translate }}</span> {{ formatSpeed(avgSpeed()) }}
+                            </p>
+                        </div>
+                        <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <a routerLink="/" class="btn btn-outline w-full">{{ 'DOWNLOAD.BACK_HOME' | translate }}</a>
+                            <a routerLink="/" class="btn btn-primary w-full">{{ 'DOWNLOAD.SHARE_FILE' | translate }}</a>
+                        </div>
+                    </div>
+                } @else if (isVerifying()) {
+                    <div class="mb-6 p-6 bg-blue-500/10 border border-blue-500/30 rounded-2xl text-center">
+                        <div class="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="text-blue-400 animate-spin"
+                                 style="animation-duration: 2s">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-black text-blue-400 mb-2">{{ 'DOWNLOAD.VERIFYING' | translate }}</h3>
+                        <p class="text-sm text-slate-400">{{ 'DOWNLOAD.VERIFYING_DESC' | translate }}</p>
+                    </div>
+                } @else if (isDownloading()) {
+                    <!--    DOWNLOAD IN CORSO    -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            @if ((signaling.receiverProgress()?.percentage ?? 0) >= 100) {
+                                <span class="text-sm font-bold text-slate-300 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.FINALIZING' | translate }}</span>
+                            } @else {
+                                <span class="text-sm font-bold text-slate-300 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.DOWNLOADING' | translate }}</span>
+                            }
+                            <span class="text-sm font-bold text-bam-primary">{{ (signaling.receiverProgress()?.percentage ?? 0).toFixed(1) }}
+                                %</span>
+                        </div>
+                        <div class="relative h-4 bg-slate-800 rounded-full overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-bam-primary to-bam-secondary rounded-full transition-all duration-300"
+                                 [style.width.%]="signaling.receiverProgress()?.percentage ?? 0">
+                                <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-xs text-slate-500">{{ formatSpeed(signaling.receiverProgress()?.speed ?? 0) }}</span>
+                            <span class="text-xs text-slate-500">{{ formatFileSize(session()!.fileInfo.size * (signaling.receiverProgress()?.percentage ?? 0) / 100) }}
+                                / {{ formatFileSize(session()!.fileInfo.size) }}</span>
+                        </div>
+                    </div>
+                }
+                @if (file()) {
+                    <!-- Download Button -->
+                    <button
+                            (click)="download()"
+                            class="btn btn-primary flex gap-3 justify-center py-4 text-lg w-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        {{ 'DOWNLOAD.DOWNLOAD_BTN' | translate }}
+                    </button>
+                }
+
+                <!-- Info Box -->
+                <div class="mt-6 p-4 bg-slate-800/50 rounded-2xl border border-slate-700">
+                    <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round" class="text-blue-400 flex-shrink-0 mt-0.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <div class="text-sm text-slate-400">
+                            <p class="font-medium mb-1">{{ 'DOWNLOAD.P2P_TITLE' | translate }}</p>
+                            <p class="text-xs">{{ 'DOWNLOAD.P2P_DESC' | translate }}</p>
+                            @if (session()!.mode === 'burn') {
+                                <p class="mt-2 text-bam-primary font-medium">{{ 'DOWNLOAD.BURN_WARNING' | translate }}</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

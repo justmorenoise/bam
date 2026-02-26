@@ -1,0 +1,122 @@
+<div class="min-h-screen p-6 lg:p-10">
+    <app-header></app-header>
+
+    <main class="max-w-5xl mx-auto">
+        <!-- Hero -->
+        <section class="text-center mt-16 mb-16">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{{ 'SECURITY.HERO.LABEL' | translate }}</p>
+            <h1 class="text-5xl lg:text-6xl font-black mb-4 tracking-tight">
+                {{ 'SECURITY.HERO.TITLE_1' | translate }} <span class="text-bam-primary">{{ 'SECURITY.HERO.TITLE_HIGHLIGHT' | translate }}</span> {{ 'SECURITY.HERO.TITLE_2' | translate }}
+            </h1>
+            <p class="text-lg text-slate-400 max-w-xl mx-auto">
+                {{ 'SECURITY.HERO.SUBTITLE' | translate }}
+            </p>
+        </section>
+
+        <!-- Features Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
+            @for (feature of data().features; track feature.title) {
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/50 transition-all group">
+                    <span class="text-3xl mb-4 block">{{ feature.icon }}</span>
+                    <h3 class="text-lg font-bold text-white mb-2 group-hover:text-bam-primary transition-colors">{{ feature.title }}</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">{{ feature.description }}</p>
+                </div>
+            }
+        </section>
+
+        <!-- Crittografia End-to-End Nativa -->
+        <section class="mb-16">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{{ 'SECURITY.E2EE.LABEL' | translate }}</p>
+            <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+                <h2 class="text-2xl font-bold text-bam-primary mb-4">{{ 'SECURITY.E2EE.TITLE' | translate }}</h2>
+                <p class="text-slate-300 leading-relaxed">
+                    {{ 'SECURITY.E2EE.P1_A' | translate }}<strong class="text-white">DTLS 1.2+</strong>{{ 'SECURITY.E2EE.P1_B' | translate }}
+                </p>
+                <p class="text-slate-400 leading-relaxed">
+                    {{ 'SECURITY.E2EE.P2' | translate }}
+                </p>
+            </div>
+        </section>
+
+        <!-- Cifratura Password Premium -->
+        <section class="mb-16">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{{ 'SECURITY.PASSWORD.LABEL' | translate }}</p>
+            <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+                <h2 class="text-2xl font-bold text-bam-primary mb-4">{{ 'SECURITY.PASSWORD.TITLE' | translate }}</h2>
+                <p class="text-slate-300 leading-relaxed">
+                    {{ 'SECURITY.PASSWORD.P1_A' | translate }}<strong class="text-white">AES-GCM a 256-bit</strong>{{ 'SECURITY.PASSWORD.P1_B' | translate }}<strong class="text-white">PBKDF2</strong>{{ 'SECURITY.PASSWORD.P1_C' | translate }}
+                </p>
+                <p class="text-slate-400 leading-relaxed">
+                    {{ 'SECURITY.PASSWORD.P2_A' | translate }}<strong class="text-white">Web Crypto API</strong>{{ 'SECURITY.PASSWORD.P2_B' | translate }}<strong class="text-white">zero-knowledge</strong>{{ 'SECURITY.PASSWORD.P2_C' | translate }}
+                </p>
+            </div>
+        </section>
+
+        <!-- Verifica Integrità -->
+        <section class="mb-16">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{{ 'SECURITY.INTEGRITY.LABEL' | translate }}</p>
+            <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+                <h2 class="text-2xl font-bold text-bam-primary mb-4">{{ 'SECURITY.INTEGRITY.TITLE' | translate }}</h2>
+                <p class="text-slate-300 leading-relaxed">
+                    {{ 'SECURITY.INTEGRITY.P1_A' | translate }}<strong class="text-white">SHA-256</strong>{{ 'SECURITY.INTEGRITY.P1_B' | translate }}
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div class="bg-slate-800/50 rounded-2xl p-4">
+                        <p class="text-bam-primary font-bold text-sm mb-1">{{ 'SECURITY.INTEGRITY.RANGE_SM' | translate }}</p>
+                        <p class="text-slate-400 text-sm">{{ 'SECURITY.INTEGRITY.RANGE_SM_DESC' | translate }}</p>
+                    </div>
+                    <div class="bg-slate-800/50 rounded-2xl p-4">
+                        <p class="text-bam-primary font-bold text-sm mb-1">{{ 'SECURITY.INTEGRITY.RANGE_MD' | translate }}</p>
+                        <p class="text-slate-400 text-sm">{{ 'SECURITY.INTEGRITY.RANGE_MD_DESC' | translate }}</p>
+                    </div>
+                    <div class="bg-slate-800/50 rounded-2xl p-4">
+                        <p class="text-bam-primary font-bold text-sm mb-1">{{ 'SECURITY.INTEGRITY.RANGE_LG' | translate }}</p>
+                        <p class="text-slate-400 text-sm">{{ 'SECURITY.INTEGRITY.RANGE_LG_DESC' | translate }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architettura Zero-Cloud -->
+        <section class="mb-16">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{{ 'SECURITY.ZERO_CLOUD.LABEL' | translate }}</p>
+            <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+                <h2 class="text-2xl font-bold text-bam-primary mb-4">{{ 'SECURITY.ZERO_CLOUD.TITLE' | translate }}</h2>
+                <p class="text-slate-300 leading-relaxed">
+                    {{ 'SECURITY.ZERO_CLOUD.P1_A' | translate }}<strong class="text-white">peer-to-peer</strong>{{ 'SECURITY.ZERO_CLOUD.P1_B' | translate }}
+                </p>
+                <p class="text-slate-400 leading-relaxed">
+                    {{ 'SECURITY.ZERO_CLOUD.P2_A' | translate }}<strong class="text-white">signaling</strong>{{ 'SECURITY.ZERO_CLOUD.P2_B' | translate }}
+                </p>
+            </div>
+        </section>
+
+        <!-- Segnalazione Vulnerabilità -->
+        <section class="mb-16">
+            <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+                <h2 class="text-2xl font-bold text-bam-primary mb-4">{{ 'SECURITY.VULN.TITLE' | translate }}</h2>
+                <p class="text-slate-300 leading-relaxed">
+                    {{ 'SECURITY.VULN.P1' | translate }}
+                </p>
+                <p class="text-slate-400 leading-relaxed">
+                    {{ 'SECURITY.VULN.P2_PRE' | translate }}
+                    <a href="mailto:security@bam.app" class="text-bam-primary hover:underline font-semibold">{{ 'SECURITY.VULN.EMAIL' | translate }}</a>
+                    {{ 'SECURITY.VULN.P2_POST' | translate }}
+                </p>
+            </div>
+        </section>
+
+        <!-- GDPR Info Box -->
+        <section class="mb-24">
+            <div class="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-6 flex gap-4">
+                <span class="text-2xl shrink-0">🇪🇺</span>
+                <div>
+                    <h3 class="font-bold text-white mb-1">{{ 'SECURITY.GDPR.TITLE' | translate }}</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        {{ 'SECURITY.GDPR.DESC_A' | translate }}<strong class="text-white">europe-west1</strong>{{ 'SECURITY.GDPR.DESC_B' | translate }}
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>

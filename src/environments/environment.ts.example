@@ -1,0 +1,99 @@
+// ============================================================
+// BAM - Angular Environment Template (Development)
+// Copy this file to environment.ts and fill in your real values
+// NEVER commit environment.ts with real credentials
+// ============================================================
+export const environment = {
+    production: false,
+    appName: 'Bam! - P2P File Sharing',
+    version: '0.0.0',
+
+    // Supabase Configuration
+    // Get these values from your Supabase project dashboard → Settings → API
+    supabase: {
+        url: 'https://YOUR_PROJECT_REF.supabase.co',
+        anonKey: 'YOUR_SUPABASE_ANON_KEY',
+    },
+
+    // WebRTC Configuration
+    webrtc: {
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            // Optional: TURN server for symmetric NAT traversal
+            // Get credentials from your TURN provider (e.g. metered.ca, Twilio, Xirsys)
+            {
+                urls: 'turn:YOUR_TURN_SERVER:443',
+                username: 'YOUR_TURN_USERNAME',
+                credential: 'YOUR_TURN_CREDENTIAL'
+            },
+            {
+                urls: 'turn:YOUR_TURN_SERVER:443?transport=tcp',
+                username: 'YOUR_TURN_USERNAME',
+                credential: 'YOUR_TURN_CREDENTIAL'
+            }
+        ],
+        chunkSize: 65536,
+        maxReconnectAttempts: 3,
+        connectionTimeout: 30000,
+        parallel: {
+            enabled: true,
+            maxChannels: 8,
+            minFileSizeMB: 50,
+            slowStartIntervalMs: 2500,
+            throughputRatio: 0.7,
+            saturationThreshold: 0.1
+        }
+    },
+
+    // AdMob Configuration (use test IDs for development)
+    admob: {
+        enabled: true,
+        bannerId: 'ca-app-pub-3940256099942544/6300978111',
+        interstitialId: 'ca-app-pub-3940256099942544/1033173712',
+    },
+
+    // File Transfer Limits
+    limits: {
+        free: {
+            maxFilesPerDay: 5000,
+            maxFileSize: null,
+        },
+        premium: {
+            maxFilesPerDay: null,
+            maxFileSize: null,
+        },
+    },
+
+    // Encryption Settings
+    encryption: {
+        algorithm: 'AES-GCM',
+        keyLength: 256,
+        ivLength: 12,
+        saltLength: 16,
+        pbkdf2Iterations: 100000,
+        hashAlgorithm: 'SHA-256',
+    },
+
+    // API Endpoints
+    api: {
+        baseUrl: 'http://localhost:4200',
+        signaling: '/api/signaling',
+    },
+
+    // Feature Flags
+    features: {
+        qrCodeSharing: true,
+        resumeDownload: true,
+        burnOnRead: true,
+        seedingMode: true,
+        gamification: true,
+        customUrls: true,
+    },
+
+    // Logging
+    logging: {
+        level: 'debug',
+        enableConsole: true,
+    },
+};

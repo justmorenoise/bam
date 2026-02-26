@@ -1,0 +1,38 @@
+<div class="card bg-gradient-to-r from-bam-primary to-bam-secondary">
+    <div class="flex items-center justify-between">
+        <div>
+            <h3 class="text-2xl font-black text-white mb-2">{{ 'DASHBOARD.UPGRADE_TITLE' | translate }}</h3>
+            <p class="text-white/80 mb-4">{{ 'DASHBOARD.UPGRADE_DESC' | translate }}</p>
+            <ul class="space-y-2 mb-4">
+                <li class="flex items-center gap-2 text-white/90">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                              clip-rule="evenodd"/>
+                    </svg>
+                    <span class="font-medium">{{ 'DASHBOARD.FEATURE_UNLIMITED' | translate }}</span>
+                </li>
+                <li class="flex items-center gap-2 text-white/90">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                              clip-rule="evenodd"/>
+                    </svg>
+                    <span class="font-medium">{{ 'DASHBOARD.FEATURE_PASSWORD' | translate }}</span>
+                </li>
+                <li class="flex items-center gap-2 text-white/90">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                              clip-rule="evenodd"/>
+                    </svg>
+                    <span class="font-medium">{{ 'DASHBOARD.FEATURE_SEED' | translate }}</span>
+                </li>
+            </ul>
+        </div>
+        <button (click)="upgradeToPremium()"
+                class="btn btn-primary bg-white text-bam-primary hover:bg-slate-100 shadow-xl px-8 py-4 text-lg whitespace-nowrap">
+            {{ 'DASHBOARD.UPGRADE_BTN' | translate }}
+        </button>
+    </div>
+</div>

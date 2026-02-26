@@ -1,0 +1,73 @@
+{
+  "plans": [
+    {
+      "name": "Anonymous",
+      "subtitle": "No registration",
+      "price": "Free",
+      "period": "",
+      "highlight": false,
+      "features": [
+        { "text": "Unlimited P2P transfer", "included": true },
+        { "text": "Unlimited file size", "included": true },
+        { "text": "Native E2EE encryption", "included": true },
+        { "text": "SHA-256 hash verification", "included": true },
+        { "text": "5 files per day", "included": true },
+        { "text": "One-time link", "included": true },
+        { "text": "Persistent links", "included": false },
+        { "text": "Resume download", "included": false },
+        { "text": "Password encryption", "included": false },
+        { "text": "Custom URLs", "included": false },
+        { "text": "Delivery receipts", "included": false },
+        { "text": "Zero ads", "included": false }
+      ]
+    },
+    {
+      "name": "Pro Free",
+      "subtitle": "Registered account",
+      "price": "Free",
+      "period": "",
+      "highlight": false,
+      "features": [
+        { "text": "Unlimited P2P transfer", "included": true },
+        { "text": "Unlimited file size", "included": true },
+        { "text": "Native E2EE encryption", "included": true },
+        { "text": "SHA-256 hash verification", "included": true },
+        { "text": "5 files per day", "included": true },
+        { "text": "One-time link", "included": true },
+        { "text": "Persistent links", "included": true },
+        { "text": "Resume download", "included": true },
+        { "text": "Password encryption", "included": false },
+        { "text": "Custom URLs", "included": false },
+        { "text": "Delivery receipts", "included": false },
+        { "text": "Zero ads", "included": false }
+      ]
+    },
+    {
+      "name": "Pro Premium",
+      "subtitle": "Full experience",
+      "price": "€4.99",
+      "period": "/month",
+      "highlight": true,
+      "features": [
+        { "text": "Unlimited P2P transfer", "included": true },
+        { "text": "Unlimited file size", "included": true },
+        { "text": "Native E2EE encryption", "included": true },
+        { "text": "SHA-256 hash verification", "included": true },
+        { "text": "Unlimited files per day", "included": true },
+        { "text": "One-time link", "included": true },
+        { "text": "Persistent links", "included": true },
+        { "text": "Resume download", "included": true },
+        { "text": "AES-GCM password encryption", "included": true },
+        { "text": "Custom URLs", "included": true },
+        { "text": "PDF delivery receipts", "included": true },
+        { "text": "Zero ads", "included": true }
+      ]
+    }
+  ],
+  "faqs": [
+    { "question": "Can I try Premium for free?", "answer": "Yes, we offer a 7-day free trial for all new Premium users." },
+    { "question": "What payment methods do you accept?", "answer": "We accept credit/debit cards (Visa, Mastercard, American Express) and PayPal." },
+    { "question": "Can I cancel at any time?", "answer": "Absolutely yes. You can cancel your subscription at any time from the Settings page. You will continue to have Premium access until the end of the paid period." },
+    { "question": "Is there an annual plan?", "answer": "Yes, the annual plan costs €49.99/year, saving about 17% compared to monthly." }
+  ]
+}

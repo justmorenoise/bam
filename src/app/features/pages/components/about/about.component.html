@@ -1,0 +1,103 @@
+<div class="min-h-screen p-6 lg:p-10">
+    <app-header></app-header>
+
+    <main class="max-w-5xl mx-auto">
+        <!-- Hero Section -->
+        <div class="text-center mb-16">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{{ 'ABOUT.HERO.LABEL' | translate }}</p>
+            <h2 class="text-5xl lg:text-6xl font-black mb-4 tracking-tight">
+                {{ 'ABOUT.HERO.TITLE_1' | translate }} <span class="text-bam-primary">{{ 'ABOUT.HERO.TITLE_HIGHLIGHT' | translate }}</span>
+            </h2>
+            <p class="text-xl text-slate-400 max-w-2xl mx-auto">
+                {{ 'ABOUT.HERO.SUBTITLE' | translate }}
+            </p>
+        </div>
+
+        <!-- Mission Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            @for (card of data().mission; track card.title) {
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/50 transition-all group">
+                    <div class="text-4xl mb-4 transition-transform">{{ card.icon }}</div>
+                    <h3 class="text-lg font-bold mb-2">{{ card.title }}</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">{{ card.description }}</p>
+                </div>
+            }
+        </div>
+
+        <!-- Come Funziona Section -->
+        <div class="mb-16">
+            <div class="text-center mb-10">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{{ 'ABOUT.HOW.LABEL' | translate }}</p>
+                <h3 class="text-3xl lg:text-4xl font-black tracking-tight">
+                    {{ 'ABOUT.HOW.TITLE_1' | translate }} <span class="text-bam-primary">{{ 'ABOUT.HOW.TITLE_HIGHLIGHT' | translate }}</span>
+                </h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @for (step of data().steps; track step.number) {
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center">
+                        <div class="text-5xl font-black text-bam-primary mb-4">{{ step.number }}</div>
+                        <h4 class="text-lg font-bold mb-2">{{ step.title }}</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed">{{ step.description }}</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="mb-16">
+            <div class="text-center mb-10">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{{ 'ABOUT.FEATURES.LABEL' | translate }}</p>
+                <h3 class="text-3xl lg:text-4xl font-black tracking-tight">
+                    {{ 'ABOUT.FEATURES.TITLE_1' | translate }} <span class="text-bam-primary">{{ 'ABOUT.FEATURES.TITLE_HIGHLIGHT' | translate }}</span>
+                </h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @for (feature of data().features; track feature.title) {
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/50 transition-all group">
+                        <div class="text-4xl mb-4 transition-transform">{{ feature.icon }}</div>
+                        <h3 class="text-lg font-bold mb-2">{{ feature.title }}</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">{{ feature.description }}</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            <div class="card text-center">
+                <div class="text-5xl font-black text-bam-primary mb-2">100%</div>
+                <p class="text-[11px] font-black uppercase tracking-widest text-slate-500">{{ 'ABOUT.STATS.PRIVACY_LABEL' | translate }}</p>
+                <p class="text-xs text-slate-400 mt-2">{{ 'ABOUT.STATS.PRIVACY_DESC' | translate }}</p>
+            </div>
+            <div class="card text-center">
+                <div class="text-5xl font-black text-bam-primary mb-2">∞</div>
+                <p class="text-[11px] font-black uppercase tracking-widest text-slate-500">{{ 'ABOUT.STATS.SIZE_LABEL' | translate }}</p>
+                <p class="text-xs text-slate-400 mt-2">{{ 'ABOUT.STATS.SIZE_DESC' | translate }}</p>
+            </div>
+            <div class="card text-center">
+                <div class="text-5xl font-black text-bam-primary mb-2">0<span class="text-sm">ms</span></div>
+                <p class="text-[11px] font-black uppercase tracking-widest text-slate-500">{{ 'ABOUT.STATS.LATENCY_LABEL' | translate }}</p>
+                <p class="text-xs text-slate-400 mt-2">{{ 'ABOUT.STATS.LATENCY_DESC' | translate }}</p>
+            </div>
+        </div>
+
+        <!-- Roadmap Section -->
+        <div class="mb-16">
+            <div class="text-center mb-10">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">{{ 'ABOUT.ROADMAP.LABEL' | translate }}</p>
+                <h3 class="text-3xl lg:text-4xl font-black tracking-tight">
+                    {{ 'ABOUT.ROADMAP.TITLE_1' | translate }} <span class="text-bam-primary">{{ 'ABOUT.ROADMAP.TITLE_HIGHLIGHT' | translate }}</span>
+                </h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @for (item of data().roadmap; track item.title) {
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/50 transition-all group">
+                        <div class="text-4xl mb-4 transition-transform">{{ item.icon }}</div>
+                        <h3 class="text-lg font-bold mb-2">{{ item.title }}</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">{{ item.description }}</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </main>
+</div>

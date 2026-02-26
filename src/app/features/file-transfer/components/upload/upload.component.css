@@ -1,0 +1,47 @@
+:host {
+    @media screen and (max-width: 720px) {
+        .card {
+            padding: 0;
+            border: unset;
+            background: unset;
+        }
+    }
+}
+
+/* Drop Zone */
+.drop-zone {
+    @apply border-2 border-dashed border-slate-800 rounded-3xl;
+    @apply transition-all duration-300;
+}
+
+.drop-zone:hover {
+    @apply border-orange-500/50 bg-slate-900/50;
+}
+
+.drop-zone.drag-over {
+    @apply border-orange-500 bg-orange-500/10;
+    @apply scale-[1.02];
+    @apply shadow-2xl shadow-orange-500/20;
+}
+
+/* Card Base */
+.card {
+    @apply bg-gradient-to-br from-slate-900 to-slate-950;
+    @apply border border-slate-800;
+    @apply rounded-3xl p-8;
+    @apply shadow-2xl;
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

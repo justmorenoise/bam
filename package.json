@@ -1,0 +1,59 @@
+{
+  "name": "bam-p2p-file-sharing",
+  "version": "1.1.5",
+  "description": "Bam - P2P File Sharing Ecosystem with Angular 20+ and Electron",
+
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "start:ip": "ng serve --host 10.0.0.6 --ssl true --ssl-key ./ssl/localhost.key --ssl-cert ./ssl/localhost.crt",
+    "build": "ng build",
+    "build:prod": "node scripts/increment-version.js && ng build --configuration production",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "lint": "ng lint",
+    "version:bump": "node scripts/increment-version.js",
+    "deploy": "node scripts/increment-version.js && ng build --configuration production && firebase deploy"
+  },
+  "keywords": [
+    "p2p",
+    "file-sharing",
+    "webrtc",
+    "electron",
+    "angular",
+    "supabase"
+  ],
+  "author": "Bam Team",
+  "license": "MIT",
+  "dependencies": {
+    "@angular/animations": "^20.0.0",
+    "@angular/common": "^20.0.0",
+    "@angular/compiler": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@angular/platform-browser-dynamic": "^20.0.0",
+    "@angular/router": "^20.0.0",
+    "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/http-loader": "^17.0.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "hash-wasm": "^4.12.0",
+    "jspdf": "^4.2.0",
+    "qrcode": "^1.5.3",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.6.2",
+    "zone.js": "^0.15.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^20.0.0",
+    "@angular/cli": "^20.0.0",
+    "@angular/compiler-cli": "^20.0.0",
+    "@types/node": "^20.10.0",
+    "@types/qrcode": "^1.5.5",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "typescript": "~5.8.0"
+  },
+  "build": {}
+}

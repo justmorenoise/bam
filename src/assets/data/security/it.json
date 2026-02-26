@@ -1,0 +1,10 @@
+{
+  "features": [
+    { "icon": "🔐", "title": "E2EE Nativa WebRTC", "description": "Crittografia DTLS 1.2+ attiva di default su ogni trasferimento. Nessuna configurazione necessaria." },
+    { "icon": "🔑", "title": "Cifratura Password Premium", "description": "Crittografia AES-GCM 256-bit con derivazione chiave PBKDF2 tramite Web Crypto API." },
+    { "icon": "🧬", "title": "Verifica Integrità SHA-256", "description": "Hash calcolato lato mittente e verificato lato destinatario per garantire zero manomissioni." },
+    { "icon": "☁️", "title": "Zero Cloud Storage", "description": "I file non vengono mai caricati su server. Solo metadati di signaling transitano via Supabase." },
+    { "icon": "🔥", "title": "Burn-on-Read", "description": "Modalità link autodistruttivo: il link scade dopo il primo download completato." },
+    { "icon": "🛡️", "title": "GDPR Compliant", "description": "Piena conformità al Regolamento Europeo sulla protezione dei dati personali." }
+  ]
+}

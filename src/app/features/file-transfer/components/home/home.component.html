@@ -1,0 +1,76 @@
+<div class="min-h-screen p-6 lg:p-10">
+    <app-header></app-header>
+
+    <main class="max-w-5xl mx-auto">
+        <!-- Hero Section -->
+        <div class="text-center mb-16">
+            <h2 class="text-6xl lg:text-7xl font-black mb-6 tracking-tight">
+                {{ 'HOME.HERO_TITLE_1' | translate }} <span class="text-bam-primary">P2P</span><br>
+                {{ 'HOME.HERO_TITLE_2' | translate }}
+            </h2>
+            <p class="text-xl text-slate-400 mb-10 max-w-2xl mx-auto">
+                {{ 'HOME.HERO_SUBTITLE' | translate }}
+            </p>
+
+            <div class="mb-8">
+                <app-drop-zone (fileSelected)="navigateToUploadWithFile($event)"></app-drop-zone>
+            </div>
+        </div>
+
+        <app-ad-banner position="landing"/>
+
+        <!-- Upgrade Banner (if free user) -->
+        @if (isFreeTier()) {
+            <app-ad-premium-banner class="mb-8"/>
+        }
+
+        <!-- Stats Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="card text-center">
+                <div class="text-5xl font-black text-bam-primary mb-2">100%</div>
+                <p class="text-[11px] font-black uppercase tracking-widest text-slate-500">{{ 'HOME.STAT_PRIVACY' | translate }}</p>
+                <p class="text-xs text-slate-400 mt-2">{{ 'HOME.STAT_PRIVACY_DESC' | translate }}</p>
+            </div>
+            <div class="card text-center">
+                <div class="text-5xl font-black text-bam-primary mb-2">∞</div>
+                <p class="text-[11px] font-black uppercase tracking-widest text-slate-500">{{ 'HOME.STAT_SIZE' | translate }}</p>
+                <p class="text-xs text-slate-400 mt-2">{{ 'HOME.STAT_SIZE_DESC' | translate }}</p>
+            </div>
+            <div class="card text-center">
+                <div class="text-5xl font-black text-bam-primary mb-2">0<span class="text-sm">ms</span></div>
+                <p class="text-[11px] font-black uppercase tracking-widest text-slate-500">{{ 'HOME.STAT_LATENCY' | translate }}</p>
+                <p class="text-xs text-slate-400 mt-2">{{ 'HOME.STAT_LATENCY_DESC' | translate }}</p>
+            </div>
+        </div>
+
+
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            @for (feature of features(); track feature.title) {
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/50 transition-all group">
+                    @if (feature?.icon) {
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">{{ feature?.icon }}</div>
+                    }
+                    <h3 class="text-lg font-bold mb-2">{{ feature.title | translate }}</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">{{ feature.description | translate }}</p>
+                </div>
+            }
+        </div>
+
+        <!-- Security Notice -->
+        <div class="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-6 flex gap-4 mx-auto">
+            <div class="text-bam-accent mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-sm font-bold text-blue-400 uppercase tracking-tighter mb-2">{{ 'HOME.SECURITY_TITLE' | translate }}</p>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    {{ 'HOME.SECURITY_DESC' | translate }}
+                </p>
+            </div>
+        </div>
+    </main>
+</div>

@@ -1,0 +1,202 @@
+<main class="max-w-5xl mx-auto">
+    <!-- Hero -->
+    <section class="text-center mt-16 mb-16">
+        <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">Privacy Policy</p>
+        <h1 class="text-5xl lg:text-6xl font-black mb-4 tracking-tight">
+            <span class="text-bam-primary">Privacy</span> Policy
+        </h1>
+        <p class="text-lg text-slate-400 max-w-xl mx-auto">
+            How we collect, use and protect your data
+        </p>
+        <p class="text-xs text-slate-500 mt-4">Last updated: February 12, 2026</p>
+    </section>
+
+    <div class="space-y-8 mb-24">
+
+        <!-- 1. Introduction -->
+        <section class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+            <h2 class="text-2xl font-bold text-bam-primary mb-4">1. Introduction</h2>
+            <p class="text-slate-300 leading-relaxed">
+                Bam! respects your privacy. This policy describes what personal data we collect,
+                how we use it and what your rights are under the General Data Protection Regulation
+                (GDPR - EU Regulation 2016/679).
+            </p>
+            <p class="text-slate-300 leading-relaxed">
+                Bam! is a peer-to-peer (P2P) file sharing service: files are transferred directly
+                between users' browsers via WebRTC, never transiting our servers. This means
+                we never have access to the content of your files.
+            </p>
+        </section>
+
+        <!-- 2. Data Collected -->
+        <section class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+            <h2 class="text-2xl font-bold text-bam-primary mb-4">2. Data Collected</h2>
+            <p class="text-slate-300 leading-relaxed">
+                The data collected varies based on the level of service usage:
+            </p>
+
+            <div class="space-y-4 mt-4">
+                <div class="bg-slate-800/50 rounded-2xl p-6">
+                    <h3 class="font-bold text-white mb-2">Anonymous User (Guest)</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li>No personal data collected</li>
+                        <li>Only a technical session cookie, strictly necessary for the service to function</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-800/50 rounded-2xl p-6">
+                    <h3 class="font-bold text-white mb-2">Pro Free User</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li>Email address</li>
+                        <li>Username</li>
+                        <li>OAuth provider used (Google, GitHub)</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-800/50 rounded-2xl p-6">
+                    <h3 class="font-bold text-white mb-2">Pro Premium User</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li>Same data as Pro Free plan</li>
+                        <li>Billing information (managed entirely by the external payment provider)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-6 mt-4">
+                <p class="text-slate-300 leading-relaxed">
+                    <span class="font-bold text-blue-400">For all levels:</span> we collect metadata related to
+                    transfers (file size, hash, timestamp) for statistical and security purposes.
+                    We <span class="font-bold text-white">NEVER</span> collect the content of transferred files.
+                </p>
+            </div>
+        </section>
+
+        <!-- 3. Data Usage -->
+        <section class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+            <h2 class="text-2xl font-bold text-bam-primary mb-4">3. Data Usage</h2>
+            <p class="text-slate-300 leading-relaxed">
+                Collected data is used exclusively for the following purposes:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-slate-300">
+                <li>Authentication and user account management</li>
+                <li>Aggregated and anonymized usage statistics to improve the service</li>
+                <li>Gamification system (XP, badges, levels)</li>
+                <li>Billing and Premium subscription management</li>
+            </ul>
+        </section>
+
+        <!-- 4. Third-Party Sharing -->
+        <section class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+            <h2 class="text-2xl font-bold text-bam-primary mb-4">4. Third-Party Sharing</h2>
+            <p class="text-slate-300 leading-relaxed">
+                We do not sell, trade or transfer your personal data to third parties. We use the following
+                technical services for platform operation:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-slate-300">
+                <li><span class="font-semibold text-white">Supabase</span> — Database, authentication and real-time signaling</li>
+                <li><span class="font-semibold text-white">Firebase Hosting</span> — Web application hosting</li>
+                <li><span class="font-semibold text-white">Google AdMob</span> — Advertising for free tier users (Anonymous and Pro Free)</li>
+            </ul>
+            <p class="text-slate-300 leading-relaxed">
+                Each service processes data in accordance with its own privacy policies and in compliance with GDPR.
+            </p>
+        </section>
+
+        <!-- 5. Encryption & Security -->
+        <section class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+            <h2 class="text-2xl font-bold text-bam-primary mb-4">5. Encryption &amp; Security</h2>
+            <p class="text-slate-300 leading-relaxed">
+                The security of your data is our priority. Bam! implements multiple layers of protection:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-slate-300">
+                <li><span class="font-semibold text-white">Native E2E encryption</span> — All WebRTC transfers are protected by end-to-end encryption via DTLS</li>
+                <li><span class="font-semibold text-white">AES-GCM encryption</span> — Premium users can add an extra layer of encryption with a custom password (PBKDF2 key derivation)</li>
+                <li><span class="font-semibold text-white">Zero-knowledge architecture</span> — Our servers cannot see or access the content of transferred files</li>
+            </ul>
+            <div class="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-6 mt-4">
+                <p class="text-slate-300 leading-relaxed">
+                    Files travel directly from browser to browser. No data transits or is stored
+                    on our servers during the transfer.
+                </p>
+            </div>
+        </section>
+
+        <!-- 6. Cookies & Tracking -->
+        <section class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+            <h2 class="text-2xl font-bold text-bam-primary mb-4">6. Cookies &amp; Tracking</h2>
+            <p class="text-slate-300 leading-relaxed">
+                Bam! uses the following tracking technologies:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-slate-300">
+                <li><span class="font-semibold text-white">Technical session cookies</span> — Strictly necessary for application operation</li>
+                <li><span class="font-semibold text-white">Anonymized analytics</span> — Aggregated and anonymous data to understand service usage</li>
+                <li><span class="font-semibold text-white">AdMob</span> — Advertising cookies active only for free tier users (Anonymous and Pro Free)</li>
+            </ul>
+        </section>
+
+        <!-- 7. Advertising -->
+        <section class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+            <h2 class="text-2xl font-bold text-bam-primary mb-4">7. Advertising</h2>
+            <p class="text-slate-300 leading-relaxed">
+                Bam! uses Google AdMob to display advertisements. Advertising is managed as follows:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-slate-300">
+                <li><span class="font-semibold text-white">Anonymous User</span> — Banners and interstitial ads</li>
+                <li><span class="font-semibold text-white">Pro Free User</span> — Banners and interstitial ads</li>
+                <li><span class="font-semibold text-white">Pro Premium User</span> — Zero ads, completely ad-free experience</li>
+            </ul>
+            <p class="text-slate-300 leading-relaxed">
+                Advertisements may use cookies and identifiers to personalize displayed content. You can manage
+                your advertising preferences in your browser settings or through Google Ads options.
+            </p>
+        </section>
+
+        <!-- 8. User Rights (GDPR) -->
+        <section class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+            <h2 class="text-2xl font-bold text-bam-primary mb-4">8. User Rights (GDPR)</h2>
+            <p class="text-slate-300 leading-relaxed">
+                Under GDPR, you have the right to:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-slate-300">
+                <li><span class="font-semibold text-white">Access</span> — Request a copy of your personal data in our possession</li>
+                <li><span class="font-semibold text-white">Rectification</span> — Correct inaccurate or incomplete personal data</li>
+                <li><span class="font-semibold text-white">Erasure</span> — Request the deletion of your personal data ("right to be forgotten")</li>
+                <li><span class="font-semibold text-white">Portability</span> — Receive your data in a structured, machine-readable format</li>
+                <li><span class="font-semibold text-white">Objection</span> — Object to the processing of your personal data for specific purposes</li>
+            </ul>
+            <div class="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-6 mt-4">
+                <p class="text-slate-300 leading-relaxed">
+                    To exercise your rights, contact us at
+                    <a href="mailto:privacy@bam.app" class="text-bam-primary hover:underline">privacy@bam.app</a>.
+                    We will respond to your request within 30 business days.
+                </p>
+            </div>
+        </section>
+
+        <!-- 9. Data Retention -->
+        <section class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+            <h2 class="text-2xl font-bold text-bam-primary mb-4">9. Data Retention</h2>
+            <p class="text-slate-300 leading-relaxed">
+                Data is retained for the minimum time necessary for the purposes for which it was collected:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-slate-300">
+                <li><span class="font-semibold text-white">Transfer metadata</span> — Retained for a maximum of 30 days, then automatically deleted</li>
+                <li><span class="font-semibold text-white">Account data</span> — Retained until account deletion by the user</li>
+                <li><span class="font-semibold text-white">Billing data</span> — Retained according to applicable tax and legal obligations</li>
+            </ul>
+        </section>
+
+        <!-- 10. Contacts -->
+        <section class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
+            <h2 class="text-2xl font-bold text-bam-primary mb-4">10. Contacts</h2>
+            <p class="text-slate-300 leading-relaxed">
+                For any questions or requests regarding this privacy policy, you can contact us at:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-slate-300">
+                <li><span class="font-semibold text-white">Privacy Email:</span> <a href="mailto:privacy@bam.app" class="text-bam-primary hover:underline">privacy@bam.app</a></li>
+                <li><span class="font-semibold text-white">DPO (Data Protection Officer):</span> <a href="mailto:dpo@bam.app" class="text-bam-primary hover:underline">dpo@bam.app</a></li>
+            </ul>
+        </section>
+
+    </div>
+</main>

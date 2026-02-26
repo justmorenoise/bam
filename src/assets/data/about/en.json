@@ -1,0 +1,26 @@
+{
+  "mission": [
+    { "icon": "🔐", "title": "Privacy First", "description": "Your files never touch our servers. Your privacy isn't a feature — it's the foundation of Bam!." },
+    { "icon": "☁️", "title": "Zero Cloud", "description": "No upload to remote servers. Data travels directly from browser to browser, with no intermediaries." },
+    { "icon": "🌐", "title": "P2P Revolution", "description": "WebRTC enables native peer-to-peer connections in the browser. Bam! leverages this technology for direct and secure transfers." }
+  ],
+  "steps": [
+    { "number": "1", "title": "Select File", "description": "Choose the file you want to share. No size limit, any format." },
+    { "number": "2", "title": "P2P Connection", "description": "Bam! generates a unique link. When the recipient opens it, a direct WebRTC connection is established." },
+    { "number": "3", "title": "Secure Transfer", "description": "The file is transferred with native end-to-end encryption. No intermediate server." }
+  ],
+  "features": [
+    { "icon": "🔗", "title": "Direct Peer-to-Peer", "description": "Files travel directly from sender to recipient via WebRTC, without going through intermediary servers." },
+    { "icon": "🔒", "title": "Native Encryption", "description": "Every transfer is protected by end-to-end encryption (DTLS 1.2+) integrated in the WebRTC protocol." },
+    { "icon": "♾️", "title": "No Size Limit", "description": "Transfer files of any size. 64KB chunking ensures stability even with huge files." },
+    { "icon": "⚡", "title": "Maximum Speed", "description": "Direct P2P connection without bottlenecks. Speed depends only on your connection." },
+    { "icon": "🛡️", "title": "Total Privacy", "description": "No file is ever uploaded to our servers. Zero access to your data." },
+    { "icon": "🖥️", "title": "Desktop App", "description": "Electron agent for persistent seeding, OS integration and native notifications." }
+  ],
+  "roadmap": [
+    { "icon": "🔥", "title": "Burn-on-Read", "description": "Self-destructing links that expire after the first completed download." },
+    { "icon": "🌱", "title": "Persistent Seeding", "description": "Continuous sharing to allow multiple downloads from the same link." },
+    { "icon": "📱", "title": "QR Quick-Share", "description": "Dynamic QR codes for instant desktop-to-mobile transfers." },
+    { "icon": "🎮", "title": "Gamification", "description": "XP system, levels and badges to reward active users." }
+  ]
+}

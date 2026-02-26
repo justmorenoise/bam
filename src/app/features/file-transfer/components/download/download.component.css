@@ -1,0 +1,18 @@
+:host {
+    display: block;
+    width: 100%;
+
+    .file-name {
+        font-size: clamp(12px, 5.25vw, 32px);
+        word-wrap: break-word;
+        line-height: 1.4;
+    }
+
+    @media screen and (max-width: 720px) {
+        .card {
+            padding: 0;
+            border: unset;
+            background: unset;
+        }
+    }
+}

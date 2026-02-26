@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    @apply bg-bam-dark text-slate-200;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-bam-primary rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-bam-secondary;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* File upload drop zone */
+.drop-zone {
+    @apply border-2 border-dashed border-slate-800 rounded-3xl transition-all duration-200;
+}
+
+.drop-zone.drag-over {
+    @apply border-bam-primary/50 bg-bam-primary/5;
+}
+
+/* Button styles */
+.btn {
+    @apply px-4 py-2 rounded-2xl font-black transition-all duration-200 focus:outline-none active:scale-[0.98];
+}
+
+.btn-primary {
+    @apply bg-white text-black hover:bg-slate-200;
+}
+
+.btn-secondary {
+    @apply bg-bam-primary text-white hover:bg-bam-primary/90;
+}
+
+.btn-outline {
+    @apply border border-slate-700 text-slate-200 hover:bg-slate-800;
+}
+
+/* Card styles */
+.card {
+    @apply bg-slate-900/50 border border-slate-800 rounded-[1rem] p-8 shadow-2xl transition-all duration-200;
+}
+
+/* Input styles */
+.input {
+    @apply w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-2xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-bam-primary;
+}
+
+/* Progress bar */
+.progress-bar {
+    @apply w-full h-1.5 bg-slate-950 rounded-full overflow-hidden;
+}
+
+.progress-bar-fill {
+    @apply h-full bg-gradient-to-r from-bam-primary to-bam-secondary transition-all duration-500 shadow-[0_0_15px_rgba(234,88,12,0.3)];
+}
+
+/* Badge styles */
+.badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+}
+
+.badge-success {
+    @apply bg-green-100 text-green-800;
+}
+
+.badge-warning {
+    @apply bg-yellow-100 text-yellow-800;
+}
+
+.badge-error {
+    @apply bg-red-100 text-red-800;
+}
+
+.badge-info {
+    @apply bg-blue-100 text-blue-800;
+}
+
+/* Loading spinner */
+.spinner {
+    @apply inline-block w-6 h-6 border-4 border-gray-200 border-t-bam-primary rounded-full animate-spin;
+}
+
+/* Utility classes */
+.gradient-text {
+    @apply bg-gradient-to-r from-bam-primary to-bam-secondary bg-clip-text text-transparent;
+}
+
+.glass {
+    @apply bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20;
+}
