@@ -43,8 +43,8 @@ export class ParallelConnectionPoolService {
 
     createSenderConnections(
         fileSize: number,
-        connectionCount: number
-    ): ParallelConnection[] {
+        connectionCount: number,
+        iceServers: RTCIceServer[]): ParallelConnection[] {
         // Close any existing connections before creating new ones
         this.closeAll();
 
@@ -53,7 +53,7 @@ export class ParallelConnectionPoolService {
 
         for (let i = 0; i < connectionCount; i++) {
             const signalOut$ = new Subject<ParallelSignal>();
-            const pc = this.connectionService.createPeerConnection();
+            const pc = this.connectionService.createPeerConnection(iceServers);
 
             // Create DataChannel (ordered only for ch0 = control)
             const dc = pc.createDataChannel(`bam-parallel-${i}`, {
@@ -174,7 +174,8 @@ export class ParallelConnectionPoolService {
 
     acceptReceiverConnections(
         connectionCount: number,
-        signalOut$: Subject<ParallelSignal>
+        signalOut$: Subject<ParallelSignal>,
+        iceServers: RTCIceServer[]
     ): ParallelConnection[] {
         // Close any existing connections before creating new ones.
         // Note: closeAll() completes old signalOut$ Subjects — that's fine because
@@ -184,7 +185,7 @@ export class ParallelConnectionPoolService {
         const conns: ParallelConnection[] = [];
 
         for (let i = 0; i < connectionCount; i++) {
-            const pc = this.connectionService.createPeerConnection();
+            const pc = this.connectionService.createPeerConnection(iceServers);
 
             const conn: ParallelConnection = {
                 index: i,

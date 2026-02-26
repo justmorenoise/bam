@@ -24,7 +24,7 @@
     "supabase"
   ],
   "author": "Bam Team",
-  "license": "MIT",
+  "license": "LGPL-3.0-or-later",
   "dependencies": {
     "@angular/animations": "^20.0.0",
     "@angular/common": "^20.0.0",

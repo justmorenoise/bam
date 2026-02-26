@@ -92,7 +92,7 @@ export class ElectronGateComponent {
      * electron/main.js gestisce già window.open con shell.openExternal.
      */
     openPricing(): void {
-        window.open('https://bam.link/pricing', '_blank');
+        window.open('https://bamfile.com/pricing', '_blank');
     }
 
     async logout(): Promise<void> {

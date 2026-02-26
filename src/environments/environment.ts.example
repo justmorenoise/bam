@@ -18,50 +18,45 @@ export const environment = {
     // WebRTC Configuration
     webrtc: {
         iceServers: [
+            // Google STUN servers
             { urls: 'stun:stun.l.google.com:19302' },
             { urls: 'stun:stun1.l.google.com:19302' },
-            // Optional: TURN server for symmetric NAT traversal
-            // Get credentials from your TURN provider (e.g. metered.ca, Twilio, Xirsys)
-            {
-                urls: 'turn:YOUR_TURN_SERVER:443',
-                username: 'YOUR_TURN_USERNAME',
-                credential: 'YOUR_TURN_CREDENTIAL'
-            },
-            {
-                urls: 'turn:YOUR_TURN_SERVER:443?transport=tcp',
-                username: 'YOUR_TURN_USERNAME',
-                credential: 'YOUR_TURN_CREDENTIAL'
-            }
         ],
-        chunkSize: 65536,
+        turnServiceApiUrl: 'https://your.turn.service/api/v1/turn/credentials',
+        turnServiceApiKey: 'YOUR_TURN_SERVICE_API_KEY',
+        chunkSize: 65536, // 64KB chunks for file transfer
         maxReconnectAttempts: 3,
-        connectionTimeout: 30000,
+        connectionTimeout: 30000, // 30 seconds
         parallel: {
             enabled: true,
             maxChannels: 8,
             minFileSizeMB: 50,
             slowStartIntervalMs: 2500,
-            throughputRatio: 0.7,
-            saturationThreshold: 0.1
+            throughputRatio: 0.7,     // aggiungi canale se throughput < 70% del disponibile
+            saturationThreshold: 0.1  // stop se nuovo canale aggiunge <10%
         }
     },
 
-    // AdMob Configuration (use test IDs for development)
-    admob: {
-        enabled: true,
-        bannerId: 'ca-app-pub-3940256099942544/6300978111',
-        interstitialId: 'ca-app-pub-3940256099942544/1033173712',
+    // Ads Configuration (Development)
+    // AdSense è attivo solo su web (non su Electron).
+    // In development gli slot AdSense non caricano annunci reali.
+    ads: {
+        enabled: false, // Disabilitato in development per evitare violazioni ToS
+        adsense: {
+            publisherId: 'ca-pub-XXXXXXXXXXXXXXXX', // Sostituire con il proprio Publisher ID
+            bannerSlot: 'XXXXXXXXXX',              // Sostituire con il proprio Ad Unit ID per banner
+        },
     },
 
     // File Transfer Limits
     limits: {
         free: {
             maxFilesPerDay: 5000,
-            maxFileSize: null,
+            maxFileSize: null, // Unlimited in P2P
         },
         premium: {
-            maxFilesPerDay: null,
-            maxFileSize: null,
+            maxFilesPerDay: null, // Unlimited
+            maxFileSize: null, // Unlimited
         },
     },
 

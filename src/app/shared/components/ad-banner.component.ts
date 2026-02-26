@@ -1,14 +1,19 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdService } from '@core/services/ad.service';
+import { environment } from '@environments/environment';
 
 /**
- * Componente banner pubblicitario.
+ * Banner pubblicitario AdSense per la versione web free.
  *
- * - Electron : non renderizza nulla (app Premium-only, zero banner)
- * - Web Free  : mostra placeholder HTML upsell Premium
- *               (in futuro sostituito con tag AdSense reale)
+ * Comportamento per piattaforma:
+ * - Electron  : non renderizza nulla
+ * - Web Free  : slot AdSense reale (ins.adsbygoogle)
  * - Web Premium: non renderizza nulla
+ *
+ * Uso:
+ *   <app-ad-banner position="dashboard" />
+ *   <app-ad-banner position="upload" format="horizontal" />
  */
 @Component({
     selector: 'app-ad-banner',
@@ -16,43 +21,56 @@ import { AdService } from '@core/services/ad.service';
     imports: [CommonModule],
     template: `
         @if (adService.adsEnabled) {
-            <div class="ad-banner p-4 bg-slate-800/50 border border-slate-700 rounded-2xl overflow-hidden relative group"
-                 [ngClass]="{ 'mb-12': position === 'landing', 'mb-8': position === 'dashboard' }">
-                <div class="absolute top-0 right-0 bg-slate-700 text-[8px] px-2 py-0.5 rounded-bl uppercase font-bold text-slate-400 tracking-widest">
-                    Sponsorizzato
-                </div>
+            <div class="ad-banner-wrapper my-6">
+                <!-- Label "Annuncio" richiesta da Google AdSense ToS -->
+                <p class="text-[9px] text-slate-600 uppercase tracking-widest text-right mb-1 pr-1">Annuncio</p>
 
-                <div class="flex items-center gap-6">
-                    <div class="w-24 h-24 bg-slate-700 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-slate-600 transition-colors">
-                        <span class="text-3xl">&#127873;</span>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-bold text-white mb-1">Passa a Bam! Premium</h4>
-                        <p class="text-sm text-slate-400 mb-3">
-                            Condivisioni illimitate, crittografia avanzata e zero pubblicità per sempre.
-                        </p>
-                        <button class="text-xs font-bold text-bam-primary uppercase tracking-wider hover:text-white transition-colors">
-                            Scopri di più &rarr;
-                        </button>
-                    </div>
-                </div>
+                <!-- Slot AdSense -->
+                <ins
+                    class="adsbygoogle"
+                    style="display:block"
+                    [attr.data-ad-client]="publisherId"
+                    [attr.data-ad-slot]="bannerSlot"
+                    [attr.data-ad-format]="adFormat"
+                    data-full-width-responsive="true">
+                </ins>
             </div>
         }
     `,
     styles: [`
-        .ad-banner {
-            min-height: 120px;
+        .ad-banner-wrapper {
+            min-height: 90px; /* Riserva spazio per evitare layout shift */
+            width: 100%;
         }
     `]
 })
-export class AdBannerComponent implements OnInit {
+export class AdBannerComponent implements AfterViewInit, OnDestroy {
+    /** Posizione del banner (influenza il formato) */
     @Input() position: 'dashboard' | 'landing' | 'upload' = 'dashboard';
 
-    constructor(public adService: AdService) {
+    /**
+     * Formato AdSense.
+     * 'auto'       : adattivo responsive (default)
+     * 'horizontal' : leaderboard
+     * 'rectangle'  : medium rectangle
+     */
+    @Input() format: 'auto' | 'horizontal' | 'rectangle' = 'auto';
+
+    readonly publisherId = environment.ads?.adsense?.publisherId ?? '';
+    readonly bannerSlot  = environment.ads?.adsense?.bannerSlot ?? '';
+
+    get adFormat(): string {
+        return this.format;
     }
 
-    ngOnInit(): void {
-        // Nessuna logica aggiuntiva necessaria:
-        // adService.adsEnabled gestisce già tutti i casi (Electron, Premium, env flag)
+    constructor(public adService: AdService) {}
+
+    ngAfterViewInit(): void {
+        // Chiede ad AdSense di riempire lo slot dopo che il DOM è pronto
+        this.adService.pushAd();
+    }
+
+    ngOnDestroy(): void {
+        // AdSense gestisce internamente il cleanup degli slot
     }
 }

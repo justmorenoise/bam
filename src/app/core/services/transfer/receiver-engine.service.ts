@@ -15,6 +15,7 @@ import {
     TransferProgress,
     TransferState,
 } from './transfer.types';
+import { TurnService } from '@core/services/turn.service';
 
 @Injectable({ providedIn: 'root' })
 export class ReceiverEngineService {
@@ -62,6 +63,7 @@ export class ReceiverEngineService {
         private connection: ConnectionService,
         private channelPool: ChannelPoolService,
         private parallelPool: ParallelConnectionPoolService,
+        private turnService: TurnService,
     ) {
     }
 
@@ -161,10 +163,12 @@ export class ReceiverEngineService {
 
                 console.log(`[RECEIVER] Accepting up to ${maxConnections} parallel PeerConnections`);
 
+                const iceServers = await this.turnService.getIceServers();
                 // Crea tutte le PC receiver
                 this.parallelConnections = this.parallelPool.acceptReceiverConnections(
                     maxConnections,
                     signalOut$ as Subject<ParallelSignal>,
+                    iceServers
                 );
 
                 // Setup handlers
@@ -305,7 +309,9 @@ export class ReceiverEngineService {
         signalOut$: Subject<any>,
     ): Promise<void> {
         this.state.set('connecting');
-        this.pc = this.connection.createPeerConnection();
+
+        const iceServers = await this.turnService.getIceServers();
+        this.pc = this.connection.createPeerConnection(iceServers);
 
         this.pc.onicecandidate = (event) => {
             if (event.candidate) {

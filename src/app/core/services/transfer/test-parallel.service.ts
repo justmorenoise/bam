@@ -3,6 +3,7 @@ import { merge, Subject } from 'rxjs';
 import { ParallelConnection, ParallelConnectionPoolService } from './parallel-connection-pool.service';
 import { TRANSFER_CONFIG } from './transfer.config';
 import { ControlMessage, FileMetadata, TransferState } from './transfer.types';
+import { TurnService } from '@core/services/turn.service';
 
 /**
  * 🧪 TEST SERVICE - 3 Parallel PeerConnections
@@ -16,7 +17,10 @@ export class TestParallelService {
     private worker: Worker | null = null;
     private cancelled = false;
 
-    constructor(private pool: ParallelConnectionPoolService) {
+    constructor(
+        private pool: ParallelConnectionPoolService,
+        private turnService: TurnService,
+    ) {
     }
 
     async testSend(file: File, fileHash: string, signalOut$: Subject<any>) {
@@ -26,7 +30,8 @@ export class TestParallelService {
 
             // 1. Create 3 parallel PeerConnections
             const connectionCount = TRANSFER_CONFIG.PARALLEL_CONNECTIONS;
-            this.connections = this.pool.createSenderConnections(file.size, connectionCount);
+            const iceServers = await this.turnService.getIceServers();
+            this.connections = this.pool.createSenderConnections(file.size, connectionCount, iceServers);
 
             // 2. Merge all signalOut streams into one
             const allSignals$ = merge(...this.connections.map(conn => conn.signalOut$));
