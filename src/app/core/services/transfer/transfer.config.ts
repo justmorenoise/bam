@@ -25,15 +25,14 @@ export const TRANSFER_CONFIG = {
 
     // ─── Buffer Limits (bytes, per channel) ─────────────────
     // Chrome closes DataChannel if bufferedAmount > 16MB (hard limit).
-    // 🧪 TUNED VALUES: Balance throughput vs browser limits
-    // - Keep buffer well below 16MB limit (use 12MB for safety margin)
-    // - LOW_WATER_MARK at 50% allows buffer to refill without starving
+    // LOW_WATER_MARK must be < the smallest MAX_BUFFER_* value (4MB relay)
+    // so that waitForBufferDrain actually waits instead of returning immediately.
     MAX_BUFFER_LAN: 12 * 1024 * 1024,   // 12MB (safe margin from Chrome's 16MB limit)
     MAX_BUFFER_WAN: 8 * 1024 * 1024,    // 8MB (WAN has higher latency, smaller buffer ok)
     MAX_BUFFER_RELAY: 4 * 1024 * 1024,  // 4MB (TURN relay is slower, avoid overfilling)
     // Resume sending when buffer drops below this threshold.
-    // At 50% we maintain good pipeline utilization without risking overflow
-    LOW_WATER_MARK: 6 * 1024 * 1024,    // 6MB (50% of MAX_BUFFER_LAN)
+    // MUST be < MAX_BUFFER_RELAY (4MB) or backpressure is bypassed on relay.
+    LOW_WATER_MARK: 2 * 1024 * 1024,    // 2MB (50% of MAX_BUFFER_RELAY — safe for all connection types)
 
     // ─── Hashing Thresholds ─────────────────────────────────
     HASH_SUBTLE_MAX: 100 * 1024 * 1024,          // 100 MB — above this, use worker

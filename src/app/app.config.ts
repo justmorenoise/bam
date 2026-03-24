@@ -28,15 +28,5 @@ export const appConfig: ApplicationConfig = {
             prefix: '/assets/i18n/',
             suffix: '.json'
         }),
-        // importProvidersFrom(
-        //     TranslateModule.forRoot({
-        //         defaultLanguage: 'en',
-        //         loader: {
-        //             provide: TranslateLoader,
-        //             useFactory: HttpLoaderFactory,
-        //             deps: [HttpClient],
-        //         },
-        //     })
-        // ),
     ],
 };

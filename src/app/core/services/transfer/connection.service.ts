@@ -12,7 +12,7 @@ export class ConnectionService {
 
         const pc = new RTCPeerConnection({
             iceServers,
-            iceCandidatePoolSize: 10,
+            iceCandidatePoolSize: 2,
             bundlePolicy: 'max-bundle',
         });
 
