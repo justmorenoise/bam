@@ -34,4 +34,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist/bam-p2p-file-sharing/browser --project-name=bamfile --branch=pre
+          command: pages deploy dist/bam-p2p-file-sharing/browser --project-name=bamfile-pre --branch=pre
