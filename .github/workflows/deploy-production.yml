@@ -19,10 +19,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Create environment files
+      - name: Create placeholder environment.ts
+        run: echo "export const environment = {};" > src/environments/environment.ts
+
+      - name: Inject production environment variables
         run: |
-          echo "export const environment = {};" > src/environments/environment.ts
-          echo "${{ secrets.PROD_ENVIRONMENT_FILE }}" | base64 -d > src/environments/environment.prod.ts
+          sed -i "s|<PROD_SUPABASE_URL>|${{ secrets.PROD_SUPABASE_URL }}|g" src/environments/environment.prod.ts
+          sed -i "s|<PROD_SUPABASE_ANON_KEY>|${{ secrets.PROD_SUPABASE_ANON_KEY }}|g" src/environments/environment.prod.ts
+          sed -i "s|<PROD_R2_WORKER_URL>|${{ secrets.PROD_R2_WORKER_URL }}|g" src/environments/environment.prod.ts
+          sed -i "s|<PROD_R2_API_KEY>|${{ secrets.PROD_R2_API_KEY }}|g" src/environments/environment.prod.ts
+          sed -i "s|<PROD_TURN_API_KEY>|${{ secrets.PROD_TURN_API_KEY }}|g" src/environments/environment.prod.ts
 
       - name: Build production
         run: npm run build:prod
