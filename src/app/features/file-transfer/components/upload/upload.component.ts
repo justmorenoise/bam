@@ -7,6 +7,10 @@ import { HeaderComponent } from '@shared/components/header.component';
 import { SignalingService } from '@core/services/signaling.service';
 import { SupabaseService } from '@core/services/supabase.service';
 import { ModalService } from '@core/services/modal.service';
+import { R2TransferService } from '@core/services/r2-transfer.service';
+import { HasherService } from '@core/services/transfer/hasher.service';
+import { CryptoService } from '@core/services/crypto.service';
+import { RetentionPolicy } from '@core/services/r2-transfer.types';
 import { UploadStateService } from '../../services/upload-state.service';
 import { Subscription } from 'rxjs';
 import * as QRCode from 'qrcode';
@@ -85,10 +89,28 @@ export class UploadComponent implements OnInit, OnDestroy {
         return this.st.session;
     }
 
+    get transferMethod() {
+        return this.st.transferMethod;
+    }
+
+    get retentionPolicy() {
+        return this.st.retentionPolicy;
+    }
+
+    get isCloudUploading() {
+        return this.st.isCloudUploading;
+    }
+
+    get cloudUploadProgress() {
+        return this.st.cloudUploadProgress;
+    }
+
     // User profile
     userProfile = this.supabase.currentProfile;
 
     private sessionSub?: Subscription;
+
+    private cloudProgressInterval: ReturnType<typeof setInterval> | null = null;
 
     constructor(
         uploadState: UploadStateService,
@@ -97,6 +119,9 @@ export class UploadComponent implements OnInit, OnDestroy {
         private modal: ModalService,
         private router: Router,
         private translate: TranslateService,
+        private r2: R2TransferService,
+        private hasher: HasherService,
+        private crypto: CryptoService,
     ) {
         this.st = uploadState;
     }
@@ -115,21 +140,28 @@ export class UploadComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        // Rimuoviamo sempre la subscription al componente
         this.sessionSub?.unsubscribe();
+        this.clearCloudProgressInterval();
 
-        // Chiudiamo la sessione WebRTC SOLO se non è in corso un trasferimento
-        if (!this.st.isTransferring() && !this.st.isRetrying()) {
-            if (this.st.linkId()) {
-                this.signaling.closeSession(this.st.linkId());
+        if (this.st.transferMethod() === 'cloud') {
+            // Cloud: abort se upload in corso, altrimenti niente da fare
+            if (this.st.isCloudUploading()) {
+                this.r2.abort();
+                this.st.isCloudUploading.set(false);
+                this.st.isGeneratingLink.set(false);
             }
-            this.signaling.terminateWorkers();
-            // Reset completo solo se non stiamo trasferendo
-            if (!this.st.generatedLink()) {
-                this.st.reset();
+        } else {
+            // P2P: chiudi sessione WebRTC solo se non in trasferimento
+            if (!this.st.isTransferring() && !this.st.isRetrying()) {
+                if (this.st.linkId()) {
+                    this.signaling.closeSession(this.st.linkId());
+                }
+                this.signaling.terminateWorkers();
+                if (!this.st.generatedLink()) {
+                    this.st.reset();
+                }
             }
         }
-        // Se sta trasferendo: sessione WebRTC e stato rimangono vivi nel service
     }
 
     /**
@@ -178,6 +210,111 @@ export class UploadComponent implements OnInit, OnDestroy {
             return;
         }
 
+        if (this.st.transferMethod() === 'cloud') {
+            await this.generateCloudLink();
+        } else {
+            await this.generateP2PLink();
+        }
+    }
+
+    /**
+     * Cloud path: hash → upload R2 → crea record DB → genera link
+     */
+    private async generateCloudLink() {
+        const file = this.st.selectedFile()!;
+
+        // Validate cloud file size
+        const maxSize = this.r2.getMaxCloudFileSize();
+        if (file.size > maxSize) {
+            this.modal.showWarning(
+                this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'),
+                this.translate.instant('UPLOAD.CLOUD_FILE_TOO_LARGE', { maxSize: this.formatFileSize(maxSize) })
+            );
+            return;
+        }
+
+        // Valida password se impostata (Premium only)
+        const password = this.st.showPasswordInput() && this.st.password() ? this.st.password() : undefined;
+        if (password && !this.isPremium()) {
+            this.modal.showWarning(
+                this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
+                this.translate.instant('UPLOAD.MODAL_PREMIUM_PASSWORD_MSG')
+            );
+            this.st.password.set('');
+            this.st.showPasswordInput.set(false);
+        }
+
+        // Valida custom slug se impostato
+        const slug = this.st.showCustomSlug() && this.st.customSlug() ? this.st.customSlug().trim() : undefined;
+        if (slug && !this.validateSlug(slug)) return;
+
+        this.st.isGeneratingLink.set(true);
+
+        try {
+            // 1. Hash file
+            const fileHash = await this.hasher.calculateHash(file, (p) => {
+                this.st.hashProgress.set(Math.round(p));
+            });
+
+            // 2. Upload to R2
+            this.st.isCloudUploading.set(true);
+            this.cloudProgressInterval = setInterval(() => {
+                this.st.cloudUploadProgress.set(this.r2.uploadProgress());
+            }, 200);
+
+            const meta = await this.r2.upload(file, this.st.retentionPolicy(), fileHash);
+
+            this.clearCloudProgressInterval();
+            this.st.isCloudUploading.set(false);
+
+            // 3. Create DB record
+            const linkId = this.crypto.generateLinkId(12);
+            const userId = this.supabase.currentUser()?.id || null;
+            const retentionPolicy = this.st.retentionPolicy();
+
+            const transferData: any = {
+                sender_id: userId,
+                file_name: file.name,
+                file_size: file.size,
+                file_hash: fileHash,
+                mode: retentionPolicy === 'burn' ? 'burn' : 'seed',
+                link_id: linkId,
+                password_protected: !!password,
+                transfer_type: 'cloud',
+                retention_policy: retentionPolicy,
+                r2_token: meta.token,
+            };
+            if (this.isPremium() && slug) {
+                transferData.custom_slug = slug;
+            }
+
+            await this.supabase.createFileTransfer(transferData);
+
+            if (!this.supabase.isPremium()) {
+                await this.supabase.incrementDailyFileCount();
+            }
+
+            // 4. Generate link + QR
+            this.st.linkId.set(linkId);
+            const linkPath = this.isPremium() && slug ? slug : linkId;
+            await this.setLinkAndQR(linkPath);
+
+        } catch (error: any) {
+            this.clearCloudProgressInterval();
+            this.st.isCloudUploading.set(false);
+            console.error('Error generating cloud link:', error);
+            this.modal.showError(this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'), error.message || 'Impossibile generare il link');
+        } finally {
+            this.st.isGeneratingLink.set(false);
+        }
+    }
+
+    /**
+     * P2P path: hash → WebRTC session → attende receiver
+     */
+    private async generateP2PLink() {
+        const file = this.st.selectedFile()!;
+
         // Enforce: modalità persistente solo per utenti autenticati
         if (this.st.mode() === 'seed' && !this.supabase.isAuthenticated()) {
             this.modal.showWarning(
@@ -190,9 +327,7 @@ export class UploadComponent implements OnInit, OnDestroy {
         this.st.isGeneratingLink.set(true);
 
         try {
-            // Valida password se impostata (Premium only)
             const password = this.st.showPasswordInput() && this.st.password() ? this.st.password() : undefined;
-
             if (password && !this.isPremium()) {
                 this.modal.showWarning(
                     this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
@@ -202,13 +337,9 @@ export class UploadComponent implements OnInit, OnDestroy {
                 this.st.showPasswordInput.set(false);
             }
 
-            // Valida custom slug se impostato
             const slug = this.st.showCustomSlug() && this.st.customSlug() ? this.st.customSlug().trim() : undefined;
-            if (slug && !this.validateSlug(slug)) {
-                return;
-            }
+            if (slug && !this.validateSlug(slug)) return;
 
-            // Crea sessione sender
             const { linkId, session } = await this.signaling.startSenderSession(
                 file,
                 this.st.mode(),
@@ -216,31 +347,19 @@ export class UploadComponent implements OnInit, OnDestroy {
                 (progress) => {
                     this.st.hashProgress.set(Math.round(progress));
                 },
-                this.isPremium() && slug ? slug : undefined
+                this.isPremium() && slug ? slug : undefined,
+                {
+                    transfer_type: 'p2p',
+                    retention_policy: this.st.mode() === 'burn' ? 'burn' : 'permanent',
+                    r2_token: null,
+                }
             );
 
             this.st.linkId.set(linkId);
             this.st.session.set(session);
 
-            // Genera URL completo — usa lo slug se presente
             const linkPath = this.isPremium() && slug ? slug : linkId;
-            const fullLink = `${window.location.origin}/download/${linkPath}`;
-            this.st.generatedLink.set(fullLink);
-
-            // Genera QR Code
-            try {
-                const qrUrl = await QRCode.toDataURL(fullLink, {
-                    width: 240,
-                    margin: 2,
-                    color: {
-                        dark: '#ffffff',
-                        light: '#0f172a'
-                    }
-                });
-                this.st.qrCodeUrl.set(qrUrl);
-            } catch (err) {
-                console.error('QR Code generation failed', err);
-            }
+            await this.setLinkAndQR(linkPath);
 
             // Subscribe to session updates
             this.sessionSub?.unsubscribe();
@@ -252,11 +371,60 @@ export class UploadComponent implements OnInit, OnDestroy {
             });
 
         } catch (error: any) {
-            console.error('Error generating link:', error);
+            console.error('Error generating P2P link:', error);
             this.modal.showError(this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'), error.message || 'Impossibile generare il link');
         } finally {
             this.st.isGeneratingLink.set(false);
         }
+    }
+
+    /**
+     * Genera URL completo e QR code (shared tra cloud e P2P)
+     */
+    private async setLinkAndQR(linkPath: string) {
+        const fullLink = `${window.location.origin}/download/${linkPath}`;
+        this.st.generatedLink.set(fullLink);
+
+        try {
+            const qrUrl = await QRCode.toDataURL(fullLink, {
+                width: 240,
+                margin: 2,
+                color: { dark: '#ffffff', light: '#0f172a' }
+            });
+            this.st.qrCodeUrl.set(qrUrl);
+        } catch (err) {
+            console.error('QR Code generation failed', err);
+        }
+    }
+
+    /**
+     * Annulla upload cloud in corso
+     */
+    cancelCloudUpload() {
+        this.r2.abort();
+        this.clearCloudProgressInterval();
+        this.st.isCloudUploading.set(false);
+        this.st.cloudUploadProgress.set(null);
+        this.st.isGeneratingLink.set(false);
+    }
+
+    private clearCloudProgressInterval() {
+        if (this.cloudProgressInterval) {
+            clearInterval(this.cloudProgressInterval);
+            this.cloudProgressInterval = null;
+        }
+    }
+
+    /**
+     * Check se il file supera il limite cloud
+     */
+    isFileTooLargeForCloud(): boolean {
+        const file = this.st.selectedFile();
+        return !!file && file.size > this.r2.getMaxCloudFileSize();
+    }
+
+    get maxCloudFileSizeFormatted(): string {
+        return this.formatFileSize(this.r2.getMaxCloudFileSize());
     }
 
     /**
@@ -448,9 +616,11 @@ export class UploadComponent implements OnInit, OnDestroy {
      */
     reset() {
         const currentLinkId = this.st.linkId();
+        const wasCloud = this.st.transferMethod() === 'cloud';
         this.sessionSub?.unsubscribe();
+        this.clearCloudProgressInterval();
         this.st.reset();
-        if (currentLinkId) {
+        if (!wasCloud && currentLinkId) {
             this.signaling.closeSession(currentLinkId);
         }
     }
@@ -504,5 +674,46 @@ export class UploadComponent implements OnInit, OnDestroy {
         }
 
         this.st.mode.set('seed');
+    }
+
+    /**
+     * Imposta retention "permanent" (premium-gated)
+     */
+    setRetentionPermanent() {
+        if (!this.isPremium()) {
+            this.modal.showPremium(
+                this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
+                this.translate.instant('UPLOAD.RETENTION_PERMANENT_PREMIUM_MSG')
+            ).subscribe(async (confirmed) => {
+                if (confirmed) {
+                    this.router.navigate(['/pricing']);
+                }
+            });
+            return;
+        }
+        this.st.retentionPolicy.set('permanent');
+    }
+
+    getRetentionIcon(): string {
+        const r = this.st.retentionPolicy();
+        return r === 'burn' ? '🔥' : r === '3day' ? '⏱️' : '♾️';
+    }
+
+    getRetentionLabel(): string {
+        const r = this.st.retentionPolicy();
+        return r === 'burn'
+            ? this.translate.instant('UPLOAD.RETENTION_BURN')
+            : r === '3day'
+                ? this.translate.instant('UPLOAD.RETENTION_3DAY')
+                : this.translate.instant('UPLOAD.RETENTION_PERMANENT');
+    }
+
+    getRetentionDescription(): string {
+        const r = this.st.retentionPolicy();
+        return r === 'burn'
+            ? this.translate.instant('UPLOAD.RETENTION_BURN_DESC')
+            : r === '3day'
+                ? this.translate.instant('UPLOAD.RETENTION_3DAY_DESC')
+                : this.translate.instant('UPLOAD.RETENTION_PERMANENT_DESC');
     }
 }

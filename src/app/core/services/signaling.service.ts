@@ -28,6 +28,8 @@ export interface FileShareSession {
     passwordProtected: boolean;
     status: ConnectionStatus;
     createdAt: Date;
+    transferType: 'p2p' | 'cloud';
+    r2Token: string | null;
 }
 
 @Injectable({
@@ -68,7 +70,8 @@ export class SignalingService {
         mode: 'burn' | 'seed',
         password?: string,
         onHashProgress?: (progress: number) => void,
-        customSlug?: string
+        customSlug?: string,
+        dbExtras?: { transfer_type?: string; retention_policy?: string; r2_token?: string | null }
     ): Promise<{ linkId: string; session: FileShareSession }> {
         try {
             if (mode === 'seed' && !this.supabase.isAuthenticated()) {
@@ -93,7 +96,9 @@ export class SignalingService {
                 mode,
                 passwordProtected: !!password,
                 status: 'waiting',
-                createdAt: new Date()
+                createdAt: new Date(),
+                transferType: 'p2p',
+                r2Token: null,
             };
 
             this.activeSessions.set(linkId, session);
@@ -107,7 +112,8 @@ export class SignalingService {
                 file_hash: fileHash,
                 mode,
                 link_id: linkId,
-                password_protected: !!password
+                password_protected: !!password,
+                ...dbExtras,
             };
             if (customSlug) {
                 transferData.custom_slug = customSlug;
@@ -313,10 +319,20 @@ export class SignalingService {
                 mode: transfer.mode,
                 passwordProtected: transfer.password_protected,
                 status: 'waiting',
-                createdAt: new Date(transfer.created_at)
+                createdAt: new Date(transfer.created_at),
+                transferType: transfer.transfer_type ?? 'p2p',
+                r2Token: transfer.r2_token ?? null,
             };
 
             this.activeSessions.set(linkId, session);
+
+            if (transfer.transfer_type === 'cloud') {
+                // Cloud transfer: no WebRTC needed, signal the component to start the R2 download
+                session.status = 'connected';
+                this.sessionUpdates$.next(session);
+                return session;
+            }
+
             await this.setupReceiverSignaling(linkId);
 
             // Notify sender that receiver is ready

@@ -30,6 +30,9 @@ export interface FileTransferRecord {
     created_at: string;
     status: 'active' | 'completed' | 'expired';
     deleted_at?: string | null;
+    transfer_type: 'p2p' | 'cloud';
+    retention_policy: 'burn' | '3day' | 'permanent';
+    r2_token: string | null;
 }
 
 const ANON_DAILY_COUNT_KEY = 'bam_anon_daily_count';
