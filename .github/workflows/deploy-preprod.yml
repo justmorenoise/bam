@@ -19,6 +19,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Create placeholder environment.ts
+        run: echo "export const environment = {};" > src/environments/environment.ts
+
       - name: Inject preprod environment variables
         run: |
           sed -i "s|<PREPROD_SUPABASE_URL>|${{ secrets.PREPROD_SUPABASE_URL }}|g" src/environments/environment.preprod.ts

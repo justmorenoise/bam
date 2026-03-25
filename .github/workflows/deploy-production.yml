@@ -19,6 +19,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Create environment files
+        run: |
+          echo "export const environment = {};" > src/environments/environment.ts
+          echo "${{ secrets.PROD_ENVIRONMENT_FILE }}" | base64 -d > src/environments/environment.prod.ts
+
       - name: Build production
         run: npm run build:prod
 
