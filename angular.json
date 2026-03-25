@@ -45,6 +45,11 @@
                 "glob": "_headers",
                 "input": "src",
                 "output": "/"
+              },
+              {
+                "glob": "coming-soon.html",
+                "input": "src",
+                "output": "/"
               }
             ],
             "styles": ["src/styles.css"],

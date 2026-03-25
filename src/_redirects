@@ -1,1 +1,5 @@
-/* /index.html 200
+# Modalità manutenzione — commenta la riga sotto e decommentare SPA routing per riattivare
+/* /coming-soon.html 302
+
+# SPA routing (attivo in condizioni normali)
+# /* /index.html 200
