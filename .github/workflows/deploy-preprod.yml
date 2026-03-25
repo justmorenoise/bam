@@ -1,0 +1,40 @@
+name: Deploy Preprod
+
+on:
+  push:
+    branches: [pre]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create placeholder environment.ts
+        run: echo "export const environment = {};" > src/environments/environment.ts
+
+      - name: Inject preprod environment variables
+        run: |
+          sed -i "s|<PREPROD_SUPABASE_URL>|${{ secrets.PREPROD_SUPABASE_URL }}|g" src/environments/environment.preprod.ts
+          sed -i "s|<PREPROD_SUPABASE_ANON_KEY>|${{ secrets.PREPROD_SUPABASE_ANON_KEY }}|g" src/environments/environment.preprod.ts
+          sed -i "s|<PREPROD_R2_WORKER_URL>|${{ secrets.PREPROD_R2_WORKER_URL }}|g" src/environments/environment.preprod.ts
+          sed -i "s|<PREPROD_R2_API_KEY>|${{ secrets.PREPROD_R2_API_KEY }}|g" src/environments/environment.preprod.ts
+
+      - name: Build preprod
+        run: npm run build:preprod
+
+      - name: Deploy to Cloudflare Pages (branch pre)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist/bam-p2p-file-sharing/browser --project-name=bamfile-pre --branch=pre

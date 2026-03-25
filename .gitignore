@@ -47,7 +47,6 @@ Thumbs.db
 
 # Angular environment files with real credentials (use environment.ts.example as template)
 src/environments/environment.ts
-src/environments/environment.prod.ts
 
 # Electron build artifacts
 /release

@@ -15,6 +15,7 @@ import {
     TransferProgress,
     TransferState,
 } from './transfer.types';
+import { TurnService } from '@core/services/turn.service';
 
 @Injectable({ providedIn: 'root' })
 export class SenderEngineService {
@@ -38,6 +39,7 @@ export class SenderEngineService {
         private connection: ConnectionService,
         private channelPool: ChannelPoolService,
         private parallelPool: ParallelConnectionPoolService,
+        private turnService: TurnService,
     ) {
     }
 
@@ -83,7 +85,8 @@ export class SenderEngineService {
         const startTransfer = async (): Promise<void> => {
             try {
                 // 1. Create PeerConnection (no offer yet)
-                this.createPeerConnection(signalOut$);
+                const iceServers = await this.turnService.getIceServers();
+                this.createPeerConnection(signalOut$, iceServers);
                 if (this.cancelled) return;
 
                 // 2. Create DataChannels before offer (so they're included in SDP)
@@ -188,7 +191,8 @@ export class SenderEngineService {
 
                 // Crea subito il numero massimo di PC (4)
                 const maxPCs = TRANSFER_CONFIG.PARALLEL_CONNECTIONS;
-                this.parallelConnections = this.parallelPool.createSenderConnections(file.size, maxPCs);
+                const iceServers = await this.turnService.getIceServers();
+                this.parallelConnections = this.parallelPool.createSenderConnections(file.size, maxPCs, iceServers);
 
                 // Sottoscrivi signalOut$ di tutte le PC
                 const allSignals$ = merge(...this.parallelConnections.map(conn => conn.signalOut$));
@@ -560,9 +564,9 @@ export class SenderEngineService {
     // PRIVATE: Connection setup
     // ═══════════════════════════════════════════════════════
 
-    private createPeerConnection(signalOut$: Subject<any>): void {
+    private createPeerConnection(signalOut$: Subject<any>, iceServers: RTCIceServer[]): void {
         this.state.set('connecting');
-        this.pc = this.connection.createPeerConnection();
+        this.pc = this.connection.createPeerConnection(iceServers);
 
         // Default adaptive params (recalculated after profiling)
         this.adaptiveParams = this.connection.calculateAdaptiveParams({

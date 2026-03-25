@@ -8,6 +8,7 @@ import { FileShareSession, SignalingService } from '@core/services/signaling.ser
 import { SupabaseService } from '@core/services/supabase.service';
 import { Subscription } from 'rxjs';
 import { AdBannerComponent } from '@shared/components/ad-banner.component';
+import { R2TransferService } from '@core/services/r2-transfer.service';
 
 @Component({
     selector: 'app-download',
@@ -26,6 +27,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     isVerifying = signal(false);
     isCompleted = signal(false);
     errorMessage = signal('');
+    warningMessage = signal('');
     avgSpeed = signal(0);
     elapsedSeconds = signal(0);
     file = signal<Blob | undefined>(undefined);
@@ -44,6 +46,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
         protected signaling: SignalingService,
         private supabase: SupabaseService,
         private translate: TranslateService,
+        protected r2Transfer: R2TransferService,
     ) {
     }
 
@@ -94,7 +97,11 @@ export class DownloadComponent implements OnInit, OnDestroy {
                     } else if (updatedSession.status === 'connected') {
                         this.isConnecting.set(false);
                         if (!this.isDownloading()) {
-                            this.startDownload();
+                            if (updatedSession.transferType === 'cloud') {
+                                this.startCloudDownload(updatedSession.r2Token!, updatedSession.fileInfo.name);
+                            } else {
+                                this.startDownload();
+                            }
                         }
                     } else if (updatedSession.status === 'transferring') {
                         // Nuovo stato gestito: assicura che la UI mostri il progresso e che la sottoscrizione sia attiva
@@ -115,7 +122,11 @@ export class DownloadComponent implements OnInit, OnDestroy {
             });
         } catch (error: any) {
             console.error('Error loading file info:', error);
-            this.errorMessage.set(error.message || this.translate.instant('DOWNLOAD.ERROR_NOT_FOUND'));
+            if (error.message?.includes('completed')) {
+                this.warningMessage.set('completed');
+            } else {
+                this.errorMessage.set(error.message || this.translate.instant('DOWNLOAD.ERROR_NOT_FOUND'));
+            }
         } finally {
             this.isLoading.set(false);
         }
@@ -169,6 +180,35 @@ export class DownloadComponent implements OnInit, OnDestroy {
             },
             pwd
         );
+    }
+
+    private async startCloudDownload(r2Token: string, fileName: string) {
+        this.isDownloading.set(true);
+        this.errorMessage.set('');
+        this.downloadStartTs = Date.now();
+
+        try {
+            await this.r2Transfer.download(r2Token, fileName);
+
+            const elapsed = Math.max(1, Math.round((Date.now() - this.downloadStartTs) / 1000));
+            this.elapsedSeconds.set(elapsed);
+            const size = this.session()!.fileInfo.size;
+            this.avgSpeed.set(Math.floor(size / elapsed));
+            this.isDownloading.set(false);
+            this.isCompleted.set(true);
+
+            if (this.supabase.isAuthenticated()) {
+                this.supabase.addXP(5);
+            }
+            try {
+                await this.supabase.incrementDownloadCount(this.linkId());
+            } catch (e) {
+                console.warn('incrementDownloadCount failed', e);
+            }
+        } catch (error: any) {
+            this.isDownloading.set(false);
+            this.errorMessage.set(error.message || this.translate.instant('DOWNLOAD.ERROR_CONNECTION'));
+        }
     }
 
     download() {

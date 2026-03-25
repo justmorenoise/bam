@@ -1,0 +1,14 @@
+name = "bam-r2-worker"
+main = "src/index.ts"
+compatibility_date = "2024-09-01"
+
+[[r2_buckets]]
+binding = "BAM_BUCKET"
+bucket_name = "bam-transfers"
+
+[triggers]
+crons = ["0 */6 * * *"]
+
+[vars]
+ALLOWED_ORIGINS = "https://bamfile.com,http://localhost:4200,https://localhost:4200,https://10.0.0.6:4200"
+# API_KEY is a secret — set via: wrangler secret put API_KEY

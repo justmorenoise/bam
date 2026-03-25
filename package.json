@@ -1,14 +1,14 @@
 {
   "name": "bam-p2p-file-sharing",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Bam - P2P File Sharing Ecosystem with Angular 20+ and Electron",
-
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --ssl true --ssl-key ./ssl/localhost.key --ssl-cert ./ssl/localhost.crt",
     "start:ip": "ng serve --host 10.0.0.6 --ssl true --ssl-key ./ssl/localhost.key --ssl-cert ./ssl/localhost.crt",
     "build": "ng build",
     "build:prod": "node scripts/increment-version.js && ng build --configuration production",
+    "build:preprod": "node scripts/generate-version.js && ng build --configuration preprod",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
@@ -24,7 +24,7 @@
     "supabase"
   ],
   "author": "Bam Team",
-  "license": "MIT",
+  "license": "LGPL-3.0-or-later",
   "dependencies": {
     "@angular/animations": "^20.0.0",
     "@angular/common": "^20.0.0",

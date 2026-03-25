@@ -129,7 +129,26 @@
     "MODE_BURN_FULL": "Usa e Getta",
     "MODE_SEED_FULL": "Persistente",
     "MODE_BURN_DESC_LINK": "Il link si autodistrugge dopo 1 download",
-    "MODE_SEED_DESC_LINK": "Il link rimane attivo per download multipli"
+    "MODE_SEED_DESC_LINK": "Il link rimane attivo per download multipli",
+    "TRANSFER_METHOD": "Metodo di Trasferimento",
+    "METHOD_CLOUD": "Cloud",
+    "METHOD_P2P": "P2P",
+    "CLOUD_DESC": "Upload su cloud, il destinatario scarica quando vuole",
+    "P2P_DESC": "Trasferimento diretto, devi restare online",
+    "P2P_WARNING": "Devi restare online. La chiusura della pagina interrompe il trasferimento.",
+    "RETENTION_POLICY": "Durata del Link",
+    "RETENTION_BURN": "Usa e Getta",
+    "RETENTION_BURN_DESC": "Eliminato dopo 1 download",
+    "RETENTION_3DAY": "3 Giorni",
+    "RETENTION_3DAY_DESC": "Download illimitati per 3 giorni",
+    "RETENTION_PERMANENT": "Permanente",
+    "RETENTION_PERMANENT_DESC": "Disponibile per sempre",
+    "RETENTION_PERMANENT_PREMIUM_MSG": "L'archiviazione permanente è disponibile solo per utenti Premium",
+    "CLOUD_UPLOADING": "Upload su cloud in corso...",
+    "CANCEL_UPLOAD": "Annulla upload",
+    "CLOUD_READY": "File caricato sul cloud",
+    "CLOUD_READY_DESC": "Condividi il link — il destinatario può scaricare in qualsiasi momento.",
+    "CLOUD_FILE_TOO_LARGE": "Il file supera il limite di {{maxSize}} per l'upload cloud."
   },
   "DOWNLOAD": {
     "LOADING": "Caricamento...",
@@ -163,7 +182,10 @@
     "BURN_WARNING": "🔥 Questo link si autodistruggerà dopo il download!",
     "ERROR_CONNECTION": "Errore durante la connessione",
     "ERROR_VERIFY": "Errore durante la verifica del file.",
-    "ERROR_NOT_FOUND": "File non trovato o scaduto"
+    "ERROR_NOT_FOUND": "File non trovato o scaduto",
+    "WARN_COMPLETED_TITLE": "Trasferimento già completato",
+    "WARN_COMPLETED_MSG": "Siamo spiacenti. Il file richiesto non è più disponibile in quanto il trasferimento è già stato completato.\n\nSe hai necessità di ricevere nuovamente il file, contatta il mittente.",
+    "WARN_COMPLETED_SUPPORT_PREFIX": "Se hai verificato dei problemi durante il trasferimento, scrivi all'assistenza:"
   },
   "AUTH": {
     "LOGIN_TITLE": "Bentornato!",

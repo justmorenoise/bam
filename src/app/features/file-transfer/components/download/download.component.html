@@ -10,6 +10,28 @@
                     <h2 class="text-2xl font-black mb-2">{{ 'DOWNLOAD.LOADING' | translate }}</h2>
                     <p class="text-slate-400">{{ 'DOWNLOAD.LOADING_DESC' | translate }}</p>
                 </div>
+            } @else if (warningMessage()) {
+                <!-- Warning State (e.g. transfer already completed) -->
+                <div class="card text-center">
+                    <div class="w-20 h-20 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="text-amber-400">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-black mb-3 text-amber-400">{{ 'DOWNLOAD.WARN_COMPLETED_TITLE' | translate }}</h2>
+                    <p class="text-slate-300 mb-4 max-w-md mx-auto leading-relaxed whitespace-pre-line">{{ 'DOWNLOAD.WARN_COMPLETED_MSG' | translate }}</p>
+                    <p class="text-sm text-slate-400 mb-6">
+                        {{ 'DOWNLOAD.WARN_COMPLETED_SUPPORT_PREFIX' | translate }}
+                        <a href="mailto:support@bamfile.com" class="text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors">support&#64;bamfile.com</a>
+                    </p>
+                    <a routerLink="/" class="btn btn-outline">
+                        {{ 'DOWNLOAD.BACK_HOME' | translate }}
+                    </a>
+                </div>
             } @else if (errorMessage()) {
                 <!-- Error State -->
                 <div class="card text-center">
@@ -149,26 +171,43 @@
                 } @else if (isDownloading()) {
                     <!--    DOWNLOAD IN CORSO    -->
                     <div class="mb-6">
-                        <div class="flex items-center justify-between mb-2">
-                            @if ((signaling.receiverProgress()?.percentage ?? 0) >= 100) {
-                                <span class="text-sm font-bold text-slate-300 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.FINALIZING' | translate }}</span>
-                            } @else {
+                        @if (session()?.transferType === 'cloud') {
+                            <!-- Cloud download progress -->
+                            <div class="flex items-center justify-between mb-2">
                                 <span class="text-sm font-bold text-slate-300 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.DOWNLOADING' | translate }}</span>
-                            }
-                            <span class="text-sm font-bold text-bam-primary">{{ (signaling.receiverProgress()?.percentage ?? 0).toFixed(1) }}
-                                %</span>
-                        </div>
-                        <div class="relative h-4 bg-slate-800 rounded-full overflow-hidden">
-                            <div class="absolute inset-0 bg-gradient-to-r from-bam-primary to-bam-secondary rounded-full transition-all duration-300"
-                                 [style.width.%]="signaling.receiverProgress()?.percentage ?? 0">
-                                <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+                                <span class="text-sm font-bold text-bam-primary">{{ r2Transfer.downloadProgress()?.percent ?? 0 }}%</span>
                             </div>
-                        </div>
-                        <div class="flex items-center justify-between mt-2">
-                            <span class="text-xs text-slate-500">{{ formatSpeed(signaling.receiverProgress()?.speed ?? 0) }}</span>
-                            <span class="text-xs text-slate-500">{{ formatFileSize(session()!.fileInfo.size * (signaling.receiverProgress()?.percentage ?? 0) / 100) }}
-                                / {{ formatFileSize(session()!.fileInfo.size) }}</span>
-                        </div>
+                            <div class="relative h-4 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-bam-primary to-bam-secondary rounded-full transition-all duration-300"
+                                     [style.width.%]="r2Transfer.downloadProgress()?.percent ?? 0">
+                                    <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-slate-500">{{ formatSpeed(r2Transfer.downloadProgress()?.speedBps ?? 0) }}</span>
+                                <span class="text-xs text-slate-500">{{ formatFileSize(r2Transfer.downloadProgress()?.loaded ?? 0) }} / {{ formatFileSize(session()!.fileInfo.size) }}</span>
+                            </div>
+                        } @else {
+                            <!-- P2P download progress -->
+                            <div class="flex items-center justify-between mb-2">
+                                @if ((signaling.receiverProgress()?.percentage ?? 0) >= 100) {
+                                    <span class="text-sm font-bold text-slate-300 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.FINALIZING' | translate }}</span>
+                                } @else {
+                                    <span class="text-sm font-bold text-slate-300 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.DOWNLOADING' | translate }}</span>
+                                }
+                                <span class="text-sm font-bold text-bam-primary">{{ (signaling.receiverProgress()?.percentage ?? 0).toFixed(1) }}%</span>
+                            </div>
+                            <div class="relative h-4 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-bam-primary to-bam-secondary rounded-full transition-all duration-300"
+                                     [style.width.%]="signaling.receiverProgress()?.percentage ?? 0">
+                                    <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-slate-500">{{ formatSpeed(signaling.receiverProgress()?.speed ?? 0) }}</span>
+                                <span class="text-xs text-slate-500">{{ formatFileSize(session()!.fileInfo.size * (signaling.receiverProgress()?.percentage ?? 0) / 100) }} / {{ formatFileSize(session()!.fileInfo.size) }}</span>
+                            </div>
+                        }
                     </div>
                 }
                 @if (file()) {

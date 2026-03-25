@@ -129,7 +129,26 @@
     "MODE_BURN_FULL": "Burn",
     "MODE_SEED_FULL": "Persistent",
     "MODE_BURN_DESC_LINK": "The link self-destructs after 1 download",
-    "MODE_SEED_DESC_LINK": "The link remains active for multiple downloads"
+    "MODE_SEED_DESC_LINK": "The link remains active for multiple downloads",
+    "TRANSFER_METHOD": "Transfer Method",
+    "METHOD_CLOUD": "Cloud",
+    "METHOD_P2P": "P2P",
+    "CLOUD_DESC": "Upload to cloud, recipient downloads anytime",
+    "P2P_DESC": "Direct transfer, you must stay online",
+    "P2P_WARNING": "You must stay online. Closing the page will stop the transfer.",
+    "RETENTION_POLICY": "Link Duration",
+    "RETENTION_BURN": "Burn",
+    "RETENTION_BURN_DESC": "Deleted after 1 download",
+    "RETENTION_3DAY": "3 Days",
+    "RETENTION_3DAY_DESC": "Unlimited downloads for 3 days",
+    "RETENTION_PERMANENT": "Permanent",
+    "RETENTION_PERMANENT_DESC": "Available forever",
+    "RETENTION_PERMANENT_PREMIUM_MSG": "Permanent storage is available only for Premium users",
+    "CLOUD_UPLOADING": "Uploading to cloud...",
+    "CANCEL_UPLOAD": "Cancel upload",
+    "CLOUD_READY": "File uploaded to cloud",
+    "CLOUD_READY_DESC": "Share the link — the recipient can download at any time.",
+    "CLOUD_FILE_TOO_LARGE": "File exceeds the {{maxSize}} cloud upload limit."
   },
   "DOWNLOAD": {
     "LOADING": "Loading...",
@@ -163,7 +182,10 @@
     "BURN_WARNING": "🔥 This link will self-destruct after download!",
     "ERROR_CONNECTION": "Error during connection",
     "ERROR_VERIFY": "Error during file verification.",
-    "ERROR_NOT_FOUND": "File not found or expired"
+    "ERROR_NOT_FOUND": "File not found or expired",
+    "WARN_COMPLETED_TITLE": "Transfer Already Completed",
+    "WARN_COMPLETED_MSG": "We're sorry. The requested file is no longer available because the transfer has already been completed.\n\nIf you need to receive the file again, please contact the sender.",
+    "WARN_COMPLETED_SUPPORT_PREFIX": "If you experienced issues during the transfer, contact support at"
   },
   "AUTH": {
     "LOGIN_TITLE": "Welcome back!",

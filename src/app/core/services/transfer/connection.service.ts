@@ -8,10 +8,11 @@ export class ConnectionService {
     readonly connectionState = signal<RTCPeerConnectionState>('new');
     readonly connectionProfile = signal<ConnectionProfile | null>(null);
 
-    createPeerConnection(): RTCPeerConnection {
+    createPeerConnection(iceServers: RTCIceServer[]): RTCPeerConnection {
+
         const pc = new RTCPeerConnection({
-            iceServers: environment.webrtc.iceServers,
-            iceCandidatePoolSize: 10,
+            iceServers,
+            iceCandidatePoolSize: 2,
             bundlePolicy: 'max-bundle',
         });
 

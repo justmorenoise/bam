@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { FileShareSession } from '@core/services/signaling.service';
+import { TransferMethod, RetentionPolicy, R2UploadProgress } from '@core/services/r2-transfer.types';
 
 @Injectable({ providedIn: 'root' })
 export class UploadStateService {
@@ -16,6 +17,12 @@ export class UploadStateService {
 
     // Mode
     readonly mode = signal<'burn' | 'seed'>('burn');
+
+    // Transfer method & retention (Cloud/P2P)
+    readonly transferMethod = signal<TransferMethod>('cloud');
+    readonly retentionPolicy = signal<RetentionPolicy>('3day');
+    readonly isCloudUploading = signal(false);
+    readonly cloudUploadProgress = signal<R2UploadProgress | null>(null);
 
     // Password (Premium)
     readonly password = signal('');
@@ -52,5 +59,9 @@ export class UploadStateService {
         this.isRetrying.set(false);
         this.session.set(null);
         this.mode.set('burn');
+        this.transferMethod.set('cloud');
+        this.retentionPolicy.set('3day');
+        this.isCloudUploading.set(false);
+        this.cloudUploadProgress.set(null);
     }
 }

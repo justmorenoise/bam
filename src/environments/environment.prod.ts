@@ -1,18 +1,14 @@
-// ============================================================
-// BAM - Angular Environment Template (Development)
-// Copy this file to environment.ts and fill in your real values
-// NEVER commit environment.ts with real credentials
-// ============================================================
+// Production Environment Configuration
+// I valori <PLACEHOLDER> vengono sostituiti a build-time dal workflow GitHub Actions
 export const environment = {
-    production: false,
+    production: true,
     appName: 'Bam! - P2P File Sharing',
-    version: '0.0.0',
+    version: '1.1.6',
 
     // Supabase Configuration
-    // Get these values from your Supabase project dashboard → Settings → API
     supabase: {
-        url: 'https://YOUR_PROJECT_REF.supabase.co',
-        anonKey: 'YOUR_SUPABASE_ANON_KEY',
+        url: '<PROD_SUPABASE_URL>',
+        anonKey: '<PROD_SUPABASE_ANON_KEY>',
     },
 
     // WebRTC Configuration
@@ -22,41 +18,48 @@ export const environment = {
             { urls: 'stun:stun.l.google.com:19302' },
             { urls: 'stun:stun1.l.google.com:19302' },
         ],
-        turnServiceApiUrl: 'https://your.turn.service/api/v1/turn/credentials',
-        turnServiceApiKey: 'YOUR_TURN_SERVICE_API_KEY',
+        turnServiceApiUrl: 'https://bam.metered.live/api/v1/turn/credentials',
+        turnServiceApiKey: '<PROD_TURN_API_KEY>',
         chunkSize: 65536, // 64KB chunks for file transfer
-        maxReconnectAttempts: 3,
+        maxReconnectAttempts: 5,
         connectionTimeout: 30000, // 30 seconds
         parallel: {
             enabled: true,
             maxChannels: 8,
             minFileSizeMB: 50,
             slowStartIntervalMs: 2500,
-            throughputRatio: 0.7,     // aggiungi canale se throughput < 70% del disponibile
-            saturationThreshold: 0.1  // stop se nuovo canale aggiunge <10%
+            throughputRatio: 0.7,
+            saturationThreshold: 0.1
         }
     },
 
-    // Ads Configuration (Development)
+    // Ads Configuration (Production)
     // AdSense è attivo solo su web (non su Electron).
-    // In development gli slot AdSense non caricano annunci reali.
     ads: {
-        enabled: false, // Disabilitato in development per evitare violazioni ToS
+        enabled: true,
         adsense: {
             publisherId: 'ca-pub-XXXXXXXXXXXXXXXX', // Sostituire con il proprio Publisher ID
             bannerSlot: 'XXXXXXXXXX',              // Sostituire con il proprio Ad Unit ID per banner
         },
     },
 
+    // Cloudflare R2 Configuration
+    r2: {
+        workerUrl: '<PROD_R2_WORKER_URL>',
+        apiKey: '<PROD_R2_API_KEY>',
+    },
+
     // File Transfer Limits
     limits: {
         free: {
-            maxFilesPerDay: 5000,
+            maxFilesPerDay: 5,
             maxFileSize: null, // Unlimited in P2P
+            maxCloudFileSize: 500 * 1024 * 1024, // 500MB
         },
         premium: {
             maxFilesPerDay: null, // Unlimited
             maxFileSize: null, // Unlimited
+            maxCloudFileSize: 2 * 1024 * 1024 * 1024, // 2GB
         },
     },
 
@@ -72,7 +75,7 @@ export const environment = {
 
     // API Endpoints
     api: {
-        baseUrl: 'http://localhost:4200',
+        baseUrl: 'https://bamfile.com',
         signaling: '/api/signaling',
     },
 
@@ -88,7 +91,7 @@ export const environment = {
 
     // Logging
     logging: {
-        level: 'debug',
-        enableConsole: true,
+        level: 'error',
+        enableConsole: false,
     },
 };

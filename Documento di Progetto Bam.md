@@ -38,7 +38,7 @@
 * **Pro Free:** Metriche base, gamification, pubblicità.  
 * **Pro Premium:** Tutte le funzioni avanzate, file illimitati, zero pubblicità.
 
-## **5\. User Journey: Il Mittente**
+## **4\. User Journey: Il Mittente**
 
 ### **Flusso Free Web**
 
@@ -54,7 +54,7 @@
 3. **Cifratura:** Il servizio Angular dedicato processa il file localmente tramite l'agente Electron.  
 4. **Notifiche:** Push su desktop all'inizio e alla fine del download.
 
-## **6\. User Journey: Il Destinatario**
+## **5\. User Journey: Il Destinatario**
 
 1. **Atterraggio:** Inserimento password (se prevista dal mittente Premium).  
 2. **Decifratura:** La Web Crypto API decifra il flusso di dati in tempo reale direttamente nel browser.  
@@ -62,7 +62,7 @@
 4. **Download:** Progress del download e messaggio di stato e o errore.
 5. **Riprendi:** Resume del download (Premium).
 
-## **7\. Matrice delle Funzionalità**
+## **6\. Matrice delle Funzionalità**
 
 | Funzionalità | Anonimo | Pro Free | Pro Premium |
 | :---- | :---- | :---- | :---- |
@@ -75,7 +75,7 @@
 | **URL Personalizzati** | No | No | Sì |
 | **Resume Download** | No | Sì | Sì |
 
-## **8\. Stack Tecnologico**
+## **7\. Stack Tecnologico**
 
 * **Frontend:** **Angular 20+** (Signals, Standalone Components).  
 * **Styling:** Tailwind CSS.  
