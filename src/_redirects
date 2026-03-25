@@ -1,4 +1,5 @@
-# Modalità manutenzione — commenta la riga sotto e decommentare SPA routing per riattivare
+# Modalità manutenzione — commenta le righe sotto e decommentare SPA routing per riattivare
+/coming-soon.html /coming-soon.html 200
 /* /coming-soon.html 302
 
 # SPA routing (attivo in condizioni normali)
