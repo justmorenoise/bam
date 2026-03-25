@@ -171,26 +171,43 @@
                 } @else if (isDownloading()) {
                     <!--    DOWNLOAD IN CORSO    -->
                     <div class="mb-6">
-                        <div class="flex items-center justify-between mb-2">
-                            @if ((signaling.receiverProgress()?.percentage ?? 0) >= 100) {
-                                <span class="text-sm font-bold text-slate-300 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.FINALIZING' | translate }}</span>
-                            } @else {
+                        @if (session()?.transferType === 'cloud') {
+                            <!-- Cloud download progress -->
+                            <div class="flex items-center justify-between mb-2">
                                 <span class="text-sm font-bold text-slate-300 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.DOWNLOADING' | translate }}</span>
-                            }
-                            <span class="text-sm font-bold text-bam-primary">{{ (signaling.receiverProgress()?.percentage ?? 0).toFixed(1) }}
-                                %</span>
-                        </div>
-                        <div class="relative h-4 bg-slate-800 rounded-full overflow-hidden">
-                            <div class="absolute inset-0 bg-gradient-to-r from-bam-primary to-bam-secondary rounded-full transition-all duration-300"
-                                 [style.width.%]="signaling.receiverProgress()?.percentage ?? 0">
-                                <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+                                <span class="text-sm font-bold text-bam-primary">{{ r2Transfer.downloadProgress()?.percent ?? 0 }}%</span>
                             </div>
-                        </div>
-                        <div class="flex items-center justify-between mt-2">
-                            <span class="text-xs text-slate-500">{{ formatSpeed(signaling.receiverProgress()?.speed ?? 0) }}</span>
-                            <span class="text-xs text-slate-500">{{ formatFileSize(session()!.fileInfo.size * (signaling.receiverProgress()?.percentage ?? 0) / 100) }}
-                                / {{ formatFileSize(session()!.fileInfo.size) }}</span>
-                        </div>
+                            <div class="relative h-4 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-bam-primary to-bam-secondary rounded-full transition-all duration-300"
+                                     [style.width.%]="r2Transfer.downloadProgress()?.percent ?? 0">
+                                    <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-slate-500">{{ formatSpeed(r2Transfer.downloadProgress()?.speedBps ?? 0) }}</span>
+                                <span class="text-xs text-slate-500">{{ formatFileSize(r2Transfer.downloadProgress()?.loaded ?? 0) }} / {{ formatFileSize(session()!.fileInfo.size) }}</span>
+                            </div>
+                        } @else {
+                            <!-- P2P download progress -->
+                            <div class="flex items-center justify-between mb-2">
+                                @if ((signaling.receiverProgress()?.percentage ?? 0) >= 100) {
+                                    <span class="text-sm font-bold text-slate-300 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.FINALIZING' | translate }}</span>
+                                } @else {
+                                    <span class="text-sm font-bold text-slate-300 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.DOWNLOADING' | translate }}</span>
+                                }
+                                <span class="text-sm font-bold text-bam-primary">{{ (signaling.receiverProgress()?.percentage ?? 0).toFixed(1) }}%</span>
+                            </div>
+                            <div class="relative h-4 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-bam-primary to-bam-secondary rounded-full transition-all duration-300"
+                                     [style.width.%]="signaling.receiverProgress()?.percentage ?? 0">
+                                    <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-slate-500">{{ formatSpeed(signaling.receiverProgress()?.speed ?? 0) }}</span>
+                                <span class="text-xs text-slate-500">{{ formatFileSize(session()!.fileInfo.size * (signaling.receiverProgress()?.percentage ?? 0) / 100) }} / {{ formatFileSize(session()!.fileInfo.size) }}</span>
+                            </div>
+                        }
                     </div>
                 }
                 @if (file()) {
