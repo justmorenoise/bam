@@ -2,6 +2,7 @@
 // I valori <PLACEHOLDER> vengono sostituiti a build-time dal workflow GitHub Actions
 export const environment = {
     production: true,
+    maintenanceMode: true,
     appName: 'Bam! - P2P File Sharing',
     version: '1.1.6',
 
