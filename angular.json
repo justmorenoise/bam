@@ -52,6 +52,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/",
               "budgets": [
                 {
                   "type": "initial",
@@ -73,6 +74,7 @@
               ]
             },
             "preprod": {
+              "baseHref": "/",
               "budgets": [
                 {
                   "type": "initial",
