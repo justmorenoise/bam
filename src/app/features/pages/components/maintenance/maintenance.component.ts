@@ -1,123 +1,55 @@
 import { Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-maintenance',
     standalone: true,
+    imports: [TranslateModule],
     template: `
-        <div class="wrapper">
-            <div class="logo">Bam!</div>
+        <div class="min-h-screen p-6 lg:p-10 flex flex-col items-center justify-center gap-10">
 
-            <div class="card">
-                <div class="icon">🔧</div>
-                <h1>Stiamo lavorando</h1>
-                <p>
-                    Il servizio è temporaneamente sospeso per manutenzione.<br />
-                    Torneremo operativi a breve.
-                </p>
-                <div class="status-wrap">
-                    <span class="status">
-                        <span class="dot"></span>
-                        Manutenzione in corso
-                    </span>
+            <!-- Logo (same as header, larger) -->
+            <div class="flex items-center gap-3">
+                <div class="bg-bam-primary p-3 rounded-2xl shadow-lg shadow-bam-primary/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                         class="text-white">
+                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                        <polyline points="16 6 12 2 8 6"/>
+                        <line x1="12" y1="2" x2="12" y2="15"/>
+                    </svg>
+                </div>
+                <span class="text-5xl font-black italic tracking-tighter uppercase">Bam!</span>
+            </div>
+
+            <!-- Card -->
+            <div class="card max-w-md w-full text-center flex flex-col items-center gap-5">
+
+                <!-- Flat icon -->
+                <div class="text-bam-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </div>
+
+                <h1 class="text-2xl font-black">{{ 'MAINTENANCE.TITLE' | translate }}</h1>
+
+                <p class="text-sm text-slate-400 leading-relaxed"
+                   [innerHTML]="'MAINTENANCE.DESC' | translate"></p>
+
+                <!-- Status badge -->
+                <div class="flex items-center gap-2 text-bam-warning text-sm
+                            bg-bam-warning/10 border border-bam-warning/20 rounded-full px-4 py-2">
+                    <span class="w-2 h-2 rounded-full bg-bam-warning animate-pulse"></span>
+                    {{ 'MAINTENANCE.STATUS' | translate }}
                 </div>
             </div>
 
-            <footer>bamfile.com</footer>
+            <footer class="text-xs text-slate-600">bamfile.com</footer>
         </div>
     `,
-    styles: [`
-        :host {
-            display: block;
-            min-height: 100dvh;
-            background: #0a0a0a;
-        }
-
-        .wrapper {
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            gap: 2rem;
-        }
-
-        .logo {
-            font-size: 3.5rem;
-            font-weight: 800;
-            letter-spacing: -2px;
-            background: linear-gradient(135deg, #fff 30%, #888);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .card {
-            background: #141414;
-            border: 1px solid #222;
-            border-radius: 1.25rem;
-            padding: 2.5rem 3rem;
-            max-width: 480px;
-            width: 100%;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        p {
-            font-size: 0.95rem;
-            color: #888;
-            line-height: 1.6;
-        }
-
-        .status-wrap {
-            display: flex;
-            justify-content: center;
-        }
-
-        .status {
-            display: inline-flex;
-            align-items: center;
-            font-size: 0.8rem;
-            color: #f59e0b;
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: 999px;
-            padding: 0.3rem 0.9rem;
-            margin-top: 0.5rem;
-        }
-
-        .dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #f59e0b;
-            margin-right: 6px;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        footer {
-            font-size: 0.75rem;
-            color: #444;
-        }
-    `],
+    styles: [],
 })
 export class MaintenanceComponent {}

@@ -415,5 +415,10 @@
     "MODAL_DELETE_CANCEL": "Cancel",
     "MODAL_DELETED_TITLE": "Account Deleted",
     "MODAL_DELETED_MSG": "Your account has been permanently deleted"
+  },
+  "MAINTENANCE": {
+    "TITLE": "We're working on it",
+    "DESC": "The service is temporarily suspended for maintenance.<br>We'll be back shortly.",
+    "STATUS": "Maintenance in progress"
   }
 }

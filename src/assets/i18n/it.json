@@ -415,5 +415,10 @@
     "MODAL_DELETE_CANCEL": "Annulla",
     "MODAL_DELETED_TITLE": "Account Eliminato",
     "MODAL_DELETED_MSG": "Il tuo account è stato eliminato definitivamente"
+  },
+  "MAINTENANCE": {
+    "TITLE": "Stiamo lavorando",
+    "DESC": "Il servizio è temporaneamente sospeso per manutenzione.<br>Torneremo operativi a breve.",
+    "STATUS": "Manutenzione in corso"
   }
 }
