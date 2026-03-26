@@ -274,8 +274,13 @@
     "DELETE_ERROR_TITLE": "Error",
     "DELETE_ERROR_MSG": "Unable to delete transfer. Please try again.",
     "COPY_SUCCESS": "Link copied to clipboard!",
+    "COPY_LINK_BTN": "Copy Link",
     "UPGRADE_SUCCESS": "Upgrade to Premium completed!",
     "UPGRADE_ERROR": "Error during upgrade"
+  },
+  "NOTIFICATIONS": {
+    "DOWNLOAD_STARTED": "Download started: {{filename}}",
+    "DOWNLOAD_COMPLETED": "Download completed: {{filename}}"
   },
   "ABOUT": {
     "HERO": {

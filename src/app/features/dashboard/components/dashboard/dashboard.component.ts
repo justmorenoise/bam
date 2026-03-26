@@ -6,6 +6,8 @@ import { HeaderComponent } from '@shared/components/header.component';
 import { AdBannerComponent } from '@shared/components/ad-banner.component';
 import { FileTransferRecord, SupabaseService } from '@core/services/supabase.service';
 import { ModalService } from '@core/services/modal.service';
+import { ToastService } from '@core/services/toast.service';
+import { R2TransferService } from '@core/services/r2-transfer.service';
 import { DropZoneComponent } from '@features/file-transfer/components/upload/drop-zone/drop-zone.component';
 import { AdPremiumBanner } from '@shared/components/ad-premium-banner/ad-premium-banner';
 
@@ -131,7 +133,9 @@ export class DashboardComponent implements OnInit {
         private supabase: SupabaseService,
         private modalService: ModalService,
         private router: Router,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private toast: ToastService,
+        private r2Transfer: R2TransferService,
     ) {
     }
 
@@ -212,8 +216,17 @@ export class DashboardComponent implements OnInit {
 
     copyLinkToClipboard(linkId: string) {
         const link = `${window.location.origin}/download/${linkId}`;
-        navigator.clipboard.writeText(link);
-        alert(this.translate.instant('DASHBOARD.COPY_SUCCESS'));
+        navigator.clipboard.writeText(link).then(() => {
+            this.toast.show(this.translate.instant('DASHBOARD.COPY_SUCCESS'), 'success');
+        });
+    }
+
+    isExpiredByDate(transfer: FileTransferRecord): boolean {
+        return !!transfer.expires_at && new Date(transfer.expires_at) < new Date();
+    }
+
+    isDisplayExpired(transfer: FileTransferRecord): boolean {
+        return transfer.status === 'expired' || this.isExpiredByDate(transfer);
     }
 
     // Metodi UI per tab, ricerca, ordinamento, paginazione, eliminazione
@@ -267,6 +280,10 @@ export class DashboardComponent implements OnInit {
         ).subscribe(async (confirmed) => {
             if (confirmed) {
                 try {
+                    // Cleanup R2 se presente (ignora errori: file già eliminato o mai caricato)
+                    if (transfer.r2_token) {
+                        await this.r2Transfer.deleteFile(transfer.r2_token).catch(() => {});
+                    }
                     await this.supabase.deleteFileTransfer(transfer.link_id);
                     await this.loadTransfers();
                 } catch (error) {

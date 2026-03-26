@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ModalComponent } from '@shared/components/modal/modal.component';
 import { FooterComponent } from '@shared/components/footer.component';
 import { AdInterstitialComponent } from '@shared/components/ad-interstitial.component';
 import { TransferBannerComponent } from '@shared/components/transfer-banner/transfer-banner.component';
+import { ToastComponent } from '@shared/components/toast/toast.component';
 import { LanguageService } from '@core/services/language.service';
 import { AdService } from '@core/services/ad.service';
+import { DownloadNotificationService } from '@core/services/download-notification.service';
 
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, ModalComponent, FooterComponent, AdInterstitialComponent, TransferBannerComponent],
+    imports: [CommonModule, RouterOutlet, ModalComponent, FooterComponent, AdInterstitialComponent, TransferBannerComponent, ToastComponent],
     template: `
         <div class="min-h-screen flex flex-col">
             <div class="flex-1">
@@ -21,6 +23,7 @@ import { AdService } from '@core/services/ad.service';
             <app-modal/>
             <app-ad-interstitial/>
             <app-transfer-banner/>
+            <app-toast/>
         </div>
     `,
     styles: [`
@@ -37,7 +40,10 @@ export class AppComponent implements OnInit {
     constructor(
         private languageService: LanguageService,
         private adService: AdService,
-    ) {}
+    ) {
+        // Attiva il servizio root che si auto-sottoscrive all'auth state
+        inject(DownloadNotificationService);
+    }
 
     async ngOnInit(): Promise<void> {
         this.languageService.init();

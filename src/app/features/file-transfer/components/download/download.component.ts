@@ -146,6 +146,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
         this.downloadStartTs = Date.now();
 
         try {
+            await this.supabase.sendDownloadNotification(this.linkId(), 'started', fileName).catch(() => {});
             await this.r2Transfer.download(r2Token, fileName);
 
             const elapsed = Math.max(1, Math.round((Date.now() - this.downloadStartTs) / 1000));
@@ -155,6 +156,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
             this.isDownloading.set(false);
             this.isCompleted.set(true);
 
+            await this.supabase.sendDownloadNotification(this.linkId(), 'completed', fileName).catch(() => {});
             if (this.supabase.isAuthenticated()) {
                 this.supabase.addXP(5).catch(() => {});
             }

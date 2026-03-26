@@ -47,6 +47,7 @@ export class SupabaseService {
     currentSession = signal<Session | null>(null);
     currentProfile = signal<UserProfile | null>(null);
     private signalingChannels = new Map<string, RealtimeChannel>();
+    private cloudNotifyChannels = new Map<string, RealtimeChannel>();
     private authState$ = new BehaviorSubject<{ user: User | null; session: Session | null; }>({
         user: null,
         session: null
@@ -230,10 +231,14 @@ export class SupabaseService {
     }
 
     async deleteFileTransfer(linkId: string) {
-        if (!this.currentUser()) throw new Error('Utente non autenticato');
+        const userId = this.currentUser()?.id;
+        if (!userId) throw new Error('Utente non autenticato');
 
         const { error } = await this.supabase
-            .rpc('delete_file_transfer', { p_link_id: linkId });
+            .from('file_transfers')
+            .update({ deleted_at: new Date().toISOString() })
+            .eq('link_id', linkId)
+            .eq('sender_id', userId);
 
         if (error) throw error;
     }
@@ -312,6 +317,47 @@ export class SupabaseService {
         };
 
         return attempt(MAX_RETRIES);
+    }
+
+    // ─── Cloud download notifications ───────────────────────────────────────
+
+    async sendDownloadNotification(linkId: string, event: 'started' | 'completed', fileName?: string): Promise<void> {
+        const channel = this.supabase.channel(`cloud-notify:${linkId}`, {
+            config: { broadcast: { self: false } }
+        });
+        await new Promise<void>((resolve) => {
+            channel.subscribe((status) => {
+                if (status === 'SUBSCRIBED') resolve();
+            });
+        });
+        await channel.send({
+            type: 'broadcast',
+            event: 'download-event',
+            payload: { event, fileName, timestamp: Date.now() }
+        });
+        await channel.unsubscribe();
+    }
+
+    async subscribeToCloudNotification(
+        linkId: string,
+        callback: (event: 'started' | 'completed', fileName?: string) => void
+    ): Promise<void> {
+        if (this.cloudNotifyChannels.has(linkId)) return;
+        const channel = this.supabase.channel(`cloud-notify:${linkId}`, {
+            config: { broadcast: { self: false } }
+        });
+        channel.on('broadcast', { event: 'download-event' }, (payload: any) => {
+            callback(payload.payload?.event, payload.payload?.fileName);
+        });
+        channel.subscribe();
+        this.cloudNotifyChannels.set(linkId, channel);
+    }
+
+    async removeAllCloudNotifyChannels(): Promise<void> {
+        for (const channel of this.cloudNotifyChannels.values()) {
+            await channel.unsubscribe();
+        }
+        this.cloudNotifyChannels.clear();
     }
 
     async removeSignalingChannel(linkId: string) {

@@ -339,12 +339,44 @@
                                 </div>
 
                                 <!-- Actions -->
-                                <div class="flex items-center gap-3 flex-shrink-0">
-                                    <!-- Status Badge -->
-                                    <span class="px-3 py-1.5 rounded-xl border text-xs font-bold whitespace-nowrap"
-                                          [ngClass]="getStatusColor(transfer.status)">
-                                        {{ getStatusLabel(transfer.status) }}
-                                    </span>
+                                <div class="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
+                                    <!-- Status Badges -->
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <!-- Badge stato principale (Attivo / Completato) — nascosto se già solo Scaduto -->
+                                        @if (!isDisplayExpired(transfer) || transfer.status === 'completed') {
+                                            <span class="px-3 py-1.5 rounded-xl border text-xs font-bold whitespace-nowrap"
+                                                  [ngClass]="getStatusColor(transfer.status)">
+                                                {{ getStatusLabel(transfer.status) }}
+                                            </span>
+                                        }
+                                        <!-- Badge Scaduto aggiuntivo -->
+                                        @if (isDisplayExpired(transfer) && transfer.status !== 'expired') {
+                                            <span class="px-3 py-1.5 rounded-xl border text-xs font-bold whitespace-nowrap text-slate-400 bg-slate-500/10 border-slate-500/30">
+                                                {{ 'DASHBOARD.STATUS_EXPIRED' | translate }}
+                                            </span>
+                                        }
+                                        <!-- Badge Scaduto unico quando status === 'expired' -->
+                                        @if (transfer.status === 'expired') {
+                                            <span class="px-3 py-1.5 rounded-xl border text-xs font-bold whitespace-nowrap text-slate-400 bg-slate-500/10 border-slate-500/30">
+                                                {{ 'DASHBOARD.STATUS_EXPIRED' | translate }}
+                                            </span>
+                                        }
+                                    </div>
+
+                                    <!-- Copia Link (solo seed attivi non scaduti) -->
+                                    @if (transfer.mode === 'seed' && transfer.status === 'active' && !isExpiredByDate(transfer)) {
+                                        <button
+                                                (click)="copyLinkToClipboard(transfer.link_id)"
+                                                class="px-3 py-1.5 bg-bam-primary/10 hover:bg-bam-primary/20 border border-bam-primary/30 rounded-xl text-bam-primary text-sm font-bold transition-colors"
+                                                [title]="'DASHBOARD.COPY_LINK_BTN' | translate">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                            </svg>
+                                        </button>
+                                    }
 
                                     <!-- Delete Button -->
                                     <button

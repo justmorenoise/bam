@@ -274,8 +274,13 @@
     "DELETE_ERROR_TITLE": "Errore",
     "DELETE_ERROR_MSG": "Impossibile eliminare il trasferimento. Riprova.",
     "COPY_SUCCESS": "Link copiato negli appunti!",
+    "COPY_LINK_BTN": "Copia Link",
     "UPGRADE_SUCCESS": "Upgrade a Premium completato!",
     "UPGRADE_ERROR": "Errore durante l'upgrade"
+  },
+  "NOTIFICATIONS": {
+    "DOWNLOAD_STARTED": "Download iniziato: {{filename}}",
+    "DOWNLOAD_COMPLETED": "Download completato: {{filename}}"
   },
   "ABOUT": {
     "HERO": {
