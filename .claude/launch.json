@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Angular (no SSL)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:nossl"],
+      "port": 4202
+    },
+    {
+      "name": "Angular (localhost SSL)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start"],
+      "port": 4200
+    },
+    {
+      "name": "Angular (LAN IP SSL)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:ip"],
+      "port": 4200
+    },
+    {
+      "name": "Cloudflare Worker (dev)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 8787
+    }
+  ]
+}

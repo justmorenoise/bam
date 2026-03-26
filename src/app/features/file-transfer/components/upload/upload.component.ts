@@ -10,7 +10,6 @@ import { ModalService } from '@core/services/modal.service';
 import { R2TransferService } from '@core/services/r2-transfer.service';
 import { HasherService } from '@core/services/transfer/hasher.service';
 import { CryptoService } from '@core/services/crypto.service';
-import { RetentionPolicy } from '@core/services/r2-transfer.types';
 import { UploadStateService } from '../../services/upload-state.service';
 import { Subscription } from 'rxjs';
 import * as QRCode from 'qrcode';
@@ -25,92 +24,34 @@ import { AdBannerComponent } from '@shared/components/ad-banner.component';
     styleUrls: ['./upload.component.css']
 })
 export class UploadComponent implements OnInit, OnDestroy {
-    // Lo stato è nel service singleton; esponiamo il service al template
     readonly st: UploadStateService;
 
-    // Alias per il template (backward compat con le binding esistenti)
-    get selectedFile() {
-        return this.st.selectedFile;
-    }
+    // ─── Template aliases ────────────────────────────────────────
 
-    get generatedLink() {
-        return this.st.generatedLink;
-    }
+    get selectedFile() { return this.st.selectedFile; }
+    get generatedLink() { return this.st.generatedLink; }
+    get qrCodeUrl() { return this.st.qrCodeUrl; }
+    get isGeneratingLink() { return this.st.isGeneratingLink; }
+    get linkCopied() { return this.st.linkCopied; }
+    get hashProgress() { return this.st.hashProgress; }
+    get mode() { return this.st.mode; }
+    get customSlug() { return this.st.customSlug; }
+    get showCustomSlug() { return this.st.showCustomSlug; }
+    get customSlugError() { return this.st.customSlugError; }
+    get session() { return this.st.session; }
+    get transferMethod() { return this.st.transferMethod; }
+    get retentionPolicy() { return this.st.retentionPolicy; }
+    get cloudExpiryDays() { return this.st.cloudExpiryDays; }
+    get isBurnUploading() { return this.st.isBurnUploading; }
+    get burnUploadProgress() { return this.st.burnUploadProgress; }
+    get isCloudUploading() { return this.st.isCloudUploading; }
+    get cloudUploadProgress() { return this.st.cloudUploadProgress; }
 
-    get qrCodeUrl() {
-        return this.st.qrCodeUrl;
-    }
-
-    get isGeneratingLink() {
-        return this.st.isGeneratingLink;
-    }
-
-    get linkCopied() {
-        return this.st.linkCopied;
-    }
-
-    get hashProgress() {
-        return this.st.hashProgress;
-    }
-
-    get mode() {
-        return this.st.mode;
-    }
-
-    get password() {
-        return this.st.password;
-    }
-
-    get showPasswordInput() {
-        return this.st.showPasswordInput;
-    }
-
-    get customSlug() {
-        return this.st.customSlug;
-    }
-
-    get showCustomSlug() {
-        return this.st.showCustomSlug;
-    }
-
-    get customSlugError() {
-        return this.st.customSlugError;
-    }
-
-    get isTransferring() {
-        return this.st.isTransferring;
-    }
-
-    get isRetrying() {
-        return this.st.isRetrying;
-    }
-
-    get session() {
-        return this.st.session;
-    }
-
-    get transferMethod() {
-        return this.st.transferMethod;
-    }
-
-    get retentionPolicy() {
-        return this.st.retentionPolicy;
-    }
-
-    get isCloudUploading() {
-        return this.st.isCloudUploading;
-    }
-
-    get cloudUploadProgress() {
-        return this.st.cloudUploadProgress;
-    }
-
-    // User profile
     userProfile = this.supabase.currentProfile;
 
     private sessionSub?: Subscription;
-
     private cloudProgressInterval: ReturnType<typeof setInterval> | null = null;
+    private burnProgressInterval: ReturnType<typeof setInterval> | null = null;
 
     constructor(
         uploadState: UploadStateService,
@@ -128,10 +69,8 @@ export class UploadComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         if (this.st.hasActiveSession()) {
-            // Ripristina la subscription se l'utente torna alla pagina durante un trasferimento
             this.reattachSessionSubscription();
         } else {
-            // Primo accesso: controlla se un file è stato passato dalla home
             const file = history.state?.file;
             if (file instanceof File) {
                 this.st.selectedFile.set(file);
@@ -142,17 +81,17 @@ export class UploadComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.sessionSub?.unsubscribe();
         this.clearCloudProgressInterval();
+        this.clearBurnProgressInterval();
 
         if (this.st.transferMethod() === 'cloud') {
-            // Cloud: abort se upload in corso, altrimenti niente da fare
             if (this.st.isCloudUploading()) {
                 this.r2.abort();
                 this.st.isCloudUploading.set(false);
                 this.st.isGeneratingLink.set(false);
             }
         } else {
-            // P2P: chiudi sessione WebRTC solo se non in trasferimento
-            if (!this.st.isTransferring() && !this.st.isRetrying()) {
+            // Burn: chiudi sessione solo se non in trasferimento attivo
+            if (!this.st.isBurnUploading()) {
                 if (this.st.linkId()) {
                     this.signaling.closeSession(this.st.linkId());
                 }
@@ -164,10 +103,6 @@ export class UploadComponent implements OnInit, OnDestroy {
         }
     }
 
-    /**
-     * Riattacca la subscription agli aggiornamenti di sessione senza aprire una nuova sessione.
-     * Usata quando l'utente torna alla pagina durante un trasferimento attivo.
-     */
     private reattachSessionSubscription() {
         const linkId = this.st.linkId();
         this.sessionSub?.unsubscribe();
@@ -179,29 +114,31 @@ export class UploadComponent implements OnInit, OnDestroy {
         });
     }
 
-    /**
-     * Gestisce selezione file dalla drop zone
-     */
+    // ─── File selection ──────────────────────────────────────────
+
     handleFileSelection(file: File) {
         if (this.st.isGeneratingLink()) return;
+        const maxSize = this.r2.getMaxFileSize();
+        if (maxSize !== null && file.size > maxSize) {
+            this.modal.showWarning(
+                this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'),
+                this.translate.instant('UPLOAD.FILE_TOO_LARGE', { maxSize: this.formatFileSize(maxSize) })
+            );
+            return;
+        }
         this.st.selectedFile.set(file);
     }
 
-    /**
-     * Rimuove il file selezionato per permetterne la sostituzione
-     */
     clearFile() {
         this.st.selectedFile.set(null);
     }
 
-    /**
-     * Genera il link di condivisione (chiamata al click di "Crea Link")
-     */
+    // ─── Link generation ─────────────────────────────────────────
+
     async generateLink() {
         const file = this.st.selectedFile();
         if (!file) return;
 
-        // Check daily limit
         if (!this.supabase.canUploadToday()) {
             this.modal.showWarning(
                 this.translate.instant('UPLOAD.MODAL_LIMIT_TITLE'),
@@ -213,17 +150,77 @@ export class UploadComponent implements OnInit, OnDestroy {
         if (this.st.transferMethod() === 'cloud') {
             await this.generateCloudLink();
         } else {
-            await this.generateP2PLink();
+            await this.generateBurnLink();
         }
     }
 
     /**
-     * Cloud path: hash → upload R2 → crea record DB → genera link
+     * Burn (streaming diretto): SignalingService gestisce token R2 + DB + signaling.
+     * Il mittente deve tenere la pagina aperta.
      */
-    private async generateCloudLink() {
+    private async generateBurnLink() {
         const file = this.st.selectedFile()!;
 
-        // Validate cloud file size
+        if (this.st.mode() === 'seed' && !this.supabase.isAuthenticated()) {
+            this.modal.showWarning(
+                this.translate.instant('UPLOAD.MODAL_AUTH_TITLE'),
+                this.translate.instant('UPLOAD.MODAL_AUTH_MSG')
+            );
+            return;
+        }
+
+        const slug = this.st.showCustomSlug() && this.st.customSlug() ? this.st.customSlug().trim() : undefined;
+        if (slug && !this.validateSlug(slug)) return;
+
+        this.st.isGeneratingLink.set(true);
+
+        try {
+            const { linkId, session } = await this.signaling.startSenderSession(
+                file,
+                this.st.mode(),
+                undefined,
+                (progress) => this.st.hashProgress.set(Math.round(progress)),
+                this.isPremium() && slug ? slug : undefined,
+                { transfer_type: 'burn', retention_policy: 'burn' },
+            );
+
+            this.st.linkId.set(linkId);
+            this.st.session.set(session);
+
+            const linkPath = this.isPremium() && slug ? slug : linkId;
+            await this.setLinkAndQR(linkPath);
+
+            this.sessionSub?.unsubscribe();
+            this.sessionSub = this.signaling.getSessionUpdates$().subscribe(updatedSession => {
+                if (updatedSession.linkId === linkId) {
+                    this.st.session.set(updatedSession);
+                    this.handleSessionStatus(updatedSession.status);
+                }
+            });
+        } catch (error: any) {
+            console.error('Error generating burn link:', error);
+            this.modal.showError(this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'), error.message || 'Impossibile generare il link');
+        } finally {
+            this.st.isGeneratingLink.set(false);
+        }
+    }
+
+    /**
+     * Cloud (premium, persistente): hash → upload R2 → record DB → link.
+     */
+    private async generateCloudLink() {
+        if (!this.isPremium()) {
+            this.modal.showPremium(
+                this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
+                this.translate.instant('UPLOAD.MODAL_PREMIUM_CLOUD_MSG')
+            ).subscribe((confirmed) => {
+                if (confirmed) this.router.navigate(['/pricing']);
+            });
+            return;
+        }
+
+        const file = this.st.selectedFile()!;
+
         const maxSize = this.r2.getMaxCloudFileSize();
         if (file.size > maxSize) {
             this.modal.showWarning(
@@ -233,60 +230,47 @@ export class UploadComponent implements OnInit, OnDestroy {
             return;
         }
 
-        // Valida password se impostata (Premium only)
-        const password = this.st.showPasswordInput() && this.st.password() ? this.st.password() : undefined;
-        if (password && !this.isPremium()) {
-            this.modal.showWarning(
-                this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
-                this.translate.instant('UPLOAD.MODAL_PREMIUM_PASSWORD_MSG')
-            );
-            this.st.password.set('');
-            this.st.showPasswordInput.set(false);
-        }
-
-        // Valida custom slug se impostato
         const slug = this.st.showCustomSlug() && this.st.customSlug() ? this.st.customSlug().trim() : undefined;
         if (slug && !this.validateSlug(slug)) return;
 
         this.st.isGeneratingLink.set(true);
 
         try {
-            // 1. Hash file
             const fileHash = await this.hasher.calculateHash(file, (p) => {
                 this.st.hashProgress.set(Math.round(p));
             });
 
-            // 2. Upload to R2
+            // Compute expiry: burn-on-read → 24h safety net; 3day → 3 days
+            const retentionPolicy = this.st.retentionPolicy() === '3day' ? '3day' as const : 'burn' as const;
+            const expiryDays = retentionPolicy === '3day' ? 3 : 1;
+            const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000).toISOString();
+
             this.st.isCloudUploading.set(true);
             this.cloudProgressInterval = setInterval(() => {
                 this.st.cloudUploadProgress.set(this.r2.uploadProgress());
             }, 200);
 
-            const meta = await this.r2.upload(file, this.st.retentionPolicy(), fileHash);
+            const meta = await this.r2.upload(file, retentionPolicy, fileHash);
 
             this.clearCloudProgressInterval();
             this.st.isCloudUploading.set(false);
 
-            // 3. Create DB record
             const linkId = this.crypto.generateLinkId(12);
             const userId = this.supabase.currentUser()?.id || null;
-            const retentionPolicy = this.st.retentionPolicy();
-
             const transferData: any = {
                 sender_id: userId,
                 file_name: file.name,
                 file_size: file.size,
                 file_hash: fileHash,
-                mode: retentionPolicy === 'burn' ? 'burn' : 'seed',
+                mode: 'seed',
                 link_id: linkId,
-                password_protected: !!password,
+                password_protected: false,
                 transfer_type: 'cloud',
                 retention_policy: retentionPolicy,
                 r2_token: meta.token,
+                expires_at: expiresAt,
             };
-            if (this.isPremium() && slug) {
-                transferData.custom_slug = slug;
-            }
+            if (this.isPremium() && slug) transferData.custom_slug = slug;
 
             await this.supabase.createFileTransfer(transferData);
 
@@ -294,7 +278,6 @@ export class UploadComponent implements OnInit, OnDestroy {
                 await this.supabase.incrementDailyFileCount();
             }
 
-            // 4. Generate link + QR
             this.st.linkId.set(linkId);
             const linkPath = this.isPremium() && slug ? slug : linkId;
             await this.setLinkAndQR(linkPath);
@@ -309,78 +292,6 @@ export class UploadComponent implements OnInit, OnDestroy {
         }
     }
 
-    /**
-     * P2P path: hash → WebRTC session → attende receiver
-     */
-    private async generateP2PLink() {
-        const file = this.st.selectedFile()!;
-
-        // Enforce: modalità persistente solo per utenti autenticati
-        if (this.st.mode() === 'seed' && !this.supabase.isAuthenticated()) {
-            this.modal.showWarning(
-                this.translate.instant('UPLOAD.MODAL_AUTH_TITLE'),
-                this.translate.instant('UPLOAD.MODAL_AUTH_MSG')
-            );
-            return;
-        }
-
-        this.st.isGeneratingLink.set(true);
-
-        try {
-            const password = this.st.showPasswordInput() && this.st.password() ? this.st.password() : undefined;
-            if (password && !this.isPremium()) {
-                this.modal.showWarning(
-                    this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
-                    this.translate.instant('UPLOAD.MODAL_PREMIUM_PASSWORD_MSG')
-                );
-                this.st.password.set('');
-                this.st.showPasswordInput.set(false);
-            }
-
-            const slug = this.st.showCustomSlug() && this.st.customSlug() ? this.st.customSlug().trim() : undefined;
-            if (slug && !this.validateSlug(slug)) return;
-
-            const { linkId, session } = await this.signaling.startSenderSession(
-                file,
-                this.st.mode(),
-                this.isPremium() && password ? password : undefined,
-                (progress) => {
-                    this.st.hashProgress.set(Math.round(progress));
-                },
-                this.isPremium() && slug ? slug : undefined,
-                {
-                    transfer_type: 'p2p',
-                    retention_policy: this.st.mode() === 'burn' ? 'burn' : 'permanent',
-                    r2_token: null,
-                }
-            );
-
-            this.st.linkId.set(linkId);
-            this.st.session.set(session);
-
-            const linkPath = this.isPremium() && slug ? slug : linkId;
-            await this.setLinkAndQR(linkPath);
-
-            // Subscribe to session updates
-            this.sessionSub?.unsubscribe();
-            this.sessionSub = this.signaling.getSessionUpdates$().subscribe(updatedSession => {
-                if (updatedSession.linkId === linkId) {
-                    this.st.session.set(updatedSession);
-                    this.handleSessionStatus(updatedSession.status);
-                }
-            });
-
-        } catch (error: any) {
-            console.error('Error generating P2P link:', error);
-            this.modal.showError(this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'), error.message || 'Impossibile generare il link');
-        } finally {
-            this.st.isGeneratingLink.set(false);
-        }
-    }
-
-    /**
-     * Genera URL completo e QR code (shared tra cloud e P2P)
-     */
     private async setLinkAndQR(linkPath: string) {
         const fullLink = `${window.location.origin}/download/${linkPath}`;
         this.st.generatedLink.set(fullLink);
@@ -397,9 +308,51 @@ export class UploadComponent implements OnInit, OnDestroy {
         }
     }
 
-    /**
-     * Annulla upload cloud in corso
-     */
+    // ─── Session status handling ──────────────────────────────────
+
+    private handleSessionStatus(status: string) {
+        if (status === 'connecting') {
+            this.modal.showInfo(
+                this.translate.instant('UPLOAD.MODAL_CONNECTING_TITLE'),
+                this.translate.instant('UPLOAD.MODAL_CONNECTING_MSG')
+            );
+        } else if (status === 'transferring') {
+            this.modal?.close();
+            this.st.isBurnUploading.set(true);
+            // Start polling burn progress
+            this.clearBurnProgressInterval();
+            this.burnProgressInterval = setInterval(() => {
+                this.st.burnUploadProgress.set(this.signaling.senderProgress());
+            }, 200);
+        } else if (status === 'completed') {
+            this.clearBurnProgressInterval();
+            this.st.isBurnUploading.set(false);
+            this.handleTransferComplete();
+        } else if (status === 'error') {
+            this.clearBurnProgressInterval();
+            this.st.isBurnUploading.set(false);
+            this.modal.showError(
+                this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'),
+                this.translate.instant('UPLOAD.MODAL_TRANSFER_ERROR')
+            );
+        }
+    }
+
+    handleTransferComplete() {
+        const isBurnMode = this.st.mode() === 'burn';
+
+        this.modal.showSuccess(
+            this.translate.instant('UPLOAD.MODAL_COMPLETE_TITLE'),
+            isBurnMode
+                ? this.translate.instant('UPLOAD.MODAL_COMPLETE_BURN')
+                : this.translate.instant('UPLOAD.MODAL_COMPLETE_SEED')
+        );
+
+        if (isBurnMode) {
+            setTimeout(() => this.reset(), 5000);
+        }
+    }
+
     cancelCloudUpload() {
         this.r2.abort();
         this.clearCloudProgressInterval();
@@ -415,157 +368,36 @@ export class UploadComponent implements OnInit, OnDestroy {
         }
     }
 
-    /**
-     * Check se il file supera il limite cloud
-     */
-    isFileTooLargeForCloud(): boolean {
-        const file = this.st.selectedFile();
-        return !!file && file.size > this.r2.getMaxCloudFileSize();
-    }
-
-    get maxCloudFileSizeFormatted(): string {
-        return this.formatFileSize(this.r2.getMaxCloudFileSize());
-    }
-
-    /**
-     * Centralizza la gestione degli aggiornamenti di stato sessione
-     */
-    private handleSessionStatus(status: string) {
-        if (status === 'connecting') {
-            this.st.isTransferring.set(false);
-            this.st.isRetrying.set(false);
-            this.modal.showInfo(
-                this.translate.instant('UPLOAD.MODAL_CONNECTING_TITLE'),
-                this.translate.instant('UPLOAD.MODAL_CONNECTING_MSG')
-            );
-        } else if (status === 'connected') {
-            this.startFileTransfer();
-        } else if (status === 'transferring') {
-            this.modal?.close();
-            this.st.isRetrying.set(false);
-            this.st.isTransferring.set(true);
-        } else if (status === 'completed') {
-            this.handleTransferComplete();
-        } else if (status === 'retry-waiting') {
-            this.modal?.close();
-            this.st.isTransferring.set(false);
-            this.st.isRetrying.set(true);
-        } else if (status === 'disconnected') {
-            this.modal.showError(
-                this.translate.instant('UPLOAD.MODAL_DISCONNECTED_TITLE'),
-                this.translate.instant('UPLOAD.MODAL_DISCONNECTED_MSG')
-            );
-        } else if (status === 'error') {
-            this.modal.showError(
-                this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'),
-                this.translate.instant('UPLOAD.MODAL_TRANSFER_ERROR')
-            );
+    private clearBurnProgressInterval() {
+        if (this.burnProgressInterval) {
+            clearInterval(this.burnProgressInterval);
+            this.burnProgressInterval = null;
         }
     }
 
-    /**
-     * Avvia trasferimento file
-     */
-    async startFileTransfer() {
-        const file = this.st.selectedFile();
-        const linkId = this.st.linkId();
-        if (!file || !linkId) return;
+    // ─── Reset ───────────────────────────────────────────────────
 
-        this.st.isTransferring.set(true);
-        this.modal?.close();
-
-        try {
-            await this.signaling.sendFileWhenReady(linkId);
-        } catch (error: any) {
-            console.error('Transfer error:', error);
-            this.modal.showError(this.translate.instant('UPLOAD.MODAL_TRANSFER_ERROR'), error.message);
+    reset() {
+        const currentLinkId = this.st.linkId();
+        const wasBurn = this.st.transferMethod() === 'burn';
+        this.sessionSub?.unsubscribe();
+        this.clearCloudProgressInterval();
+        this.clearBurnProgressInterval();
+        this.st.reset();
+        if (wasBurn && currentLinkId) {
+            this.signaling.closeSession(currentLinkId);
         }
     }
 
-    /**
-     * Gestisce completamento trasferimento
-     */
-    handleTransferComplete() {
-        this.st.isTransferring.set(false);
+    // ─── Premium gates ───────────────────────────────────────────
 
-        const isBurnMode = this.st.mode() === 'burn';
-
-        this.modal.showSuccess(
-            this.translate.instant('UPLOAD.MODAL_COMPLETE_TITLE'),
-            isBurnMode
-                ? this.translate.instant('UPLOAD.MODAL_COMPLETE_BURN')
-                : this.translate.instant('UPLOAD.MODAL_COMPLETE_SEED')
-        );
-
-        if (isBurnMode) {
-            setTimeout(() => {
-                this.reset();
-            }, 5000);
-        }
-    }
-
-    /**
-     * Controlla se il browser supporta la Web Share API
-     */
-    get canShare(): boolean {
-        return typeof navigator !== 'undefined' && !!navigator.share;
-    }
-
-    /**
-     * Copia link negli appunti
-     */
-    async copyLink() {
-        const link = this.st.generatedLink();
-        if (!link) return;
-
-        try {
-            await navigator.clipboard.writeText(link);
-            this.st.linkCopied.set(true);
-
-            setTimeout(() => {
-                this.st.linkCopied.set(false);
-            }, 2000);
-        } catch (error) {
-            this.modal.showError(this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'), 'Impossibile copiare il link');
-        }
-    }
-
-    /**
-     * Condivide il link usando la Web Share API nativa del browser
-     */
-    async shareLink() {
-        const link = this.st.generatedLink();
-        const fileName = this.st.selectedFile()?.name;
-        if (!link) return;
-
-        try {
-            await navigator.share({
-                title: this.translate.instant('UPLOAD.SHARE_TITLE'),
-                text: fileName
-                    ? this.translate.instant('UPLOAD.SHARE_TEXT_FILE', { filename: fileName })
-                    : this.translate.instant('UPLOAD.SHARE_TEXT'),
-                url: link,
-            });
-        } catch (error: any) {
-            // L'utente ha annullato: non mostrare errore
-            if (error?.name !== 'AbortError') {
-                console.error('Share error:', error);
-            }
-        }
-    }
-
-    /**
-     * Toggle custom slug input
-     */
     toggleCustomSlug() {
         if (!this.isPremium()) {
             this.modal.showPremium(
                 this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
                 this.translate.instant('UPLOAD.MODAL_PREMIUM_URL_MSG')
-            ).subscribe(async (confirmed) => {
-                if (confirmed) {
-                    this.router.navigate(['/pricing']);
-                }
+            ).subscribe((confirmed) => {
+                if (confirmed) this.router.navigate(['/pricing']);
             });
             return;
         }
@@ -576,9 +408,35 @@ export class UploadComponent implements OnInit, OnDestroy {
         }
     }
 
-    /**
-     * Valida slug personalizzato
-     */
+    setCloudMode() {
+        if (!this.isPremium()) {
+            this.modal.showPremium(
+                this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
+                this.translate.instant('UPLOAD.MODAL_PREMIUM_CLOUD_MSG')
+            ).subscribe((confirmed) => {
+                if (confirmed) this.router.navigate(['/pricing']);
+            });
+            return;
+        }
+        this.st.transferMethod.set('cloud');
+        this.st.retentionPolicy.set('burn');
+    }
+
+    protected setPersistentMode() {
+        if (!this.isPremium()) {
+            this.modal.showPremium(
+                this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
+                this.translate.instant('UPLOAD.MODAL_PREMIUM_SEED_MSG')
+            ).subscribe((confirmed) => {
+                if (confirmed) this.router.navigate(['/pricing']);
+            });
+            return;
+        }
+        this.st.mode.set('seed');
+    }
+
+    // ─── Slug validation ─────────────────────────────────────────
+
     validateSlug(slug: string): boolean {
         if (slug.length < 3 || slug.length > 32) {
             this.st.customSlugError.set(this.translate.instant('UPLOAD.SLUG_ERROR_LENGTH'));
@@ -592,42 +450,52 @@ export class UploadComponent implements OnInit, OnDestroy {
         return true;
     }
 
-    /**
-     * Toggle password input
-     */
-    togglePasswordInput() {
-        if (!this.isPremium()) {
-            this.modal.showPremium(
-                this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
-                this.translate.instant('UPLOAD.MODAL_PREMIUM_PASSWORD_MSG')
-            ).subscribe(async (confirmed) => {
-                if (confirmed) {
-                    this.router.navigate(['/pricing']);
-                }
+    // ─── Sharing ────────────────────────────────────────────────
+
+    async copyLink() {
+        const link = this.st.generatedLink();
+        if (!link) return;
+        try {
+            await navigator.clipboard.writeText(link);
+            this.st.linkCopied.set(true);
+            setTimeout(() => this.st.linkCopied.set(false), 2000);
+        } catch {
+            this.modal.showError(this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'), 'Impossibile copiare il link');
+        }
+    }
+
+    async shareLink() {
+        const link = this.st.generatedLink();
+        const fileName = this.st.selectedFile()?.name;
+        if (!link) return;
+        try {
+            await navigator.share({
+                title: this.translate.instant('UPLOAD.SHARE_TITLE'),
+                text: fileName
+                    ? this.translate.instant('UPLOAD.SHARE_TEXT_FILE', { filename: fileName })
+                    : this.translate.instant('UPLOAD.SHARE_TEXT'),
+                url: link,
             });
-            return;
-        }
-
-        this.st.showPasswordInput.update(current => !current);
-    }
-
-    /**
-     * Reset completo: chiude la sessione e pulisce tutto lo stato
-     */
-    reset() {
-        const currentLinkId = this.st.linkId();
-        const wasCloud = this.st.transferMethod() === 'cloud';
-        this.sessionSub?.unsubscribe();
-        this.clearCloudProgressInterval();
-        this.st.reset();
-        if (!wasCloud && currentLinkId) {
-            this.signaling.closeSession(currentLinkId);
+        } catch (error: any) {
+            if (error?.name !== 'AbortError') console.error('Share error:', error);
         }
     }
 
-    /**
-     * Utilities
-     */
+    get canShare(): boolean {
+        return typeof navigator !== 'undefined' && !!navigator.share;
+    }
+
+    // ─── Utilities ───────────────────────────────────────────────
+
+    isFileTooLargeForCloud(): boolean {
+        const file = this.st.selectedFile();
+        return !!file && file.size > this.r2.getMaxCloudFileSize();
+    }
+
+    get maxCloudFileSizeFormatted(): string {
+        return this.formatFileSize(this.r2.getMaxCloudFileSize());
+    }
+
     formatFileSize(bytes: number): string {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
@@ -658,62 +526,5 @@ export class UploadComponent implements OnInit, OnDestroy {
         return this.st.mode() === 'burn'
             ? this.translate.instant('UPLOAD.MODE_BURN_DESC_LINK')
             : this.translate.instant('UPLOAD.MODE_SEED_DESC_LINK');
-    }
-
-    protected setPersistentMode() {
-        if (!this.isPremium()) {
-            this.modal.showPremium(
-                this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
-                this.translate.instant('UPLOAD.MODAL_PREMIUM_SEED_MSG')
-            ).subscribe(async (confirmed) => {
-                if (confirmed) {
-                    this.router.navigate(['/pricing']);
-                }
-            });
-            return;
-        }
-
-        this.st.mode.set('seed');
-    }
-
-    /**
-     * Imposta retention "permanent" (premium-gated)
-     */
-    setRetentionPermanent() {
-        if (!this.isPremium()) {
-            this.modal.showPremium(
-                this.translate.instant('UPLOAD.MODAL_PREMIUM_TITLE'),
-                this.translate.instant('UPLOAD.RETENTION_PERMANENT_PREMIUM_MSG')
-            ).subscribe(async (confirmed) => {
-                if (confirmed) {
-                    this.router.navigate(['/pricing']);
-                }
-            });
-            return;
-        }
-        this.st.retentionPolicy.set('permanent');
-    }
-
-    getRetentionIcon(): string {
-        const r = this.st.retentionPolicy();
-        return r === 'burn' ? '🔥' : r === '3day' ? '⏱️' : '♾️';
-    }
-
-    getRetentionLabel(): string {
-        const r = this.st.retentionPolicy();
-        return r === 'burn'
-            ? this.translate.instant('UPLOAD.RETENTION_BURN')
-            : r === '3day'
-                ? this.translate.instant('UPLOAD.RETENTION_3DAY')
-                : this.translate.instant('UPLOAD.RETENTION_PERMANENT');
-    }
-
-    getRetentionDescription(): string {
-        const r = this.st.retentionPolicy();
-        return r === 'burn'
-            ? this.translate.instant('UPLOAD.RETENTION_BURN_DESC')
-            : r === '3day'
-                ? this.translate.instant('UPLOAD.RETENTION_3DAY_DESC')
-                : this.translate.instant('UPLOAD.RETENTION_PERMANENT_DESC');
     }
 }

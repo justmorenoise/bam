@@ -30,7 +30,7 @@ export interface FileTransferRecord {
     created_at: string;
     status: 'active' | 'completed' | 'expired';
     deleted_at?: string | null;
-    transfer_type: 'p2p' | 'cloud';
+    transfer_type: 'p2p' | 'cloud' | 'burn';
     retention_policy: 'burn' | '3day' | 'permanent';
     r2_token: string | null;
 }

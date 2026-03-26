@@ -32,7 +32,7 @@ import { AdService } from '@core/services/ad.service';
     `]
 })
 export class AppComponent implements OnInit {
-    title = 'Bam! - P2P File Sharing';
+    title = 'Bam! - File Sharing';
 
     constructor(
         private languageService: LanguageService,

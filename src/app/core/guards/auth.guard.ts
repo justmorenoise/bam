@@ -1,7 +1,6 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../services/supabase.service';
-import { PlatformService } from '../services/platform.service';
 import { environment } from '../../../environments/environment';
 
 export const maintenanceGuard = () => {
@@ -43,22 +42,6 @@ export const premiumGuard = () => {
  * - Utente premium → accesso consentito
  */
 export const electronPremiumGuard = () => {
-    const supabase = inject(SupabaseService);
-    const platform = inject(PlatformService);
-    const router = inject(Router);
-
-    // Su web questo guard non deve mai bloccare
-    if (!platform.isElectron) {
-        return true;
-    }
-
-    if (!supabase.isAuthenticated()) {
-        return router.createUrlTree(['/auth/login']);
-    }
-
-    if (!supabase.isPremium()) {
-        return router.createUrlTree(['/electron-gate']);
-    }
-
+    // TODO: Electron non ancora implementato — guard disabilitato
     return true;
 };

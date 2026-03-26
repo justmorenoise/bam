@@ -10,5 +10,5 @@ bucket_name = "bam-transfers-pre"
 crons = ["0 */6 * * *"]
 
 [vars]
-ALLOWED_ORIGINS = "https://pre.bamfile.com,http://localhost:4200,https://localhost:4200,https://10.0.0.6:4200"
+ALLOWED_ORIGINS = "https://pre.bamfile.com,http://localhost:4200,http://localhost:4202,https://localhost:4200,https://10.0.0.6:4200"
 # API_KEY is a secret — set via: wrangler secret put API_KEY --config wrangler.preprod.toml

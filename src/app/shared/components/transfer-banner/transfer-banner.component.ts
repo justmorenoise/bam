@@ -19,7 +19,7 @@ import { SignalingService } from '@core/services/signaling.service';
 
                 <!-- Progress bar sottile in cima al banner -->
                 <div class="h-0.5 bg-slate-800">
-                    @if (st.isTransferring()) {
+                    @if (st.isBurnUploading()) {
                         <div
                                 class="h-full bg-gradient-to-r from-orange-500 to-red-500 transition-all duration-300"
                                 [style.width.%]="signaling.senderProgress()?.percentage ?? 0">
@@ -34,7 +34,7 @@ import { SignalingService } from '@core/services/signaling.service';
                     <div class="max-w-5xl mx-auto flex items-center gap-3">
 
                         <!-- Icona stato -->
-                        @if (st.isTransferring()) {
+                        @if (st.isBurnUploading()) {
                             <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse shrink-0"></span>
                         } @else {
                             <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0"></span>
@@ -46,13 +46,13 @@ import { SignalingService } from '@core/services/signaling.service';
                         </span>
 
                         <!-- Stats (solo durante il trasferimento) -->
-                        @if (st.isTransferring()) {
+                        @if (st.isBurnUploading()) {
                             <div class="flex items-center gap-4 shrink-0">
                                 <span class="text-sm font-black font-mono text-orange-400">
                                     {{ (signaling.senderProgress()?.percentage ?? 0) | number:'1.0-1' }}%
                                 </span>
                                 <span class="text-xs text-slate-400 font-mono hidden sm:block">
-                                    {{ formatSpeed(signaling.senderProgress()?.speed ?? 0) }}
+                                    {{ formatSpeed(signaling.senderProgress()?.speedBps ?? 0) }}
                                 </span>
                             </div>
                         } @else {
@@ -90,7 +90,7 @@ export class TransferBannerComponent {
 
     shouldShow(): boolean {
         const onUploadRoute = this.router.url === '/upload';
-        return !onUploadRoute && (this.st.isTransferring() || this.st.isRetrying());
+        return !onUploadRoute && this.st.isBurnUploading();
     }
 
     goToUpload() {

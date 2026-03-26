@@ -5,6 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --ssl true --ssl-key ./ssl/localhost.key --ssl-cert ./ssl/localhost.crt",
+    "start:nossl": "ng serve --port 4202",
     "start:ip": "ng serve --host 10.0.0.6 --ssl true --ssl-key ./ssl/localhost.key --ssl-cert ./ssl/localhost.crt",
     "build": "ng build",
     "build:prod": "node scripts/increment-version.js && ng build --configuration production",

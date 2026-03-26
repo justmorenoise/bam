@@ -273,6 +273,13 @@ export class R2TransferService {
             : environment.limits.free.maxCloudFileSize;
     }
 
+    /** Ritorna il limite max per il burn upload (null = illimitato) */
+    getMaxFileSize(): number | null {
+        return this.supabase.isPremium()
+            ? environment.limits.premium.maxFileSize
+            : environment.limits.free.maxFileSize;
+    }
+
     private headers(extra: Record<string, string> = {}): Record<string, string> {
         return {
             'X-Bam-Api-Key': environment.r2.apiKey,

@@ -37,7 +37,7 @@ export class ReceiptService {
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(100, 100, 100);
-        doc.text('P2P File Sharing — Ricevuta di Consegna', pageWidth / 2, y, { align: 'center' });
+        doc.text('Bam! File Sharing — Ricevuta di Consegna', pageWidth / 2, y, { align: 'center' });
         y += 15;
 
         // Linea separatrice
@@ -116,9 +116,9 @@ export class ReceiptService {
         doc.setTextColor(80, 80, 80);
 
         const securityNotes = [
-            'Trasferimento diretto P2P via WebRTC — nessun server intermedio.',
-            'Crittografia E2E nativa tramite DTLS 1.2+.',
-            'Integrità verificata tramite hash SHA-256.',
+            'Trasferimento sicuro via Cloudflare R2 con crittografia HTTPS/TLS 1.3.',
+            'Dati temporanei: eliminati immediatamente (burn) o entro 3 giorni (cloud).',
+            'Integrità verificata tramite hash xxHash128.',
         ];
 
         if (data.passwordProtected) {
@@ -140,7 +140,7 @@ export class ReceiptService {
         doc.setFontSize(8);
         doc.setTextColor(150, 150, 150);
         doc.text(
-            `Generato da BAM P2P File Sharing — ${this.formatDate(new Date())}`,
+            `Generato da BAM File Sharing — ${this.formatDate(new Date())}`,
             pageWidth / 2,
             y,
             { align: 'center' }

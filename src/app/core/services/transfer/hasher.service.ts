@@ -1,6 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { createXXHash128 } from 'hash-wasm';
-import { TRANSFER_CONFIG } from './transfer.config';
+
+const HASH_SUBTLE_MAX = 100 * 1024 * 1024;   // 100 MB — above this, use worker
+const HASH_WORKER_CHUNK_SIZE = 2 * 1024 * 1024; // 2 MB chunks for worker
 
 @Injectable({ providedIn: 'root' })
 export class HasherService {
@@ -11,7 +13,7 @@ export class HasherService {
     async calculateHash(file: File, onProgress?: (pct: number) => void): Promise<string> {
         this.hashProgress.set(0);
 
-        if (file.size <= TRANSFER_CONFIG.HASH_SUBTLE_MAX) {
+        if (file.size <= HASH_SUBTLE_MAX) {
             return this.hashWithXXHash128(file, onProgress);
         }
         return this.hashWithWorker(file, onProgress);
@@ -60,7 +62,7 @@ export class HasherService {
             this.terminateWorker();
             this.worker = new Worker(new URL('../../workers/hash-wasm.worker', import.meta.url), { type: 'module' });
 
-            const chunkSize = TRANSFER_CONFIG.HASH_WORKER_CHUNK_SIZE;
+            const chunkSize = HASH_WORKER_CHUNK_SIZE;
             const totalChunks = Math.ceil(file.size / chunkSize);
             let chunkIndex = 0;
 

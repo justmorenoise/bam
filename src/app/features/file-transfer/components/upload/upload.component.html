@@ -68,7 +68,7 @@
                         </button>
                     </div>
 
-                    <!-- Switch Cloud/P2P -->
+                    <!-- Tipo di condivisione: 2 tab -->
                     <div class="mb-6">
                         <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">
                             {{ 'UPLOAD.TRANSFER_METHOD' | translate }}
@@ -76,7 +76,22 @@
                         <div class="p-1.5 bg-slate-950 rounded-2xl border border-slate-800 grid grid-cols-2 gap-2">
                             <button
                                     type="button"
-                                    (click)="transferMethod.set('cloud')"
+                                    (click)="transferMethod.set('burn')"
+                                    class="flex flex-col items-center gap-1.5 py-4 rounded-xl transition-all"
+                                    [class]="transferMethod() === 'burn' ? 'bg-gradient-to-br from-orange-600 to-red-600 text-white shadow-lg shadow-orange-500/30' : 'text-slate-500 hover:text-slate-400'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                                </svg>
+                                <span class="text-xs font-black uppercase tracking-tighter">{{ 'UPLOAD.METHOD_BURN' | translate }}</span>
+                                <span class="text-[9px] text-center px-2"
+                                      [class]="transferMethod() === 'burn' ? 'text-white/70' : 'text-slate-600'">
+                                    {{ 'UPLOAD.BURN_DESC' | translate }}
+                                </span>
+                            </button>
+                            <button
+                                    type="button"
+                                    (click)="setCloudMode()"
                                     class="flex flex-col items-center gap-1.5 py-4 rounded-xl transition-all"
                                     [class]="transferMethod() === 'cloud' ? 'bg-gradient-to-br from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30' : 'text-slate-500 hover:text-slate-400'">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -89,29 +104,11 @@
                                     {{ 'UPLOAD.CLOUD_DESC' | translate }}
                                 </span>
                             </button>
-                            <button
-                                    type="button"
-                                    (click)="transferMethod.set('p2p')"
-                                    class="flex flex-col items-center gap-1.5 py-4 rounded-xl transition-all"
-                                    [class]="transferMethod() === 'p2p' ? 'bg-gradient-to-br from-green-600 to-emerald-600 text-white shadow-lg shadow-green-500/30' : 'text-slate-500 hover:text-slate-400'">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 12h8"/>
-                                    <path d="M12 4v16"/>
-                                    <path d="M20 12h-8"/>
-                                    <circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/>
-                                </svg>
-                                <span class="text-xs font-black uppercase tracking-tighter">{{ 'UPLOAD.METHOD_P2P' | translate }}</span>
-                                <span class="text-[9px] text-center px-2"
-                                      [class]="transferMethod() === 'p2p' ? 'text-white/70' : 'text-slate-600'">
-                                    {{ 'UPLOAD.P2P_DESC' | translate }}
-                                </span>
-                            </button>
                         </div>
                     </div>
 
-                    <!-- P2P Warning -->
-                    @if (transferMethod() === 'p2p') {
+                    <!-- Avviso Streaming diretto (devi restare online) -->
+                    @if (transferMethod() === 'burn') {
                         <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 mb-6 flex items-center gap-3">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400 shrink-0">
@@ -122,53 +119,28 @@
                         </div>
                     }
 
-                    <!-- Retention selector (Cloud) / Burn-Seed toggle (P2P) -->
+                    <!-- Opzioni eliminazione (solo Cloud/Persistente) -->
                     @if (transferMethod() === 'cloud') {
                         <div class="mb-6">
                             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">
-                                {{ 'UPLOAD.RETENTION_POLICY' | translate }}
+                                {{ 'UPLOAD.CLOUD_EXPIRY' | translate }}
                             </label>
-                            <div class="p-1.5 bg-slate-950 rounded-2xl border border-slate-800 grid grid-cols-3 gap-2">
+                            <div class="p-1.5 bg-slate-950 rounded-2xl border border-slate-800 flex flex-col gap-2">
                                 <button
                                         type="button"
                                         (click)="retentionPolicy.set('burn')"
-                                        class="flex flex-col items-center gap-1.5 py-4 rounded-xl transition-all"
-                                        [class]="retentionPolicy() === 'burn' ? 'bg-gradient-to-br from-orange-600 to-red-600 text-white shadow-lg shadow-orange-500/30' : 'text-slate-500 hover:text-slate-400'">
-                                    <span class="text-2xl">🔥</span>
-                                    <span class="text-[10px] font-black uppercase tracking-tighter">{{ 'UPLOAD.RETENTION_BURN' | translate }}</span>
-                                    <span class="text-[9px] text-center px-1"
-                                          [class]="retentionPolicy() === 'burn' ? 'text-white/70' : 'text-slate-600'">
-                                        {{ 'UPLOAD.RETENTION_BURN_DESC' | translate }}
-                                    </span>
+                                        class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-left"
+                                        [class]="retentionPolicy() === 'burn' ? 'bg-orange-500/10 border border-orange-500/30 text-white' : 'border border-transparent text-slate-400 hover:text-slate-300'">
+                                    <span class="text-xl shrink-0">🔥</span>
+                                    <span class="text-sm font-bold">{{ 'UPLOAD.RETENTION_BURN' | translate }}</span>
                                 </button>
                                 <button
                                         type="button"
                                         (click)="retentionPolicy.set('3day')"
-                                        class="flex flex-col items-center gap-1.5 py-4 rounded-xl transition-all"
-                                        [class]="retentionPolicy() === '3day' ? 'bg-gradient-to-br from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30' : 'text-slate-500 hover:text-slate-400'">
-                                    <span class="text-2xl">⏱️</span>
-                                    <span class="text-[10px] font-black uppercase tracking-tighter">{{ 'UPLOAD.RETENTION_3DAY' | translate }}</span>
-                                    <span class="text-[9px] text-center px-1"
-                                          [class]="retentionPolicy() === '3day' ? 'text-white/70' : 'text-slate-600'">
-                                        {{ 'UPLOAD.RETENTION_3DAY_DESC' | translate }}
-                                    </span>
-                                </button>
-                                <button
-                                        type="button"
-                                        (click)="setRetentionPermanent()"
-                                        class="flex flex-col items-center gap-1.5 py-4 rounded-xl transition-all relative"
-                                        [class]="retentionPolicy() === 'permanent' ? 'bg-gradient-to-br from-purple-600 to-violet-600 text-white shadow-lg shadow-purple-500/30' : 'text-slate-500 hover:text-slate-400'">
-                                    <span class="text-2xl">♾️</span>
-                                    <span class="text-[10px] font-black uppercase tracking-tighter">{{ 'UPLOAD.RETENTION_PERMANENT' | translate }}</span>
-                                    <span class="text-[9px] text-center px-1"
-                                          [class]="retentionPolicy() === 'permanent' ? 'text-white/70' : 'text-slate-600'">
-                                        {{ 'UPLOAD.RETENTION_PERMANENT_DESC' | translate }}
-                                    </span>
-                                    @if (!isPremium()) {
-                                        <span class="absolute top-2 right-2 text-[8px] px-1.5 py-0.5 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-500 rounded-full border border-yellow-500/30 font-bold">
-                                            {{ 'COMMON.PREMIUM_BADGE' | translate }}
-                                        </span>
-                                    }
+                                        class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-left"
+                                        [class]="retentionPolicy() === '3day' ? 'bg-blue-500/10 border border-blue-500/30 text-white' : 'border border-transparent text-slate-400 hover:text-slate-300'">
+                                    <span class="text-xl shrink-0">📅</span>
+                                    <span class="text-sm font-bold">{{ 'UPLOAD.RETENTION_3DAY' | translate }}</span>
                                 </button>
                             </div>
                         </div>
@@ -179,68 +151,7 @@
                                 <p class="text-sm text-red-400">{{ 'UPLOAD.CLOUD_FILE_TOO_LARGE' | translate:{ maxSize: maxCloudFileSizeFormatted } }}</p>
                             </div>
                         }
-                    } @else {
-                        <!-- Switch Burn/Seed (P2P) -->
-                        <div class="mb-6">
-                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">
-                                {{ 'UPLOAD.SHARE_MODE' | translate }}
-                            </label>
-                            <div class="p-1.5 bg-slate-950 rounded-2xl border border-slate-800 grid grid-cols-2 gap-2">
-                                <button
-                                        type="button"
-                                        (click)="mode.set('burn')"
-                                        class="flex flex-col items-center gap-1.5 py-4 rounded-xl transition-all"
-                                        [class]="mode() === 'burn' ? 'bg-gradient-to-br from-orange-600 to-red-600 text-white shadow-lg shadow-orange-500/30' : 'text-slate-500 hover:text-slate-400'">
-                                    <span class="text-2xl">🔥</span>
-                                    <span class="text-xs font-black uppercase tracking-tighter">{{ 'UPLOAD.MODE_BURN' | translate }}</span>
-                                    <span class="text-[9px] text-center px-2"
-                                          [class]="mode() === 'burn' ? 'text-white/70' : 'text-slate-600'">
-                                        {{ 'UPLOAD.MODE_BURN_DESC' | translate }}
-                                    </span>
-                                </button>
-                                <button
-                                        type="button"
-                                        (click)="setPersistentMode()"
-                                        class="flex flex-col items-center gap-1.5 py-4 rounded-xl transition-all"
-                                        [class]="mode() === 'seed' ? 'bg-gradient-to-br from-green-600 to-emerald-600 text-white shadow-lg shadow-green-500/30' : 'text-slate-500 hover:text-slate-400'">
-                                    <span class="text-2xl">🌱</span>
-                                    <span class="text-xs font-black uppercase tracking-tighter">{{ 'UPLOAD.MODE_SEED' | translate }}</span>
-                                    <span class="text-[9px] text-center px-2"
-                                          [class]="mode() === 'seed' ? 'text-white/70' : 'text-slate-600'">
-                                        {{ 'UPLOAD.MODE_SEED_DESC' | translate }}
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
                     }
-
-                    <!-- Password Protection (Premium) -->
-                    <div class="mb-6 p-3 rounded-2xl border border-slate-800">
-                        <div class="flex items-center justify-between">
-                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                                {{ 'UPLOAD.PASSWORD_PROTECTION' | translate }}
-                                @if (!isPremium()) {
-                                    <span class="ml-2 text-[9px] px-2 py-0.5 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-500 rounded-full border border-yellow-500/30">
-                                        {{ 'COMMON.PREMIUM_BADGE' | translate }}
-                                    </span>
-                                }
-                            </label>
-                            <button
-                                    type="button"
-                                    (click)="togglePasswordInput()"
-                                    class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
-                                    [class]="showPasswordInput() ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'">
-                                {{ showPasswordInput() ? ('UPLOAD.PASSWORD_ACTIVE' | translate) : ('UPLOAD.PASSWORD_DISABLED' | translate) }}
-                            </button>
-                        </div>
-                        @if (showPasswordInput()) {
-                            <input
-                                    type="password"
-                                    [(ngModel)]="password"
-                                    [placeholder]="'UPLOAD.PASSWORD_PLACEHOLDER' | translate"
-                                    class="w-full mt-3 px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all">
-                        }
-                    </div>
 
                     <!-- Custom URL (Premium) -->
                     <div class="mb-8 p-3 rounded-2xl border border-slate-800">
@@ -389,26 +300,15 @@
                                     <span class="text-sm font-mono text-slate-400">{{ formatFileSize(selectedFile()!.size) }}</span>
                                     @if (transferMethod() === 'cloud') {
                                         <span class="text-xs px-2 py-1 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 font-bold uppercase tracking-wider">
-                                            Cloud
+                                            {{ 'UPLOAD.METHOD_CLOUD' | translate }}
                                         </span>
                                         <span class="text-xs px-2 py-1 rounded-lg font-bold uppercase tracking-wider"
-                                              [class]="retentionPolicy() === 'burn' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
-                                                      : retentionPolicy() === '3day' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
-                                                      : 'bg-purple-500/20 text-purple-400 border border-purple-500/30'">
-                                            {{ getRetentionIcon() }} {{ getRetentionLabel() }}
+                                              [class]="retentionPolicy() === 'burn' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' : 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'">
+                                            {{ retentionPolicy() === 'burn' ? '🔥' : '📅' }}
                                         </span>
                                     } @else {
-                                        <span class="text-xs px-2 py-1 rounded-lg bg-green-500/20 text-green-400 border border-green-500/30 font-bold uppercase tracking-wider">
-                                            P2P
-                                        </span>
-                                        <span class="text-xs px-2 py-1 rounded-lg font-bold uppercase tracking-wider"
-                                              [class]="mode() === 'burn' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' : 'bg-green-500/20 text-green-400 border border-green-500/30'">
-                                            {{ getModeIcon() }} {{ getModeLabel() }}
-                                        </span>
-                                    }
-                                    @if (showPasswordInput() && password()) {
-                                        <span class="text-xs px-2 py-1 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 font-bold">
-                                            {{ 'COMMON.PROTECTED_BADGE' | translate }}
+                                        <span class="text-xs px-2 py-1 rounded-lg bg-orange-500/20 text-orange-400 border border-orange-500/30 font-bold uppercase tracking-wider">
+                                            {{ 'UPLOAD.METHOD_BURN' | translate }}
                                         </span>
                                     }
                                 </div>
@@ -441,9 +341,9 @@
 
                             <p class="text-xs text-slate-500 my-3">
                                 @if (transferMethod() === 'cloud') {
-                                    {{ getRetentionDescription() }}
+                                    {{ retentionPolicy() === 'burn' ? ('UPLOAD.RETENTION_BURN_DESC' | translate) : ('UPLOAD.CLOUD_EXPIRY_DESC' | translate:{ days: 3 }) }}
                                 } @else {
-                                    {{ getModeDescription() }}
+                                    {{ 'UPLOAD.MODE_BURN_DESC_LINK' | translate }}
                                 }
                             </p>
                             <div class="flex flex-1 w-full gap-3 items-start justify-center md:justify-start">
@@ -525,12 +425,12 @@
                     </div>
                 }
 
-                <!-- P2P: Transfer in Progress, Retry, Waiting -->
+                <!-- Burn: Transfer in Progress, Waiting -->
                 @if (transferMethod() !== 'cloud') {
                     <!-- Transfer in Progress -->
-                    @if (isTransferring()) {
+                    @if (isBurnUploading()) {
                         <div class="card">
-                            @if ((signaling.senderProgress()?.percentage ?? 0) >= 100) {
+                            @if ((burnUploadProgress()?.percentage ?? 0) >= 100) {
                                 <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
                                     <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
                                     {{ 'UPLOAD.TRANSFER_COMPLETED' | translate }}
@@ -547,17 +447,16 @@
                                 <div class="relative h-3 bg-slate-900 rounded-full overflow-hidden mb-4">
                                     <div
                                             class="absolute inset-y-0 left-0 bg-gradient-to-r from-orange-600 to-red-600 transition-all duration-300 shadow-lg shadow-orange-500/50"
-                                            [style.width.%]="signaling.senderProgress()?.percentage ?? 0">
+                                            [style.width.%]="burnUploadProgress()?.percentage ?? 0">
                                     </div>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <div>
-                                        <p class="text-3xl font-black font-mono">{{ (signaling.senderProgress()?.percentage ?? 0) | number:'1.0-1' }}
-                                            %</p>
+                                        <p class="text-3xl font-black font-mono">{{ (burnUploadProgress()?.percentage ?? 0) | number:'1.0-1' }}%</p>
                                         <p class="text-xs text-slate-500 uppercase tracking-wider">{{ 'UPLOAD.COMPLETED' | translate }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-lg font-bold text-orange-500">{{ formatSpeed(signaling.senderProgress()?.speed ?? 0) }}</p>
+                                        <p class="text-lg font-bold text-orange-500">{{ formatSpeed(burnUploadProgress()?.speedBps ?? 0) }}</p>
                                         <p class="text-xs text-slate-500 uppercase tracking-wider">{{ 'UPLOAD.SPEED' | translate }}</p>
                                     </div>
                                 </div>
@@ -565,32 +464,8 @@
                         </div>
                     }
 
-                    <!-- Retry -->
-                    @if (isRetrying()) {
-                        <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6 text-center">
-                            <div class="flex justify-center items-center gap-3 mb-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                     stroke-linejoin="round" class="text-amber-400">
-                                    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                                    <path d="M3 3v5h5"/>
-                                    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
-                                    <path d="M16 21h5v-5"/>
-                                </svg>
-                                <p class="text-lg font-bold text-amber-400">{{ 'UPLOAD.RECONNECTING' | translate }}</p>
-                                <div class="spinner"></div>
-                            </div>
-                            <p class="text-sm text-slate-400">
-                                {{ 'UPLOAD.RECONNECTING_DESC' | translate }}
-                            </p>
-                            <p class="text-xs text-slate-500 mt-2">
-                                {{ 'UPLOAD.RECONNECTING_HINT' | translate }}
-                            </p>
-                        </div>
-                    }
-
                     <!-- Waiting for Receiver -->
-                    @if (generatedLink() && !isTransferring() && !isRetrying() && session()?.status === 'waiting') {
+                    @if (generatedLink() && !isBurnUploading() && session()?.status === 'waiting') {
                         <div class="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-6 text-center">
                             <div class="flex justify-center items-center gap-3 mb-2">
                                 <p class="text-lg font-bold text-blue-400">{{ 'UPLOAD.WAITING_RECEIVER' | translate }}</p>

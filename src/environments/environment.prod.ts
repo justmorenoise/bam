@@ -3,7 +3,7 @@
 export const environment = {
     production: true,
     maintenanceMode: true,
-    appName: 'Bam! - P2P File Sharing',
+    appName: 'Bam! - File Sharing',
     version: '1.1.6',
 
     // Supabase Configuration
@@ -54,7 +54,7 @@ export const environment = {
     limits: {
         free: {
             maxFilesPerDay: 5,
-            maxFileSize: null, // Unlimited in P2P
+            maxFileSize: 1 * 1024 * 1024 * 1024, // 1 GB
             maxCloudFileSize: 500 * 1024 * 1024, // 500MB
         },
         premium: {

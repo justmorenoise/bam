@@ -11,7 +11,7 @@
     "FREE": "Free"
   },
   "FOOTER": {
-    "TAGLINE": "Condivisione file P2P sicura, veloce e privata. Nessun server cloud, crittografia end-to-end nativa.",
+    "TAGLINE": "Condivisione file sicura, veloce e privata. Streaming diretto o archiviazione cloud temporanea. Crittografia end-to-end nativa.",
     "TRY": "Prova subito",
     "START_SHARING": "Inizia a condividere",
     "DASHBOARD": "Dashboard",
@@ -36,7 +36,7 @@
   "DROP_ZONE": {
     "DRAG_TITLE": "Trascina qui il tuo file",
     "DRAG_DESC": "oppure clicca per sfogliare",
-    "NO_LIMIT": "♾️ Nessun limite di dimensione"
+    "NO_LIMIT": "📦 Max 1 GB gratis · Illimitato con Premium"
   },
   "TRANSFER_BANNER": {
     "ARIA_LABEL": "Torna al trasferimento in corso",
@@ -46,26 +46,26 @@
   "HOME": {
     "HERO_TITLE_1": "Condividi File",
     "HERO_TITLE_2": "in Modo Sicuro e Veloce",
-    "HERO_SUBTITLE": "Trasferimento diretto tra dispositivi. Nessun server cloud. Crittografia end-to-end nativa. Dimensione illimitata.",
+    "HERO_SUBTITLE": "Condivisione sicura tramite Cloudflare R2. Crittografia HTTPS/TLS 1.3 nativa. Fino a 1 GB gratuito.",
     "STAT_PRIVACY": "Privacy Garantita",
-    "STAT_PRIVACY_DESC": "Zero server cloud intermedi",
+    "STAT_PRIVACY_DESC": "Chunk eliminati subito dopo il download",
     "STAT_SIZE": "Dimensione File",
-    "STAT_SIZE_DESC": "Nessun limite di dimensione",
+    "STAT_SIZE_DESC": "Max 1 GB (Free) · Illimitato (Premium)",
     "STAT_LATENCY": "Latenza Server",
-    "STAT_LATENCY_DESC": "Connessione P2P diretta",
+    "STAT_LATENCY_DESC": "Trasferimento diretto via streaming",
     "SECURITY_TITLE": "Sicurezza E2EE Nativa",
-    "SECURITY_DESC": "Tutti i trasferimenti sono protetti nativamente con crittografia end-to-end tramite protocollo WebRTC (DTLS 1.2+). I tuoi file non passano mai dai nostri server.",
+    "SECURITY_DESC": "Tutti i trasferimenti sono protetti con crittografia HTTPS/TLS 1.3. L'integrità di ogni file è verificata tramite hash xxHash128 prima e dopo il trasferimento.",
     "FEATURE_FAST_TITLE": "Ultra Veloce",
-    "FEATURE_FAST_DESC": "Trasferimento diretto P2P senza server intermedi",
+    "FEATURE_FAST_DESC": "Streaming a chunk su R2 — nessuna archiviazione permanente",
     "FEATURE_SECURE_TITLE": "Sicuro",
-    "FEATURE_SECURE_DESC": "Crittografia end-to-end nativa con WebRTC",
+    "FEATURE_SECURE_DESC": "Crittografia HTTPS nativa e verifica integrità xxHash128",
     "FEATURE_SIMPLE_TITLE": "Semplice",
     "FEATURE_SIMPLE_DESC": "Drag & drop, genera link e condividi in secondi",
     "FEATURE_PREMIUM_TITLE": "Premium",
     "FEATURE_PREMIUM_DESC": "File illimitati, cifratura avanzata, zero pubblicità"
   },
   "UPLOAD": {
-    "TITLE": "Condividi File P2P",
+    "TITLE": "Condividi File",
     "CONFIGURE_LINK": "Configura il Link",
     "SHARE_MODE": "Modalità Condivisione",
     "MODE_BURN": "Usa e Getta",
@@ -85,7 +85,7 @@
     "SLUG_ERROR_FORMAT": "Solo lettere, numeri, trattini e underscore",
     "CREATE_LINK": "Crea Link",
     "ENCRYPTION_TITLE": "🔒 Crittografia End-to-End Nativa",
-    "ENCRYPTION_DESC": "Tutti i trasferimenti sono protetti automaticamente con WebRTC DTLS 1.2+. Nessun server intermedio tocca i tuoi dati.",
+    "ENCRYPTION_DESC": "Tutti i trasferimenti avvengono tramite HTTPS/TLS 1.3. I tuoi chunk transitano cifrati su Cloudflare R2 e vengono eliminati subito dopo il download.",
     "PROCESSING_FILE": "Elaborazione file in corso...",
     "PROCESSING_WAIT": "Elaborazione del file in corso... Attendere prego.",
     "GENERATING_LINK": "Generazione link in corso...",
@@ -114,6 +114,7 @@
     "MODAL_PREMIUM_PASSWORD_MSG": "La protezione con password è disponibile solo per utenti Premium",
     "MODAL_PREMIUM_URL_MSG": "Gli URL personalizzati sono disponibili solo per utenti Premium",
     "MODAL_PREMIUM_SEED_MSG": "La creazione di link persistenti è disponibile solo per utenti Premium",
+    "MODAL_PREMIUM_CLOUD_MSG": "Il trasferimento Cloud è disponibile solo per utenti Premium",
     "MODAL_COMPLETE_TITLE": "Trasferimento Completato!",
     "MODAL_COMPLETE_BURN": "Il file è stato trasferito e il link è stato distrutto",
     "MODAL_COMPLETE_SEED": "Il file è stato trasferito con successo",
@@ -130,24 +131,32 @@
     "MODE_SEED_FULL": "Persistente",
     "MODE_BURN_DESC_LINK": "Il link si autodistrugge dopo 1 download",
     "MODE_SEED_DESC_LINK": "Il link rimane attivo per download multipli",
-    "TRANSFER_METHOD": "Metodo di Trasferimento",
-    "METHOD_CLOUD": "Cloud",
+    "TRANSFER_METHOD": "Tipo di condivisione",
+    "METHOD_CLOUD": "Persistente",
     "METHOD_P2P": "P2P",
-    "CLOUD_DESC": "Upload su cloud, il destinatario scarica quando vuole",
+    "METHOD_BURN": "Streaming diretto",
+    "CLOUD_DESC": "Archiviato su Cloudflare R2",
     "P2P_DESC": "Trasferimento diretto, devi restare online",
-    "P2P_WARNING": "Devi restare online. La chiusura della pagina interrompe il trasferimento.",
+    "BURN_DESC": "Devi restare online durante il trasferimento",
+    "P2P_WARNING": "Devi restare online. La chiusura della pagina interrompe il trasferimento dei chunk.",
     "RETENTION_POLICY": "Durata del Link",
-    "RETENTION_BURN": "Usa e Getta",
+    "RETENTION_BURN": "Eliminazione automatica dopo il download",
     "RETENTION_BURN_DESC": "Eliminato dopo 1 download",
-    "RETENTION_3DAY": "3 Giorni",
+    "RETENTION_3DAY": "Link disponibile per un massimo di 3 giorni",
     "RETENTION_3DAY_DESC": "Download illimitati per 3 giorni",
     "RETENTION_PERMANENT": "Permanente",
     "RETENTION_PERMANENT_DESC": "Disponibile per sempre",
     "RETENTION_PERMANENT_PREMIUM_MSG": "L'archiviazione permanente è disponibile solo per utenti Premium",
+    "CLOUD_EXPIRY": "Opzioni di eliminazione",
+    "CLOUD_EXPIRY_1DAY": "1 Giorno",
+    "CLOUD_EXPIRY_2DAY": "2 Giorni",
+    "CLOUD_EXPIRY_3DAY": "3 Giorni",
+    "CLOUD_EXPIRY_DESC": "Il link scadrà automaticamente tra {{days}} giorni",
     "CLOUD_UPLOADING": "Upload su cloud in corso...",
     "CANCEL_UPLOAD": "Annulla upload",
     "CLOUD_READY": "File caricato sul cloud",
     "CLOUD_READY_DESC": "Condividi il link — il destinatario può scaricare in qualsiasi momento.",
+    "FILE_TOO_LARGE": "Il file supera il limite di {{maxSize}} per gli utenti Free. Fai l'upgrade a Premium per file illimitati.",
     "CLOUD_FILE_TOO_LARGE": "Il file supera il limite di {{maxSize}} per l'upload cloud."
   },
   "DOWNLOAD": {
@@ -177,8 +186,8 @@
     "FINALIZING": "Finalizzo il download. Attendi...",
     "DOWNLOADING": "Download in corso",
     "DOWNLOAD_BTN": "Scarica File",
-    "P2P_TITLE": "Trasferimento P2P Sicuro",
-    "P2P_DESC": "Il file verrà trasferito direttamente dal dispositivo del sender al tuo, senza passare attraverso server esterni.",
+    "P2P_TITLE": "Trasferimento Sicuro",
+    "P2P_DESC": "Il file viene trasmesso a chunk da Cloudflare R2 direttamente al tuo browser tramite HTTPS. I chunk vengono eliminati non appena scaricati.",
     "BURN_WARNING": "🔥 Questo link si autodistruggerà dopo il download!",
     "ERROR_CONNECTION": "Errore durante la connessione",
     "ERROR_VERIFY": "Errore durante la verifica del file.",
@@ -273,7 +282,7 @@
       "LABEL": "Chi Siamo",
       "TITLE_1": "La Rivoluzione del",
       "TITLE_HIGHLIGHT": "File Sharing",
-      "SUBTITLE": "Bam! nasce con una missione semplice: restituire il controllo dei tuoi file a te. Nessun cloud, nessun intermediario. Solo connessioni dirette, sicure e private."
+      "SUBTITLE": "Bam! nasce con una missione semplice: restituire il controllo dei tuoi file a te. Trasferimento sicuro tramite Cloudflare R2, con crittografia nativa e archiviazione temporanea."
     },
     "HOW": {
       "LABEL": "Come Funziona",
@@ -287,11 +296,11 @@
     },
     "STATS": {
       "PRIVACY_LABEL": "Privacy Garantita",
-      "PRIVACY_DESC": "Zero server cloud intermedi",
+      "PRIVACY_DESC": "Chunk eliminati subito dopo il download",
       "SIZE_LABEL": "Dimensione File",
-      "SIZE_DESC": "Nessun limite di dimensione",
+      "SIZE_DESC": "Max 1 GB (Free) · Illimitato (Premium)",
       "LATENCY_LABEL": "Latenza Server",
-      "LATENCY_DESC": "Connessione P2P diretta"
+      "LATENCY_DESC": "Trasferimento via streaming diretto"
     },
     "ROADMAP": {
       "LABEL": "Roadmap",
@@ -323,9 +332,9 @@
     "E2EE": {
       "LABEL": "Protocollo",
       "TITLE": "Crittografia End-to-End Nativa",
-      "P1_A": "Ogni connessione WebRTC stabilita su Bam! utilizza il protocollo ",
-      "P1_B": " (Datagram Transport Layer Security) per crittografare automaticamente tutti i dati in transito. Questo avviene a livello di trasporto, senza alcuna configurazione da parte dell'utente.",
-      "P2": "La crittografia è attiva di default su ogni trasferimento, indipendentemente dal piano scelto. I dati vengono cifrati dal browser del mittente e decifrati esclusivamente dal browser del destinatario. Nessun intermediario — incluso Bam! — può accedere al contenuto dei file."
+      "P1_A": "Ogni trasferimento su Bam! avviene tramite connessioni ",
+      "P1_B": " (Transport Layer Security) che crittografano automaticamente tutti i dati in transito. Questo avviene a livello di trasporto, senza alcuna configurazione da parte dell'utente.",
+      "P2": "La crittografia è attiva di default su ogni trasferimento, indipendentemente dal piano scelto. I dati vengono cifrati durante il transito e non sono mai accessibili in chiaro ai nostri server. Nessun intermediario — incluso Bam! — può accedere al contenuto dei file durante il trasferimento."
     },
     "PASSWORD": {
       "LABEL": "Premium",
@@ -342,20 +351,20 @@
       "TITLE": "Verifica Integrità",
       "P1_A": "Ogni file trasferito viene verificato tramite hash ",
       "P1_B": ". L'hash viene calcolato lato mittente prima dell'invio e confrontato lato destinatario al completamento del download, garantendo che il file non sia stato alterato durante il trasferimento.",
-      "RANGE_SM": "< 50 MB",
-      "RANGE_SM_DESC": "SubtleCrypto — API nativa del browser, veloce e sincrona.",
-      "RANGE_MD": "50 MB – 1 GB",
-      "RANGE_MD_DESC": "CryptoJS — hash incrementale per file di medie dimensioni.",
-      "RANGE_LG": "> 1 GB",
-      "RANGE_LG_DESC": "Web Worker + hash-wasm — calcolo non bloccante in thread separato."
+      "RANGE_SM": "< 100 MB",
+      "RANGE_SM_DESC": "Thread principale — xxHash128 streaming incrementale, nessuna allocazione completa in memoria.",
+      "RANGE_MD": "≥ 100 MB",
+      "RANGE_MD_DESC": "Web Worker + hash-wasm — xxHash128 non bloccante in thread separato.",
+      "RANGE_LG": "Tutti i file",
+      "RANGE_LG_DESC": "Verifica automatica al completamento — nessuna configurazione richiesta."
     },
     "ZERO_CLOUD": {
       "LABEL": "Architettura",
-      "TITLE": "Architettura Zero-Cloud",
-      "P1_A": "Bam! non carica mai i tuoi file su alcun server. L'architettura è interamente ",
-      "P1_B": ": il file viaggia direttamente dal browser del mittente a quello del destinatario tramite WebRTC.",
+      "TITLE": "Archiviazione Temporanea",
+      "P1_A": "I tuoi file transitano temporaneamente su ",
+      "P1_B": " e vengono eliminati automaticamente: immediatamente dopo il download in modalità Burn, oppure alla scadenza del link in modalità Cloud (massimo 3 giorni). Nessun dato viene conservato oltre il necessario.",
       "P2_A": "I nostri server gestiscono esclusivamente il ",
-      "P2_B": " — lo scambio iniziale di metadati necessario per stabilire la connessione diretta tra i due peer. Una volta stabilita la connessione, i server non sono più coinvolti. Nessun file, nessun frammento, nessun byte del tuo contenuto transita mai attraverso la nostra infrastruttura."
+      "P2_B": " — le notifiche in tempo reale tra mittente e destinatario tramite Supabase Realtime. Il contenuto dei file transita cifrato via HTTPS e non è mai accessibile in chiaro dalla nostra infrastruttura."
     },
     "VULN": {
       "TITLE": "Segnalazione Vulnerabilità",

@@ -11,7 +11,7 @@
     "FREE": "Free"
   },
   "FOOTER": {
-    "TAGLINE": "Secure, fast and private P2P file sharing. No cloud server, native end-to-end encryption.",
+    "TAGLINE": "Secure, fast and private file sharing. Direct streaming or temporary cloud storage. Native end-to-end encryption.",
     "TRY": "Try now",
     "START_SHARING": "Start sharing",
     "DASHBOARD": "Dashboard",
@@ -36,7 +36,7 @@
   "DROP_ZONE": {
     "DRAG_TITLE": "Drag your file here",
     "DRAG_DESC": "or click to browse",
-    "NO_LIMIT": "♾️ No size limit"
+    "NO_LIMIT": "📦 Max 1 GB free · Unlimited with Premium"
   },
   "TRANSFER_BANNER": {
     "ARIA_LABEL": "Back to transfer in progress",
@@ -46,26 +46,26 @@
   "HOME": {
     "HERO_TITLE_1": "Share Files",
     "HERO_TITLE_2": "Secure and Fast",
-    "HERO_SUBTITLE": "Direct device-to-device transfer. No cloud server. Native end-to-end encryption. Unlimited size.",
+    "HERO_SUBTITLE": "Secure sharing via Cloudflare R2. Native HTTPS/TLS 1.3 encryption. Up to 1 GB free.",
     "STAT_PRIVACY": "Privacy Guaranteed",
-    "STAT_PRIVACY_DESC": "Zero cloud intermediary servers",
+    "STAT_PRIVACY_DESC": "Chunks deleted immediately after download",
     "STAT_SIZE": "File Size",
-    "STAT_SIZE_DESC": "No size limit",
+    "STAT_SIZE_DESC": "Max 1 GB (Free) · Unlimited (Premium)",
     "STAT_LATENCY": "Server Latency",
-    "STAT_LATENCY_DESC": "Direct P2P connection",
+    "STAT_LATENCY_DESC": "Direct streaming transfer",
     "SECURITY_TITLE": "Native E2EE Security",
-    "SECURITY_DESC": "All transfers are natively protected with end-to-end encryption via WebRTC protocol (DTLS 1.2+). Your files never pass through our servers.",
+    "SECURITY_DESC": "All transfers are protected with HTTPS/TLS 1.3 encryption. Every file is verified via xxHash128 hash before and after transfer.",
     "FEATURE_FAST_TITLE": "Ultra Fast",
-    "FEATURE_FAST_DESC": "Direct P2P transfer without intermediary servers",
+    "FEATURE_FAST_DESC": "Chunked streaming on R2 — no permanent storage",
     "FEATURE_SECURE_TITLE": "Secure",
-    "FEATURE_SECURE_DESC": "Native end-to-end encryption with WebRTC",
+    "FEATURE_SECURE_DESC": "Native HTTPS encryption and xxHash128 integrity check",
     "FEATURE_SIMPLE_TITLE": "Simple",
     "FEATURE_SIMPLE_DESC": "Drag & drop, generate link and share in seconds",
     "FEATURE_PREMIUM_TITLE": "Premium",
     "FEATURE_PREMIUM_DESC": "Unlimited files, advanced encryption, zero ads"
   },
   "UPLOAD": {
-    "TITLE": "Share P2P Files",
+    "TITLE": "Share Files",
     "CONFIGURE_LINK": "Configure Link",
     "SHARE_MODE": "Share Mode",
     "MODE_BURN": "Burn",
@@ -85,7 +85,7 @@
     "SLUG_ERROR_FORMAT": "Only letters, numbers, hyphens and underscores",
     "CREATE_LINK": "Create Link",
     "ENCRYPTION_TITLE": "🔒 Native End-to-End Encryption",
-    "ENCRYPTION_DESC": "All transfers are automatically protected with WebRTC DTLS 1.2+. No intermediary server touches your data.",
+    "ENCRYPTION_DESC": "All transfers use HTTPS/TLS 1.3. Your chunks transit encrypted on Cloudflare R2 and are deleted immediately after download.",
     "PROCESSING_FILE": "Processing file...",
     "PROCESSING_WAIT": "Processing file... Please wait.",
     "GENERATING_LINK": "Generating link...",
@@ -114,6 +114,7 @@
     "MODAL_PREMIUM_PASSWORD_MSG": "Password protection is available only for Premium users",
     "MODAL_PREMIUM_URL_MSG": "Custom URLs are available only for Premium users",
     "MODAL_PREMIUM_SEED_MSG": "Creating persistent links is available only for Premium users",
+    "MODAL_PREMIUM_CLOUD_MSG": "Cloud transfer is available only for Premium users",
     "MODAL_COMPLETE_TITLE": "Transfer Completed!",
     "MODAL_COMPLETE_BURN": "The file has been transferred and the link has been destroyed",
     "MODAL_COMPLETE_SEED": "The file has been transferred successfully",
@@ -130,24 +131,32 @@
     "MODE_SEED_FULL": "Persistent",
     "MODE_BURN_DESC_LINK": "The link self-destructs after 1 download",
     "MODE_SEED_DESC_LINK": "The link remains active for multiple downloads",
-    "TRANSFER_METHOD": "Transfer Method",
-    "METHOD_CLOUD": "Cloud",
+    "TRANSFER_METHOD": "Sharing type",
+    "METHOD_CLOUD": "Persistent",
     "METHOD_P2P": "P2P",
-    "CLOUD_DESC": "Upload to cloud, recipient downloads anytime",
+    "METHOD_BURN": "Direct streaming",
+    "CLOUD_DESC": "Stored on Cloudflare R2",
     "P2P_DESC": "Direct transfer, you must stay online",
-    "P2P_WARNING": "You must stay online. Closing the page will stop the transfer.",
+    "BURN_DESC": "You must stay online during transfer",
+    "P2P_WARNING": "You must stay online. Closing the page will stop the chunk transfer.",
     "RETENTION_POLICY": "Link Duration",
-    "RETENTION_BURN": "Burn",
+    "RETENTION_BURN": "Delete automatically after download",
     "RETENTION_BURN_DESC": "Deleted after 1 download",
-    "RETENTION_3DAY": "3 Days",
+    "RETENTION_3DAY": "Link available for up to 3 days",
     "RETENTION_3DAY_DESC": "Unlimited downloads for 3 days",
     "RETENTION_PERMANENT": "Permanent",
     "RETENTION_PERMANENT_DESC": "Available forever",
     "RETENTION_PERMANENT_PREMIUM_MSG": "Permanent storage is available only for Premium users",
+    "CLOUD_EXPIRY": "Deletion options",
+    "CLOUD_EXPIRY_1DAY": "1 Day",
+    "CLOUD_EXPIRY_2DAY": "2 Days",
+    "CLOUD_EXPIRY_3DAY": "3 Days",
+    "CLOUD_EXPIRY_DESC": "The link will automatically expire in {{days}} days",
     "CLOUD_UPLOADING": "Uploading to cloud...",
     "CANCEL_UPLOAD": "Cancel upload",
     "CLOUD_READY": "File uploaded to cloud",
     "CLOUD_READY_DESC": "Share the link — the recipient can download at any time.",
+    "FILE_TOO_LARGE": "File exceeds the {{maxSize}} limit for Free users. Upgrade to Premium for unlimited file size.",
     "CLOUD_FILE_TOO_LARGE": "File exceeds the {{maxSize}} cloud upload limit."
   },
   "DOWNLOAD": {
@@ -177,8 +186,8 @@
     "FINALIZING": "Finalizing download. Please wait...",
     "DOWNLOADING": "Downloading",
     "DOWNLOAD_BTN": "Download File",
-    "P2P_TITLE": "Secure P2P Transfer",
-    "P2P_DESC": "The file will be transferred directly from the sender's device to yours, without passing through external servers.",
+    "P2P_TITLE": "Secure Transfer",
+    "P2P_DESC": "The file is transmitted in chunks from Cloudflare R2 directly to your browser via HTTPS. Chunks are deleted as soon as they are downloaded.",
     "BURN_WARNING": "🔥 This link will self-destruct after download!",
     "ERROR_CONNECTION": "Error during connection",
     "ERROR_VERIFY": "Error during file verification.",
@@ -273,7 +282,7 @@
       "LABEL": "About Us",
       "TITLE_1": "The Revolution of",
       "TITLE_HIGHLIGHT": "File Sharing",
-      "SUBTITLE": "Bam! was born with a simple mission: give back control of your files to you. No cloud, no intermediaries. Only direct, secure and private connections."
+      "SUBTITLE": "Bam! was born with a simple mission: give back control of your files to you. Secure transfer via Cloudflare R2, with native encryption and temporary storage."
     },
     "HOW": {
       "LABEL": "How It Works",
@@ -287,11 +296,11 @@
     },
     "STATS": {
       "PRIVACY_LABEL": "Privacy Guaranteed",
-      "PRIVACY_DESC": "Zero cloud intermediary servers",
+      "PRIVACY_DESC": "Chunks deleted immediately after download",
       "SIZE_LABEL": "File Size",
-      "SIZE_DESC": "No size limit",
+      "SIZE_DESC": "Max 1 GB (Free) · Unlimited (Premium)",
       "LATENCY_LABEL": "Server Latency",
-      "LATENCY_DESC": "Direct P2P connection"
+      "LATENCY_DESC": "Direct streaming transfer"
     },
     "ROADMAP": {
       "LABEL": "Roadmap",
@@ -323,9 +332,9 @@
     "E2EE": {
       "LABEL": "Protocol",
       "TITLE": "Native End-to-End Encryption",
-      "P1_A": "Every WebRTC connection established on Bam! uses the ",
-      "P1_B": " (Datagram Transport Layer Security) protocol to automatically encrypt all data in transit. This happens at the transport layer, without any configuration by the user.",
-      "P2": "Encryption is active by default on every transfer, regardless of the chosen plan. Data is encrypted by the sender's browser and decrypted exclusively by the recipient's browser. No intermediary — including Bam! — can access the file content."
+      "P1_A": "Every transfer on Bam! uses ",
+      "P1_B": " (Transport Layer Security) connections that automatically encrypt all data in transit. This happens at the transport layer, without any configuration by the user.",
+      "P2": "Encryption is active by default on every transfer, regardless of the chosen plan. Data is encrypted in transit and never accessible in plaintext by our servers. No intermediary — including Bam! — can access file content during transfer."
     },
     "PASSWORD": {
       "LABEL": "Premium",
@@ -342,20 +351,20 @@
       "TITLE": "Integrity Verification",
       "P1_A": "Every transferred file is verified via ",
       "P1_B": " hash. The hash is calculated on the sender side before sending and compared on the receiver side upon download completion, guaranteeing the file was not altered during transfer.",
-      "RANGE_SM": "< 50 MB",
-      "RANGE_SM_DESC": "SubtleCrypto — native browser API, fast and synchronous.",
-      "RANGE_MD": "50 MB – 1 GB",
-      "RANGE_MD_DESC": "CryptoJS — incremental hash for medium-sized files.",
-      "RANGE_LG": "> 1 GB",
-      "RANGE_LG_DESC": "Web Worker + hash-wasm — non-blocking computation in separate thread."
+      "RANGE_SM": "< 100 MB",
+      "RANGE_SM_DESC": "Main thread — xxHash128 incremental streaming, no full memory allocation.",
+      "RANGE_MD": "≥ 100 MB",
+      "RANGE_MD_DESC": "Web Worker + hash-wasm — non-blocking xxHash128 in separate thread.",
+      "RANGE_LG": "All files",
+      "RANGE_LG_DESC": "Automatic verification on completion — no configuration required."
     },
     "ZERO_CLOUD": {
       "LABEL": "Architecture",
-      "TITLE": "Zero-Cloud Architecture",
-      "P1_A": "Bam! never uploads your files to any server. The architecture is entirely ",
-      "P1_B": ": the file travels directly from the sender's browser to the recipient's browser via WebRTC.",
+      "TITLE": "Temporary Storage",
+      "P1_A": "Your files transit temporarily on ",
+      "P1_B": " and are automatically deleted: immediately after download in Burn mode, or when the link expires in Cloud mode (maximum 3 days). No data is retained beyond what is necessary.",
       "P2_A": "Our servers exclusively handle ",
-      "P2_B": " — the initial exchange of metadata needed to establish a direct connection between the two peers. Once the connection is established, the servers are no longer involved. No file, no fragment, no byte of your content ever transits through our infrastructure."
+      "P2_B": " — real-time notifications between sender and recipient via Supabase Realtime. File content transits encrypted via HTTPS and is never accessible in plaintext from our infrastructure."
     },
     "VULN": {
       "TITLE": "Vulnerability Reporting",

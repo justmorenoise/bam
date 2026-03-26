@@ -1,5 +1,5 @@
 export type RetentionPolicy = 'burn' | '3day' | 'permanent';
-export type TransferMethod = 'cloud' | 'p2p';
+export type TransferMethod = 'burn' | 'cloud';
 
 export interface R2TransferMeta {
     token: string;

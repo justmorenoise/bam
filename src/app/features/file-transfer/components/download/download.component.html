@@ -84,20 +84,6 @@
                     </div>
                 </div>
 
-                <!-- Password Input (if required) -->
-                @if (session()!.passwordProtected && !isDownloading()) {
-                    <div class="mb-6">
-                        <label class="block text-sm font-bold text-slate-300 mb-2 uppercase tracking-wide text-[10px]">{{ 'DOWNLOAD.PASSWORD_LABEL' | translate }}</label>
-                        <input
-                                type="password"
-                                class="input"
-                                [placeholder]="'DOWNLOAD.PASSWORD_PLACEHOLDER' | translate"
-                                [value]="password()"
-                                (input)="password.set($any($event.target).value)">
-                        <p class="text-xs text-slate-500 mt-1">{{ 'DOWNLOAD.PASSWORD_HINT' | translate }}</p>
-                    </div>
-                }
-
                 <!-- Connection Status -->
                 @if (isConnecting()) {
                     <div class="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-2xl">
@@ -155,19 +141,6 @@
                             <a routerLink="/" class="btn btn-primary w-full">{{ 'DOWNLOAD.SHARE_FILE' | translate }}</a>
                         </div>
                     </div>
-                } @else if (isVerifying()) {
-                    <div class="mb-6 p-6 bg-blue-500/10 border border-blue-500/30 rounded-2xl text-center">
-                        <div class="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                 stroke-linejoin="round" class="text-blue-400 animate-spin"
-                                 style="animation-duration: 2s">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-black text-blue-400 mb-2">{{ 'DOWNLOAD.VERIFYING' | translate }}</h3>
-                        <p class="text-sm text-slate-400">{{ 'DOWNLOAD.VERIFYING_DESC' | translate }}</p>
-                    </div>
                 } @else if (isDownloading()) {
                     <!--    DOWNLOAD IN CORSO    -->
                     <div class="mb-6">
@@ -204,28 +177,12 @@
                                 </div>
                             </div>
                             <div class="flex items-center justify-between mt-2">
-                                <span class="text-xs text-slate-500">{{ formatSpeed(signaling.receiverProgress()?.speed ?? 0) }}</span>
+                                <span class="text-xs text-slate-500">{{ formatSpeed(signaling.receiverProgress()?.speedBps ?? 0) }}</span>
                                 <span class="text-xs text-slate-500">{{ formatFileSize(session()!.fileInfo.size * (signaling.receiverProgress()?.percentage ?? 0) / 100) }} / {{ formatFileSize(session()!.fileInfo.size) }}</span>
                             </div>
                         }
                     </div>
                 }
-                @if (file()) {
-                    <!-- Download Button -->
-                    <button
-                            (click)="download()"
-                            class="btn btn-primary flex gap-3 justify-center py-4 text-lg w-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                             stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7 10 12 15 17 10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                        {{ 'DOWNLOAD.DOWNLOAD_BTN' | translate }}
-                    </button>
-                }
-
                 <!-- Info Box -->
                 <div class="mt-6 p-4 bg-slate-800/50 rounded-2xl border border-slate-700">
                     <div class="flex items-start gap-3">

@@ -20,25 +20,18 @@ import { R2TransferService } from '@core/services/r2-transfer.service';
 export class DownloadComponent implements OnInit, OnDestroy {
     linkId = signal('');
     session = signal<FileShareSession | null>(null);
-    password = signal('');
     isLoading = signal(false);
     isConnecting = signal(false);
     isDownloading = signal(false);
-    isVerifying = signal(false);
     isCompleted = signal(false);
     errorMessage = signal('');
     warningMessage = signal('');
     avgSpeed = signal(0);
     elapsedSeconds = signal(0);
-    file = signal<Blob | undefined>(undefined);
-
-    // Canali paralleli attivi (UI indicator)
-    parallelChannels = signal(0);
 
     private sessionSub?: Subscription;
-    private transferSub?: Subscription;
     private downloadStartTs = 0;
-    private _fileName: string = '';
+    private progressInterval: ReturnType<typeof setInterval> | null = null;
 
     constructor(
         private route: ActivatedRoute,
@@ -47,8 +40,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
         private supabase: SupabaseService,
         private translate: TranslateService,
         protected r2Transfer: R2TransferService,
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         const linkId = this.route.snapshot.paramMap.get('linkId');
@@ -56,14 +48,13 @@ export class DownloadComponent implements OnInit, OnDestroy {
             this.router.navigate(['/']);
             return;
         }
-
         this.linkId.set(linkId);
         this.loadFileInfo();
     }
 
     ngOnDestroy() {
         this.sessionSub?.unsubscribe();
-        this.transferSub?.unsubscribe();
+        this.clearProgressInterval();
         if (this.linkId()) {
             this.signaling.closeSession(this.linkId());
         }
@@ -77,49 +68,63 @@ export class DownloadComponent implements OnInit, OnDestroy {
             const session = await this.signaling.joinReceiverSession(this.linkId());
             this.session.set(session);
 
-            // Subscribe to session updates
             this.sessionSub = this.signaling.getSessionUpdates$().subscribe(updatedSession => {
-                if (updatedSession.linkId === this.linkId()) {
+                if (updatedSession.linkId !== this.linkId()) return;
 
-                    const currentSession = this.session();
-                    if (!currentSession || currentSession.status !== updatedSession.status) {
-                        console.log(`DownloadComponent.`, updatedSession.status);
-                    }
+                this.session.set(updatedSession);
 
-                    this.session.set(updatedSession);
-
-                    if (updatedSession.status === 'connecting') {
-                        this.isConnecting.set(true);
-                    } else if (updatedSession.status === 'waiting') {
+                switch (updatedSession.status) {
+                    case 'waiting':
+                    case 'connecting':
                         this.isConnecting.set(true);
                         this.isDownloading.set(false);
+                        break;
 
-                    } else if (updatedSession.status === 'connected') {
+                    case 'connected':
+                        // Cloud transfer: start R2 download
                         this.isConnecting.set(false);
                         if (!this.isDownloading()) {
-                            if (updatedSession.transferType === 'cloud') {
-                                this.startCloudDownload(updatedSession.r2Token!, updatedSession.fileInfo.name);
-                            } else {
-                                this.startDownload();
+                            this.startCloudDownload(updatedSession.r2Token!, updatedSession.fileInfo.name);
+                        }
+                        break;
+
+                    case 'transferring':
+                        // Burn streaming: chunks arriving
+                        this.isConnecting.set(false);
+                        if (!this.isDownloading()) {
+                            this.isDownloading.set(true);
+                            this.downloadStartTs = Date.now();
+                            this.startBurnProgressTracking();
+                        }
+                        break;
+
+                    case 'completed':
+                        this.clearProgressInterval();
+                        this.isDownloading.set(false);
+                        this.isConnecting.set(false);
+
+                        if (!this.isCompleted()) {
+                            const elapsed = Math.max(1, Math.round((Date.now() - this.downloadStartTs) / 1000));
+                            this.elapsedSeconds.set(elapsed);
+                            const size = this.session()!.fileInfo.size;
+                            this.avgSpeed.set(Math.floor(size / elapsed));
+                            this.isCompleted.set(true);
+
+                            if (this.supabase.isAuthenticated()) {
+                                this.supabase.addXP(5).catch(() => {});
                             }
                         }
-                    } else if (updatedSession.status === 'transferring') {
-                        // Nuovo stato gestito: assicura che la UI mostri il progresso e che la sottoscrizione sia attiva
-                        this.isConnecting.set(false);
-                        if (!this.isDownloading()) {
-                            this.startDownload();
-                        }
-                        this.isDownloading.set(true);
-                    } else if (updatedSession.status === 'error') {
+                        break;
+
+                    case 'error':
+                        this.clearProgressInterval();
                         this.errorMessage.set(this.translate.instant('DOWNLOAD.ERROR_CONNECTION'));
                         this.isConnecting.set(false);
                         this.isDownloading.set(false);
-                        this.isVerifying.set(false);
-                    } else if (updatedSession.status === 'completed') {
-                        this.isDownloading.set(false);
-                    }
+                        break;
                 }
             });
+
         } catch (error: any) {
             console.error('Error loading file info:', error);
             if (error.message?.includes('completed')) {
@@ -132,56 +137,9 @@ export class DownloadComponent implements OnInit, OnDestroy {
         }
     }
 
-    startDownload() {
-        if (!this.session()) return;
-
-        // Check if password is required
-        if (this.session()!.passwordProtected && !this.password()) {
-            return; // Wait for password input
-        }
-
-        this.isCompleted.set(false);
-        this.isDownloading.set(true);
-        this.errorMessage.set('');
-        this.downloadStartTs = Date.now();
-
-        const pwd = this.session()!.passwordProtected ? this.password() : undefined;
-        this.transferSub = this.signaling.receiveFile(
-            this.linkId(),
-            undefined,
-            async (file, metadata) => {
-                try {
-                    // Calcola subito le statistiche di trasferimento (tempo e velocità media) al termine del download
-                    const elapsed = Math.max(1, Math.round((Date.now() - this.downloadStartTs) / 1000));
-                    this.elapsedSeconds.set(elapsed);
-                    const size = metadata?.size ?? this.session()!.fileInfo.size;
-                    this.avgSpeed.set(Math.floor(size / elapsed));
-
-                    // L'integrità è già verificata dal receiver-engine prima di emettere il file.
-                    // Se l'hash non combacia, onComplete non viene mai chiamata.
-                    this.isDownloading.set(false);
-
-                    this.file.set(file);
-                    this._fileName = metadata.name;
-                    // 2. Download completed: salva file e mostra schermata di successo con statistiche
-                    this.downloadFile(file, metadata.name);
-
-                    this.isCompleted.set(true);
-
-                    // Add XP if user is logged in
-                    if (this.supabase.isAuthenticated()) {
-                        this.supabase.addXP(5);
-                    }
-                } catch (error: any) {
-                    console.error('Integrity check error:', error);
-                    this.errorMessage.set(this.translate.instant('DOWNLOAD.ERROR_VERIFY'));
-                    this.isDownloading.set(false);
-                }
-            },
-            pwd
-        );
-    }
-
+    /**
+     * Cloud (premium): full file download from R2.
+     */
     private async startCloudDownload(r2Token: string, fileName: string) {
         this.isDownloading.set(true);
         this.errorMessage.set('');
@@ -198,34 +156,36 @@ export class DownloadComponent implements OnInit, OnDestroy {
             this.isCompleted.set(true);
 
             if (this.supabase.isAuthenticated()) {
-                this.supabase.addXP(5);
+                this.supabase.addXP(5).catch(() => {});
             }
-            try {
-                await this.supabase.incrementDownloadCount(this.linkId());
-            } catch (e) {
-                console.warn('incrementDownloadCount failed', e);
-            }
+            await this.supabase.incrementDownloadCount(this.linkId()).catch(() => {});
         } catch (error: any) {
             this.isDownloading.set(false);
             this.errorMessage.set(error.message || this.translate.instant('DOWNLOAD.ERROR_CONNECTION'));
         }
     }
 
-    download() {
-        const file = this.file();
-        if (!file) return;
-        this.downloadFile(file, this._fileName);
+    /**
+     * Burn streaming: track progress from ChunkedStreamService.
+     * The actual download + browser save is handled by SignalingService.
+     */
+    private startBurnProgressTracking() {
+        this.clearProgressInterval();
+        this.progressInterval = setInterval(() => {
+            const progress = this.signaling.receiverProgress();
+            if (progress) {
+                const elapsed = Math.max(1, (Date.now() - this.downloadStartTs) / 1000);
+                this.avgSpeed.set(Math.floor(progress.speedBps));
+                this.elapsedSeconds.set(Math.floor(elapsed));
+            }
+        }, 200);
     }
 
-    private downloadFile(blob: Blob, filename: string) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+    private clearProgressInterval() {
+        if (this.progressInterval) {
+            clearInterval(this.progressInterval);
+            this.progressInterval = null;
+        }
     }
 
     formatFileSize(bytes: number): string {

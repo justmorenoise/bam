@@ -2,12 +2,14 @@
  * Bam! R2 Transfer Worker
  *
  * Handles cloud-based file transfers via Cloudflare R2.
- * Supports single-part and multipart uploads, download with burn-after-read,
- * retention policies (burn / 3-day / permanent), and scheduled cleanup.
+ * Supports:
+ *   - Burn streaming: chunked upload/download, chunks deleted after ack
+ *   - Cloud (premium): full multipart upload, configurable retention 1-3 days
  *
  * Bucket structure:
- *   {token}/_meta.json   — transfer metadata
- *   {token}/file         — the uploaded file
+ *   {token}/_meta.json      — transfer metadata
+ *   {token}/file            — the uploaded file (cloud mode)
+ *   {token}/chunks/{n}      — individual chunks (burn streaming mode)
  */
 
 // ─── Types ──────────────────────────────────────────────────
@@ -29,6 +31,7 @@ interface TransferMeta {
     createdAt: number;
     expiresAt: number | null;
     uploaded: boolean;
+    totalChunks?: number;  // set for burn streaming transfers
 }
 
 interface CreateTransferBody {
@@ -37,6 +40,7 @@ interface CreateTransferBody {
     fileHash: string;
     contentType: string;
     retentionPolicy: RetentionPolicy;
+    totalChunks?: number;  // required for burn streaming transfers
 }
 
 // ─── Size limits per tier ───────────────────────────────────
@@ -46,8 +50,8 @@ const SIZE_LIMITS: Record<string, number> = {
     premium: 2 * 1024 * 1024 * 1024, // 2 GB
 };
 
-const MULTIPART_THRESHOLD = 100 * 1024 * 1024; // 100 MB
-const MULTIPART_PART_SIZE = 10 * 1024 * 1024;  // 10 MB per part (minimum 5MB for R2)
+// Multipart thresholds (used by Angular client — kept here for reference)
+// Threshold: 100 MB; Part size: 10 MB per part (minimum 5 MB for R2)
 
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 const BURN_SAFETY_NET_MS = 24 * 60 * 60 * 1000; // 24h safety net for failed burn deletes
@@ -95,6 +99,10 @@ function metaKey(token: string): string {
 
 function fileKey(token: string): string {
     return `${token}/file`;
+}
+
+function chunkKey(token: string, index: number): string {
+    return `${token}/chunks/${index}`;
 }
 
 async function getMeta(bucket: R2Bucket, token: string): Promise<TransferMeta | null> {
@@ -175,6 +183,21 @@ export default {
                 return handleDelete(request, env);
             }
 
+            // ── PUT /transfer/:token/chunks/:n ─────────────────── (burn streaming)
+            if (request.method === 'PUT' && /^\/transfer\/[^/]+\/chunks\/\d+$/.test(path)) {
+                return handleUploadChunk(request, env);
+            }
+
+            // ── GET /transfer/:token/chunks/:n ─────────────────── (burn streaming)
+            if (request.method === 'GET' && /^\/transfer\/[^/]+\/chunks\/\d+$/.test(path)) {
+                return handleDownloadChunk(request, env);
+            }
+
+            // ── DELETE /transfer/:token/chunks/:n ──────────────── (burn streaming)
+            if (request.method === 'DELETE' && /^\/transfer\/[^/]+\/chunks\/\d+$/.test(path)) {
+                return handleDeleteChunk(request, env);
+            }
+
             return errorResponse('Not found', 404, request, env);
         } catch (err) {
             console.error('Worker error:', err);
@@ -183,7 +206,7 @@ export default {
     },
 
     // ── Scheduled cleanup ──────────────────────────────────────
-    async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
         await cleanupExpiredTransfers(env);
     },
 };
@@ -227,6 +250,7 @@ async function handleCreateTransfer(request: Request, env: Env): Promise<Respons
         createdAt: Date.now(),
         expiresAt: computeExpiresAt(body.retentionPolicy),
         uploaded: false,
+        ...(body.totalChunks !== undefined ? { totalChunks: body.totalChunks } : {}),
     };
 
     await putMeta(env.BAM_BUCKET, token, meta);
@@ -376,10 +400,12 @@ async function handleStatus(request: Request, env: Env): Promise<Response> {
             exists: true,
             fileName: meta.fileName,
             fileSize: meta.fileSize,
+            fileHash: meta.fileHash,
             contentType: meta.contentType,
             retentionPolicy: meta.retentionPolicy,
             expiresAt: meta.expiresAt,
             createdAt: meta.createdAt,
+            totalChunks: meta.totalChunks ?? null,
         },
         200,
         request,
@@ -442,12 +468,91 @@ async function handleDelete(request: Request, env: Env): Promise<Response> {
     return jsonResponse({ status: 'deleted' }, 200, request, env);
 }
 
+// ─── Burn streaming chunk handlers ──────────────────────────
+
+async function handleUploadChunk(request: Request, env: Env): Promise<Response> {
+    if (!authenticate(request, env)) {
+        return errorResponse('Unauthorized', 401, request, env);
+    }
+
+    const parts = new URL(request.url).pathname.split('/');
+    // /transfer/{token}/chunks/{index}
+    const token = parts[2];
+    const chunkIndex = parseInt(parts[4], 10);
+
+    if (!token || isNaN(chunkIndex)) {
+        return errorResponse('Invalid path', 400, request, env);
+    }
+
+    const meta = await getMeta(env.BAM_BUCKET, token);
+    if (!meta) return errorResponse('Transfer not found', 404, request, env);
+
+    if (!request.body) return errorResponse('No body', 400, request, env);
+
+    await env.BAM_BUCKET.put(chunkKey(token, chunkIndex), request.body, {
+        httpMetadata: { contentType: 'application/octet-stream' },
+    });
+
+    return jsonResponse({ status: 'ok', chunkIndex }, 200, request, env);
+}
+
+async function handleDownloadChunk(request: Request, env: Env): Promise<Response> {
+    const parts = new URL(request.url).pathname.split('/');
+    const token = parts[2];
+    const chunkIndex = parseInt(parts[4], 10);
+
+    if (!token || isNaN(chunkIndex)) {
+        return errorResponse('Invalid path', 400, request, env);
+    }
+
+    const obj = await env.BAM_BUCKET.get(chunkKey(token, chunkIndex));
+    if (!obj) return errorResponse('Chunk not found', 404, request, env);
+
+    return new Response(obj.body, {
+        headers: {
+            ...corsHeaders(request, env),
+            'Content-Type': 'application/octet-stream',
+            'Cache-Control': 'no-store',
+        },
+    });
+}
+
+async function handleDeleteChunk(request: Request, env: Env): Promise<Response> {
+    if (!authenticate(request, env)) {
+        return errorResponse('Unauthorized', 401, request, env);
+    }
+
+    const parts = new URL(request.url).pathname.split('/');
+    const token = parts[2];
+    const chunkIndex = parseInt(parts[4], 10);
+
+    if (!token || isNaN(chunkIndex)) {
+        return errorResponse('Invalid path', 400, request, env);
+    }
+
+    await env.BAM_BUCKET.delete(chunkKey(token, chunkIndex));
+    return jsonResponse({ status: 'deleted', chunkIndex }, 200, request, env);
+}
+
 // ─── Cleanup ────────────────────────────────────────────────
+
+async function deleteBurnChunks(bucket: R2Bucket, token: string): Promise<void> {
+    let cursor: string | undefined;
+    const prefix = `${token}/chunks/`;
+    do {
+        const listed = await bucket.list({ prefix, cursor, limit: 1000 });
+        if (listed.objects.length > 0) {
+            await bucket.delete(listed.objects.map(o => o.key));
+        }
+        cursor = listed.truncated ? listed.cursor : undefined;
+    } while (cursor);
+}
 
 async function deleteTransfer(bucket: R2Bucket, token: string): Promise<void> {
     await Promise.all([
         bucket.delete(fileKey(token)),
         bucket.delete(metaKey(token)),
+        deleteBurnChunks(bucket, token),
     ]);
 }
 
