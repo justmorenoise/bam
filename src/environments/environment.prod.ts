@@ -39,8 +39,9 @@ export const environment = {
     ads: {
         enabled: true,
         adsense: {
-            publisherId: 'ca-pub-XXXXXXXXXXXXXXXX', // Sostituire con il proprio Publisher ID
-            bannerSlot: 'XXXXXXXXXX',              // Sostituire con il proprio Ad Unit ID per banner
+            publisherId: 'ca-pub-6681808248400224',
+            bannerSlot: 'XXXXXXXXXX',              // Da compilare dopo approvazione AdSense
+            interstitialSlot: 'XXXXXXXXXX',        // Da compilare dopo approvazione AdSense
         },
     },
 

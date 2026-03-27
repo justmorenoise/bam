@@ -39,6 +39,7 @@ export const environment = {
         adsense: {
             publisherId: '',
             bannerSlot: '',
+            interstitialSlot: '',
         },
     },
 

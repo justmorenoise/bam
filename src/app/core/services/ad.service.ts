@@ -52,6 +52,13 @@ export class AdService {
     async initialize(): Promise<void> {
         if (!this.adsEnabled || this.adsenseLoaded) return;
 
+        // Script già caricato da index.html: non iniettarlo una seconda volta
+        if ((window as any).adsbygoogle !== undefined) {
+            this.adsenseLoaded = true;
+            return;
+        }
+
+        // Fallback dinamico (nel caso index.html non carichi lo script)
         return new Promise<void>((resolve) => {
             const publisherId = environment.ads.adsense.publisherId;
             const script = document.createElement('script');
