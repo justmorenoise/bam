@@ -11,9 +11,11 @@ export const maintenanceGuard = () => {
     return true;
 };
 
-export const authGuard = () => {
+export const authGuard = async () => {
     const supabase = inject(SupabaseService);
     const router = inject(Router);
+
+    await supabase.authReady;
 
     if (supabase.isAuthenticated()) {
         return true;
@@ -23,9 +25,11 @@ export const authGuard = () => {
     return router.createUrlTree(['/auth/login']);
 };
 
-export const premiumGuard = () => {
+export const premiumGuard = async () => {
     const supabase = inject(SupabaseService);
     const router = inject(Router);
+
+    await supabase.authReady;
 
     if (supabase.isAuthenticated() && supabase.isPremium()) {
         return true;

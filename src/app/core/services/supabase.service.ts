@@ -43,6 +43,7 @@ const LAST_UPLOAD_DATE_KEY = 'bam_last_upload_date';
 })
 export class SupabaseService {
     public supabase: SupabaseClient;
+    authReady!: Promise<void>;
     currentUser = signal<User | null>(null);
     currentSession = signal<Session | null>(null);
     currentProfile = signal<UserProfile | null>(null);
@@ -55,7 +56,7 @@ export class SupabaseService {
 
     constructor() {
         this.supabase = createClient(environment.supabase.url, environment.supabase.anonKey);
-        this.initAuth();
+        this.authReady = this.initAuth();
     }
 
     private async initAuth() {
