@@ -22,9 +22,9 @@
                 (GDPR - EU Regulation 2016/679).
             </p>
             <p class="text-slate-300 leading-relaxed">
-                Bam! is a peer-to-peer (P2P) file sharing service: files are transferred directly
-                between users' browsers via WebRTC, never transiting our servers. This means
-                we never have access to the content of your files.
+                Bam! is a file sharing service: files are transferred
+                between users' browsers via cloud streaming in chunks. This means
+                we never have access to the whole content of your files.
             </p>
         </section>
 
@@ -109,14 +109,14 @@
                 The security of your data is our priority. Bam! implements multiple layers of protection:
             </p>
             <ul class="list-disc list-inside space-y-2 text-slate-300">
-                <li><span class="font-semibold text-white">Native E2E encryption</span> — All WebRTC transfers are protected by end-to-end encryption via DTLS</li>
+                <li><span class="font-semibold text-white">Native E2E encryption</span> — All transfers are protected by TLS 1.3 over HTTPS</li>
                 <li><span class="font-semibold text-white">AES-GCM encryption</span> — Premium users can add an extra layer of encryption with a custom password (PBKDF2 key derivation)</li>
                 <li><span class="font-semibold text-white">Zero-knowledge architecture</span> — Our servers cannot see or access the content of transferred files</li>
             </ul>
             <div class="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-6 mt-4">
                 <p class="text-slate-300 leading-relaxed">
-                    Files travel directly from browser to browser. No data transits or is stored
-                    on our servers during the transfer.
+                    File chunks transit through Cloudflare R2 over HTTPS and are deleted immediately
+                    after download. Bam!'s own servers never store or access file content.
                 </p>
             </div>
         </section>

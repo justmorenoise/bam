@@ -1,21 +1,21 @@
 {
   "mission": [
     { "icon": "🔐", "title": "Privacy First", "description": "I tuoi file non toccano mai i nostri server. La tua privacy non è una funzionalità, è il fondamento di Bam!." },
-    { "icon": "☁️", "title": "Zero Cloud", "description": "Nessun upload su server remoti. I dati viaggiano direttamente da browser a browser, senza intermediari." },
-    { "icon": "🌐", "title": "Rivoluzione P2P", "description": "WebRTC permette connessioni peer-to-peer native nel browser. Bam! sfrutta questa tecnologia per trasferimenti diretti e sicuri." }
+    { "icon": "☁️", "title": "Cloud Effimero", "description": "I file vengono suddivisi in chunk cifrati e archiviati temporaneamente su Cloudflare R2 solo per la durata del trasferimento. Ogni chunk viene eliminato immediatamente dopo il download." },
+    { "icon": "🌐", "title": "Cloud Streaming", "description": "Bam! trasmette il tuo file come chunk cifrati attraverso Cloudflare R2 via HTTPS. Veloce, sicuro e accessibile da qualsiasi browser senza plugin." }
   ],
   "steps": [
-    { "number": "1", "title": "Seleziona File", "description": "Scegli il file che vuoi condividere. Nessun limite di dimensione, qualsiasi formato." },
-    { "number": "2", "title": "Connessione P2P", "description": "Bam! genera un link unico. Quando il destinatario lo apre, si stabilisce una connessione WebRTC diretta." },
-    { "number": "3", "title": "Trasferimento Sicuro", "description": "Il file viene trasferito con crittografia end-to-end nativa. Nessun server intermedio." }
+    { "number": "1", "title": "Seleziona File", "description": "Scegli il file che vuoi condividere. Fino a 1 GB per gli utenti Free, illimitato con Premium. Qualsiasi formato." },
+    { "number": "2", "title": "Upload Cloud", "description": "Bam! genera un link unico e trasmette il file a Cloudflare R2 come chunk cifrati. Condividi il link — il destinatario può scaricare quando vuole." },
+    { "number": "3", "title": "Trasferimento Sicuro", "description": "Il file viene trasferito con crittografia end-to-end tramite HTTPS. I chunk vengono eliminati da Cloudflare R2 immediatamente dopo il download." }
   ],
   "features": [
-    { "icon": "🔗", "title": "Peer-to-Peer Diretto", "description": "I file viaggiano direttamente dal mittente al destinatario tramite WebRTC, senza passare da server intermedi." },
-    { "icon": "🔒", "title": "Crittografia Nativa", "description": "Ogni trasferimento è protetto da crittografia end-to-end (DTLS 1.2+) integrata nel protocollo WebRTC." },
-    { "icon": "♾️", "title": "Nessun Limite di Dimensione", "description": "Trasferisci file di qualsiasi dimensione. Il chunking a 64KB garantisce stabilità anche con file enormi." },
-    { "icon": "⚡", "title": "Velocità Massima", "description": "Connessione diretta P2P senza colli di bottiglia. La velocità dipende solo dalla tua connessione." },
-    { "icon": "🛡️", "title": "Privacy Totale", "description": "Nessun file viene mai caricato sui nostri server. Zero accesso ai tuoi dati." },
-    { "icon": "🖥️", "title": "App Desktop", "description": "Agent Electron per seeding persistente, integrazione OS e notifiche native." }
+    { "icon": "🔗", "title": "Streaming Cloud Sicuro", "description": "I file vengono suddivisi in chunk cifrati e trasmessi via Cloudflare R2 tramite HTTPS. Ogni chunk viene eliminato definitivamente subito dopo il download." },
+    { "icon": "🔒", "title": "Crittografia Nativa", "description": "Ogni trasferimento è protetto da TLS 1.3 tramite HTTPS. Gli utenti Premium hanno un ulteriore livello con crittografia password AES-GCM e derivazione chiave PBKDF2." },
+    { "icon": "📦", "title": "Fino a 1 GB Gratis", "description": "Trasferisci file fino a 1 GB gratuitamente. Con Premium la dimensione è illimitata." },
+    { "icon": "⚡", "title": "Velocità Massima", "description": "La rete edge globale di Cloudflare consegna i tuoi chunk alla massima velocità. Nessun collo di bottiglia, nessuna infrastruttura relay da gestire." },
+    { "icon": "🛡️", "title": "Privacy Totale", "description": "I chunk sono archiviati su Cloudflare R2 solo durante il trasferimento ed eliminati immediatamente dopo il download. Zero accesso permanente ai tuoi dati." },
+    { "icon": "🖥️", "title": "App Desktop", "description": "Agent Electron per seeding persistente, integrazione OS e notifiche native. (Coming soon)" }
   ],
   "roadmap": [
     { "icon": "🔥", "title": "Burn-on-Read", "description": "Link autodistruttivi che scadono dopo il primo download completato." },

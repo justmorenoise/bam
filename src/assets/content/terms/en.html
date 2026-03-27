@@ -30,13 +30,13 @@
         <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
             <h2 class="text-2xl font-bold text-bam-primary mb-4">2. Service Description</h2>
             <p class="text-slate-300 leading-relaxed">
-                Bam! is a peer-to-peer (P2P) file sharing platform that enables direct file transfer
-                between browsers via WebRTC technology. Files are never uploaded to cloud servers:
-                the transfer occurs exclusively in direct mode between the users' devices.
+                Bam! is a file sharing platform that enables secure file transfer via cloud streaming.
+                Files are split into encrypted chunks, uploaded to Cloudflare R2, and each
+                chunk is deleted immediately after download.
             </p>
             <p class="text-slate-300 leading-relaxed">
-                The service is available as a browser-accessible web application and as a desktop application
-                via Electron, for Windows, macOS and Linux operating systems.
+                The service is available as a browser-accessible web application. A desktop application
+                via Electron for Windows, macOS and Linux is currently in development (coming soon).
             </p>
         </div>
 
@@ -132,8 +132,9 @@
             <h2 class="text-2xl font-bold text-bam-primary mb-4">7. Encryption &amp; Security</h2>
             <p class="text-slate-300 leading-relaxed">
                 All transfers on Bam! are protected by native end-to-end encryption (E2EE),
-                guaranteed by the DTLS protocol integrated in WebRTC. This means that data in transit
-                is encrypted and cannot be intercepted by third parties.
+                guaranteed by TLS 1.3 over HTTPS for all data in transit, and optionally
+                by AES-GCM encryption for chunk content (Premium). Data in transit cannot
+                be intercepted by third parties.
             </p>
             <ul class="list-disc list-inside space-y-2 text-slate-300">
                 <li>
@@ -141,14 +142,14 @@
                     allows adding an extra layer of protection via password with PBKDF2 key derivation.
                 </li>
                 <li>
-                    <strong class="text-white">Integrity verification:</strong> SHA-256 hash to ensure received files
+                    <strong class="text-white">Integrity verification:</strong> xxHash128 hash to ensure received files
                     are identical to those sent.
                 </li>
             </ul>
             <div class="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-6">
                 <p class="text-slate-300 leading-relaxed">
                     Bam! has no technical ability to access the content of files transferred between users.
-                    The P2P nature of the service ensures that no data transits through our servers.
+                    File chunks transit only through Cloudflare R2 and are deleted immediately after download. Bam!'s own servers never access the content of transferred files.
                 </p>
             </div>
         </div>

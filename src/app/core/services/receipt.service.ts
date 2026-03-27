@@ -65,7 +65,7 @@ export class ReceiptService {
 
         addField('File', data.fileName);
         addField('Dimensione', this.formatFileSize(data.fileSize));
-        addField('Hash SHA-256', data.fileHash.substring(0, 32) + '...');
+        addField('Hash xxHash128', data.fileHash.substring(0, 32) + '...');
         addField('Modalità', data.mode === 'burn' ? 'Usa e Getta (burn)' : 'Persistente (seed)');
         addField('Protetto', data.passwordProtected ? 'Sì (AES-GCM 256-bit)' : 'No');
         addField('Link ID', data.linkId);

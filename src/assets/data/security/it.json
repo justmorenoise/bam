@@ -1,9 +1,9 @@
 {
   "features": [
-    { "icon": "🔐", "title": "E2EE Nativa WebRTC", "description": "Crittografia DTLS 1.2+ attiva di default su ogni trasferimento. Nessuna configurazione necessaria." },
+    { "icon": "🔐", "title": "Crittografia TLS 1.3", "description": "Tutti i trasferimenti usano HTTPS con TLS 1.3. I dati in transito sono completamente cifrati e protetti da intercettazione." },
     { "icon": "🔑", "title": "Cifratura Password Premium", "description": "Crittografia AES-GCM 256-bit con derivazione chiave PBKDF2 tramite Web Crypto API." },
-    { "icon": "🧬", "title": "Verifica Integrità SHA-256", "description": "Hash calcolato lato mittente e verificato lato destinatario per garantire zero manomissioni." },
-    { "icon": "☁️", "title": "Zero Cloud Storage", "description": "I file non vengono mai caricati su server. Solo metadati di signaling transitano via Supabase." },
+    { "icon": "🧬", "title": "Verifica Integrità xxHash128", "description": "Hash calcolato lato mittente e verificato lato destinatario per garantire zero manomissioni." },
+    { "icon": "☁️", "title": "Chunk Cloud Effimeri", "description": "I chunk dei file transitano temporaneamente su Cloudflare R2 e vengono eliminati immediatamente dopo il download. I server di Bam! non memorizzano mai il contenuto dei file." },
     { "icon": "🔥", "title": "Burn-on-Read", "description": "Modalità link autodistruttivo: il link scade dopo il primo download completato." },
     { "icon": "🛡️", "title": "GDPR Compliant", "description": "Piena conformità al Regolamento Europeo sulla protezione dei dati personali." }
   ]

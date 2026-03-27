@@ -30,13 +30,12 @@
         <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-4">
             <h2 class="text-2xl font-bold text-bam-primary mb-4">2. Descrizione del Servizio</h2>
             <p class="text-slate-300 leading-relaxed">
-                Bam! è una piattaforma di file sharing peer-to-peer (P2P) che consente il trasferimento diretto
-                di file tra browser tramite tecnologia WebRTC. I file non vengono mai caricati su server cloud:
-                il trasferimento avviene esclusivamente in modalità diretta tra i dispositivi degli utenti.
+                Bam! è una piattaforma di file sharing che consente il trasferimento
+                di file tra utenti tramite tecnologia cloud streaming. I file vengono caricati su server cloud a chunks (pezzi) e eliminati una volta trasferiti.
             </p>
             <p class="text-slate-300 leading-relaxed">
-                Il servizio è disponibile come applicazione web accessibile da browser e come applicazione desktop
-                tramite Electron, per i sistemi operativi Windows, macOS e Linux.
+                Il servizio è disponibile come applicazione web accessibile da browser. Un'applicazione desktop
+                tramite Electron per Windows, macOS e Linux è attualmente in sviluppo (coming soon).
             </p>
         </div>
 
@@ -132,8 +131,9 @@
             <h2 class="text-2xl font-bold text-bam-primary mb-4">7. Crittografia e Sicurezza</h2>
             <p class="text-slate-300 leading-relaxed">
                 Tutti i trasferimenti su Bam! sono protetti da crittografia end-to-end (E2EE) nativa,
-                garantita dal protocollo DTLS integrato in WebRTC. Questo significa che i dati in transito
-                sono cifrati e non possono essere intercettati da terze parti.
+                garantita da TLS 1.3 su HTTPS per tutti i dati in transito, e opzionalmente
+                dalla crittografia AES-GCM del contenuto dei chunk (Premium). I dati in transito
+                non possono essere intercettati da terze parti.
             </p>
             <ul class="list-disc list-inside space-y-2 text-slate-300">
                 <li>
@@ -142,14 +142,14 @@
                     con derivazione della chiave via PBKDF2.
                 </li>
                 <li>
-                    <strong class="text-white">Verifica integrità:</strong> hash SHA-256 per garantire che i file
+                    <strong class="text-white">Verifica integrità:</strong> hash xxHash128 per garantire che i file
                     ricevuti siano identici a quelli inviati.
                 </li>
             </ul>
             <div class="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-6">
                 <p class="text-slate-300 leading-relaxed">
                     Bam! non ha la possibilità tecnica di accedere al contenuto dei file trasferiti tra gli utenti.
-                    La natura P2P del servizio garantisce che nessun dato transiti sui nostri server.
+                    La codifica crittografica dei file e la suddivisione in chunk del servizio garantisce la sicurezza e la privacy durante il trasferimento.
                 </p>
             </div>
         </div>
