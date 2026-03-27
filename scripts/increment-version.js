@@ -7,6 +7,7 @@ const path = require('path');
 const packageJsonPath = path.join(__dirname, '../package.json');
 const versionFilePath = path.join(__dirname, '../src/version.ts');
 const envProdPath = path.join(__dirname, '../src/environments/environment.prod.ts');
+const envPrePath = path.join(__dirname, '../src/environments/environment.preprod.ts');
 const envDevPath = path.join(__dirname, '../src/environments/environment.ts');
 
 // Leggi package.json
@@ -39,6 +40,9 @@ fs.writeFileSync(versionFilePath, versionContent);
 
 // Aggiorna environment.prod.ts
 updateEnvironmentFile(envProdPath, newVersion);
+
+// Aggiorna environment.preprod.ts
+updateEnvironmentFile(envPrePath, newVersion);
 
 // Aggiorna environment.ts (opzionale, per dev)
 updateEnvironmentFile(envDevPath, newVersion);

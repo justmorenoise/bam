@@ -1,6 +1,6 @@
 {
   "name": "bam-p2p-file-sharing",
-  "version": "1.1.6",
+  "version": "1.1.8",
   "description": "Bam - P2P File Sharing Ecosystem with Angular 20+ and Electron",
   "scripts": {
     "ng": "ng",
