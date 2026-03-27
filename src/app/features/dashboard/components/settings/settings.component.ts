@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -16,13 +16,21 @@ import { ModalService } from '@core/services/modal.service';
 })
 export class SettingsComponent {
     userProfile = this.supabase.currentProfile;
+    isOAuthOnly = computed(() => {
+        const identities = this.supabase.currentUser()?.identities ?? [];
+        return identities.length > 0 && identities.every(i => i.provider !== 'email');
+    });
 
     fullName = signal('');
     isUpdatingProfile = signal(false);
     profileMessage = signal('');
 
+    currentPassword = signal('');
     newPassword = signal('');
     confirmPassword = signal('');
+    showCurrentPassword = signal(false);
+    showNewPassword = signal(false);
+    showConfirmPassword = signal(false);
     isUpdatingPassword = signal(false);
     passwordMessage = signal('');
 
@@ -65,8 +73,8 @@ export class SettingsComponent {
     }
 
     async updatePassword() {
-        if (!this.newPassword() || !this.confirmPassword()) {
-            this.passwordMessage.set(this.translate.instant('SETTINGS.VALIDATION_FILL_FIELDS'));
+        if (!this.currentPassword() || !this.newPassword() || !this.confirmPassword()) {
+            this.passwordMessage.set(this.translate.instant('SETTINGS.VALIDATION_FILL_ALL_PASSWORD'));
             return;
         }
 
@@ -84,6 +92,17 @@ export class SettingsComponent {
         this.passwordMessage.set('');
 
         try {
+            const email = this.supabase.currentUser()?.email ?? '';
+            const { error: authError } = await this.supabase.supabase.auth.signInWithPassword({
+                email,
+                password: this.currentPassword()
+            });
+
+            if (authError) {
+                this.passwordMessage.set(this.translate.instant('SETTINGS.VALIDATION_WRONG_PASSWORD'));
+                return;
+            }
+
             const { error } = await this.supabase.supabase.auth.updateUser({
                 password: this.newPassword()
             });
@@ -94,6 +113,7 @@ export class SettingsComponent {
                 this.translate.instant('SETTINGS.MODAL_SUCCESS_TITLE'),
                 this.translate.instant('SETTINGS.MODAL_PASSWORD_SUCCESS')
             );
+            this.currentPassword.set('');
             this.newPassword.set('');
             this.confirmPassword.set('');
             this.passwordMessage.set('');
@@ -101,7 +121,7 @@ export class SettingsComponent {
             console.error('Error updating password:', error);
             this.modal.showError(
                 this.translate.instant('SETTINGS.MODAL_ERROR_TITLE'),
-                error.message || this.translate.instant('SETTINGS.VALIDATION_PASSWORD_LENGTH')
+                this.translate.instant('SETTINGS.MODAL_PASSWORD_ERROR_MSG')
             );
         } finally {
             this.isUpdatingPassword.set(false);
@@ -160,7 +180,7 @@ export class SettingsComponent {
                     console.error('Error deleting account:', error);
                     this.modal.showError(
                         this.translate.instant('SETTINGS.MODAL_ERROR_TITLE'),
-                        error.message
+                        this.translate.instant('SETTINGS.MODAL_DELETE_ERROR_MSG')
                     );
                 }
             }

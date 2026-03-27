@@ -130,7 +130,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
             if (error.message?.includes('completed')) {
                 this.warningMessage.set('completed');
             } else {
-                this.errorMessage.set(error.message || this.translate.instant('DOWNLOAD.ERROR_NOT_FOUND'));
+                this.errorMessage.set(this.translate.instant('DOWNLOAD.ERROR_NOT_FOUND'));
             }
         } finally {
             this.isLoading.set(false);
@@ -163,7 +163,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
             await this.supabase.incrementDownloadCount(this.linkId()).catch(() => {});
         } catch (error: any) {
             this.isDownloading.set(false);
-            this.errorMessage.set(error.message || this.translate.instant('DOWNLOAD.ERROR_CONNECTION'));
+            this.errorMessage.set(this.translate.instant('DOWNLOAD.ERROR_CONNECTION'));
         }
     }
 

@@ -16,6 +16,7 @@ import { ModalService } from '@core/services/modal.service';
 export class LoginComponent implements OnInit {
     email = signal('');
     password = signal('');
+    showPassword = signal(false);
     isLoading = signal(false);
     errorMessage = signal('');
 
@@ -50,7 +51,7 @@ export class LoginComponent implements OnInit {
             console.error('Login error:', error);
             this.modal.showError(
                 this.translate.instant('AUTH.MODAL_LOGIN_ERROR_TITLE'),
-                error.message || this.translate.instant('AUTH.MODAL_LOGIN_ERROR_MSG')
+                this.translate.instant('AUTH.MODAL_LOGIN_ERROR_MSG')
             );
             this.errorMessage.set('');
         } finally {

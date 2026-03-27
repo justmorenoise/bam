@@ -199,7 +199,7 @@ export class UploadComponent implements OnInit, OnDestroy {
             });
         } catch (error: any) {
             console.error('Error generating burn link:', error);
-            this.modal.showError(this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'), error.message || 'Impossibile generare il link');
+            this.modal.showError(this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'), this.translate.instant('UPLOAD.MODAL_ERROR_MSG'));
         } finally {
             this.st.isGeneratingLink.set(false);
         }
@@ -286,7 +286,7 @@ export class UploadComponent implements OnInit, OnDestroy {
             this.clearCloudProgressInterval();
             this.st.isCloudUploading.set(false);
             console.error('Error generating cloud link:', error);
-            this.modal.showError(this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'), error.message || 'Impossibile generare il link');
+            this.modal.showError(this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'), this.translate.instant('UPLOAD.MODAL_ERROR_MSG'));
         } finally {
             this.st.isGeneratingLink.set(false);
         }

@@ -67,11 +67,11 @@ export class SupabaseService {
             this.currentUser.set(session.user);
             await this.loadUserProfile(session.user.id);
         }
-        this.supabase.auth.onAuthStateChange(async (event, session) => {
+        this.supabase.auth.onAuthStateChange((_event, session) => {
             this.currentSession.set(session);
             this.currentUser.set(session?.user || null);
             if (session?.user) {
-                await this.loadUserProfile(session.user.id);
+                this.loadUserProfile(session.user.id).catch(err => console.error('Profile load error:', err));
             } else {
                 this.currentProfile.set(null);
             }

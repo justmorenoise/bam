@@ -18,6 +18,8 @@ export class RegisterComponent implements OnInit {
     email = signal('');
     password = signal('');
     confirmPassword = signal('');
+    showPassword = signal(false);
+    showConfirmPassword = signal(false);
     isLoading = signal(false);
     errorMessage = signal('');
     successMessage = signal('');
@@ -76,7 +78,7 @@ export class RegisterComponent implements OnInit {
             }, 3000);
         } catch (error: any) {
             console.error('Registration error:', error);
-            this.modal.showError(this.translate.instant('AUTH.MODAL_REGISTER_ERROR_TITLE'), error.message || 'Impossibile completare la registrazione');
+            this.modal.showError(this.translate.instant('AUTH.MODAL_REGISTER_ERROR_TITLE'), this.translate.instant('AUTH.MODAL_REGISTER_ERROR_MSG'));
             this.errorMessage.set('');
         } finally {
             this.isLoading.set(false);
