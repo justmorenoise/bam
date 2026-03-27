@@ -2,10 +2,11 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, catchError } from 'rxjs/operators';
+import { switchMap, catchError, tap } from 'rxjs/operators';
 import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from '@shared/components/header.component';
 import { LanguageService } from '@core/services/language.service';
+import { SeoService } from '@core/services/seo.service';
 
 interface SecurityData {
     features: { icon: string; title: string; description: string }[];
@@ -23,9 +24,11 @@ const EMPTY: SecurityData = { features: [] };
 export class SecurityComponent {
     private http = inject(HttpClient);
     private lang = inject(LanguageService);
+    private seo  = inject(SeoService);
 
     data = toSignal(
         toObservable(this.lang.currentLang).pipe(
+            tap(() => this.seo.set('SEO.SECURITY.TITLE', 'SEO.SECURITY.DESC')),
             switchMap(lang =>
                 this.http.get<SecurityData>(`/assets/data/security/${lang}.json`).pipe(
                     catchError(() => this.http.get<SecurityData>('/assets/data/security/en.json'))

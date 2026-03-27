@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,6 +7,8 @@ import { AdBannerComponent } from '@shared/components/ad-banner.component';
 import { SupabaseService } from '@core/services/supabase.service';
 import { DropZoneComponent } from '@features/file-transfer/components/upload/drop-zone/drop-zone.component';
 import { AdPremiumBanner } from '@shared/components/ad-premium-banner/ad-premium-banner';
+import { LanguageService } from '@core/services/language.service';
+import { SeoService } from '@core/services/seo.service';
 
 type Feature = {
     icon?: string;
@@ -24,10 +26,14 @@ type Feature = {
 export class HomeComponent implements OnInit {
     isFreeTier = computed(() => this.supabase.currentProfile()?.tier !== 'premium');
 
+    private seo = inject(SeoService);
+    private lang = inject(LanguageService);
+
     constructor(
         private supabase: SupabaseService,
         private router: Router
     ) {
+        effect(() => { this.lang.currentLang(); this.seo.set('SEO.HOME.TITLE', 'SEO.HOME.DESC'); });
     }
 
     ngOnInit() {

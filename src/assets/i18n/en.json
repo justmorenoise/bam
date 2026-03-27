@@ -434,5 +434,14 @@
     "TITLE": "We're working on it",
     "DESC": "The service is temporarily suspended for maintenance.<br>We'll be back shortly.",
     "STATUS": "Maintenance in progress"
+  },
+  "SEO": {
+    "HOME":        { "TITLE": "Bam! – Fast & Secure File Sharing", "DESC": "Share files up to 1 GB for free. Secure streaming via Cloudflare R2, native TLS 1.3 encryption. No account needed." },
+    "ABOUT":       { "TITLE": "About – Bam!", "DESC": "Learn about Bam! – our mission, how the transfer works, and what we're building next." },
+    "PRICING":     { "TITLE": "Pricing – Bam!", "DESC": "Free plan up to 1 GB. Premium unlocks unlimited transfers, custom slugs, password protection, and more." },
+    "SECURITY":    { "TITLE": "Security – Bam!", "DESC": "End-to-end encrypted transfers. TLS 1.3, server-side encryption at rest, zero-knowledge design." },
+    "TERMS":       { "TITLE": "Terms & Conditions – Bam!", "DESC": "Read the terms and conditions for using the Bam! file sharing service." },
+    "PRIVACY":     { "TITLE": "Privacy Policy – Bam!", "DESC": "How Bam! collects, uses, and protects your personal data." },
+    "MAINTENANCE": { "TITLE": "Maintenance – Bam!", "DESC": "Bam! is temporarily under maintenance. We'll be back soon." }
   }
 }

@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { LanguageService } from '@core/services/language.service';
+import { SeoService } from '@core/services/seo.service';
 
 @Component({
     selector: 'app-maintenance',
@@ -52,4 +54,11 @@ import { TranslateModule } from '@ngx-translate/core';
     `,
     styles: [],
 })
-export class MaintenanceComponent {}
+export class MaintenanceComponent {
+    private seo  = inject(SeoService);
+    private lang = inject(LanguageService);
+
+    constructor() {
+        effect(() => { this.lang.currentLang(); this.seo.set('SEO.MAINTENANCE.TITLE', 'SEO.MAINTENANCE.DESC'); });
+    }
+}
