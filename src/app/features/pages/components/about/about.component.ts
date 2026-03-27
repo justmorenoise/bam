@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { switchMap, catchError, tap } from 'rxjs/operators';
 import { TranslateModule } from '@ngx-translate/core';
+import { LucideAngularModule, LucideIconData, Lock, Cloud, Globe, Link, Package, Zap, Shield, Monitor, Flame, Sprout, Smartphone, Gamepad2 } from 'lucide-angular';
 import { HeaderComponent } from '@shared/components/header.component';
 import { LanguageService } from '@core/services/language.service';
 import { SeoService } from '@core/services/seo.service';
@@ -20,11 +21,17 @@ const EMPTY: AboutData = { mission: [], steps: [], features: [], roadmap: [] };
 @Component({
     selector: 'app-about',
     standalone: true,
-    imports: [CommonModule, HeaderComponent, TranslateModule],
+    imports: [CommonModule, HeaderComponent, TranslateModule, LucideAngularModule],
     templateUrl: './about.component.html',
     styleUrls: ['./about.component.css']
 })
 export class AboutComponent {
+    readonly iconMap: Record<string, LucideIconData> = {
+        lock: Lock, cloud: Cloud, globe: Globe, link: Link,
+        package: Package, zap: Zap, shield: Shield, monitor: Monitor,
+        flame: Flame, sprout: Sprout, smartphone: Smartphone, 'gamepad-2': Gamepad2
+    };
+
     private http = inject(HttpClient);
     private lang = inject(LanguageService);
     private seo  = inject(SeoService);

@@ -1,10 +1,10 @@
 {
   "features": [
-    { "icon": "🔐", "title": "TLS 1.3 Encryption", "description": "All transfers use HTTPS with TLS 1.3. Data in transit is fully encrypted and protected from interception." },
-    { "icon": "🔑", "title": "Premium Password Encryption", "description": "AES-GCM 256-bit encryption with PBKDF2 key derivation via Web Crypto API." },
-    { "icon": "🧬", "title": "xxHash128 Integrity Verification", "description": "Hash calculated on the sender side and verified on the receiver side to guarantee zero tampering." },
-    { "icon": "☁️", "title": "Ephemeral Cloud Chunks", "description": "File chunks transit temporarily through Cloudflare R2 and are deleted immediately after download. Bam!'s own servers never store file content." },
-    { "icon": "🔥", "title": "Burn-on-Read", "description": "Self-destructing link mode: the link expires after the first completed download." },
-    { "icon": "🛡️", "title": "GDPR Compliant", "description": "Full compliance with the European Data Protection Regulation." }
+    { "icon": "lock", "title": "TLS 1.3 Encryption", "description": "All transfers use HTTPS with TLS 1.3. Data in transit is fully encrypted and protected from interception." },
+    { "icon": "key-round", "title": "Premium Password Encryption", "description": "AES-GCM 256-bit encryption with PBKDF2 key derivation via Web Crypto API." },
+    { "icon": "hash", "title": "xxHash128 Integrity Verification", "description": "Hash calculated on the sender side and verified on the receiver side to guarantee zero tampering." },
+    { "icon": "cloud", "title": "Ephemeral Cloud Chunks", "description": "File chunks transit temporarily through Cloudflare R2 and are deleted immediately after download. Bam!'s own servers never store file content." },
+    { "icon": "flame", "title": "Burn-on-Read", "description": "Self-destructing link mode: the link expires after the first completed download." },
+    { "icon": "shield-check", "title": "GDPR Compliant", "description": "Full compliance with the European Data Protection Regulation." }
   ]
 }

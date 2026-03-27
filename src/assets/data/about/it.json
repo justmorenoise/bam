@@ -1,8 +1,8 @@
 {
   "mission": [
-    { "icon": "🔐", "title": "Privacy First", "description": "I tuoi file non toccano mai i nostri server. La tua privacy non è una funzionalità, è il fondamento di Bam!." },
-    { "icon": "☁️", "title": "Cloud Effimero", "description": "I file vengono suddivisi in chunk cifrati e archiviati temporaneamente su Cloudflare R2 solo per la durata del trasferimento. Ogni chunk viene eliminato immediatamente dopo il download." },
-    { "icon": "🌐", "title": "Cloud Streaming", "description": "Bam! trasmette il tuo file come chunk cifrati attraverso Cloudflare R2 via HTTPS. Veloce, sicuro e accessibile da qualsiasi browser senza plugin." }
+    { "icon": "lock", "title": "Privacy First", "description": "I tuoi file non toccano mai i nostri server. La tua privacy non è una funzionalità, è il fondamento di Bam!." },
+    { "icon": "cloud", "title": "Cloud Effimero", "description": "I file vengono suddivisi in chunk cifrati e archiviati temporaneamente su Cloudflare R2 solo per la durata del trasferimento. Ogni chunk viene eliminato immediatamente dopo il download." },
+    { "icon": "globe", "title": "Cloud Streaming", "description": "Bam! trasmette il tuo file come chunk cifrati attraverso Cloudflare R2 via HTTPS. Veloce, sicuro e accessibile da qualsiasi browser senza plugin." }
   ],
   "steps": [
     { "number": "1", "title": "Seleziona File", "description": "Scegli il file che vuoi condividere. Fino a 1 GB per gli utenti Free, illimitato con Premium. Qualsiasi formato." },
@@ -10,17 +10,17 @@
     { "number": "3", "title": "Trasferimento Sicuro", "description": "Il file viene trasferito con crittografia end-to-end tramite HTTPS. I chunk vengono eliminati da Cloudflare R2 immediatamente dopo il download." }
   ],
   "features": [
-    { "icon": "🔗", "title": "Streaming Cloud Sicuro", "description": "I file vengono suddivisi in chunk cifrati e trasmessi via Cloudflare R2 tramite HTTPS. Ogni chunk viene eliminato definitivamente subito dopo il download." },
-    { "icon": "🔒", "title": "Crittografia Nativa", "description": "Ogni trasferimento è protetto da TLS 1.3 tramite HTTPS. Gli utenti Premium hanno un ulteriore livello con crittografia password AES-GCM e derivazione chiave PBKDF2." },
-    { "icon": "📦", "title": "Fino a 1 GB Gratis", "description": "Trasferisci file fino a 1 GB gratuitamente. Con Premium la dimensione è illimitata." },
-    { "icon": "⚡", "title": "Velocità Massima", "description": "La rete edge globale di Cloudflare consegna i tuoi chunk alla massima velocità. Nessun collo di bottiglia, nessuna infrastruttura relay da gestire." },
-    { "icon": "🛡️", "title": "Privacy Totale", "description": "I chunk sono archiviati su Cloudflare R2 solo durante il trasferimento ed eliminati immediatamente dopo il download. Zero accesso permanente ai tuoi dati." },
-    { "icon": "🖥️", "title": "App Desktop", "description": "Agent Electron per seeding persistente, integrazione OS e notifiche native. (Coming soon)" }
+    { "icon": "link", "title": "Streaming Cloud Sicuro", "description": "I file vengono suddivisi in chunk cifrati e trasmessi via Cloudflare R2 tramite HTTPS. Ogni chunk viene eliminato definitivamente subito dopo il download." },
+    { "icon": "lock", "title": "Crittografia Nativa", "description": "Ogni trasferimento è protetto da TLS 1.3 tramite HTTPS. Gli utenti Premium hanno un ulteriore livello con crittografia password AES-GCM e derivazione chiave PBKDF2." },
+    { "icon": "package", "title": "Fino a 1 GB Gratis", "description": "Trasferisci file fino a 1 GB gratuitamente. Con Premium la dimensione è illimitata." },
+    { "icon": "zap", "title": "Velocità Massima", "description": "La rete edge globale di Cloudflare consegna i tuoi chunk alla massima velocità. Nessun collo di bottiglia, nessuna infrastruttura relay da gestire." },
+    { "icon": "shield", "title": "Privacy Totale", "description": "I chunk sono archiviati su Cloudflare R2 solo durante il trasferimento ed eliminati immediatamente dopo il download. Zero accesso permanente ai tuoi dati." },
+    { "icon": "monitor", "title": "App Desktop", "description": "Agent Electron per seeding persistente, integrazione OS e notifiche native. (Coming soon)" }
   ],
   "roadmap": [
-    { "icon": "🔥", "title": "Burn-on-Read", "description": "Link autodistruttivi che scadono dopo il primo download completato." },
-    { "icon": "🌱", "title": "Seeding Persistente", "description": "Condivisione continua per permettere download multipli dallo stesso link." },
-    { "icon": "📱", "title": "QR Quick-Share", "description": "Codici QR dinamici per trasferimenti istantanei desktop-to-mobile." },
-    { "icon": "🎮", "title": "Gamification", "description": "Sistema XP, livelli e badge per premiare gli utenti attivi." }
+    { "icon": "flame", "title": "Burn-on-Read", "description": "Link autodistruttivi che scadono dopo il primo download completato." },
+    { "icon": "sprout", "title": "Seeding Persistente", "description": "Condivisione continua per permettere download multipli dallo stesso link." },
+    { "icon": "smartphone", "title": "QR Quick-Share", "description": "Codici QR dinamici per trasferimenti istantanei desktop-to-mobile." },
+    { "icon": "gamepad-2", "title": "Gamification", "description": "Sistema XP, livelli e badge per premiare gli utenti attivi." }
   ]
 }

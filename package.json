@@ -1,6 +1,6 @@
 {
   "name": "bam-p2p-file-sharing",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "description": "Bam - P2P File Sharing Ecosystem with Angular 20+ and Electron",
   "scripts": {
     "ng": "ng",
@@ -40,6 +40,7 @@
     "@supabase/supabase-js": "^2.39.0",
     "hash-wasm": "^4.12.0",
     "jspdf": "^4.2.0",
+    "lucide-angular": "^1.0.0",
     "qrcode": "^1.5.3",
     "rxjs": "^7.8.1",
     "tslib": "^2.6.2",

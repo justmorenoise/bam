@@ -16,7 +16,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
             @for (card of data().mission; track card.title) {
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/50 transition-all group">
-                    <div class="text-4xl mb-4 transition-transform">{{ card.icon }}</div>
+                    <lucide-icon [img]="iconMap[card.icon]" class="w-9 h-9 mb-4 text-slate-300 stroke-[1.5]"></lucide-icon>
                     <h3 class="text-lg font-bold mb-2">{{ card.title }}</h3>
                     <p class="text-sm text-slate-400 leading-relaxed">{{ card.description }}</p>
                 </div>
@@ -53,7 +53,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @for (feature of data().features; track feature.title) {
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/50 transition-all group">
-                        <div class="text-4xl mb-4 transition-transform">{{ feature.icon }}</div>
+                        <lucide-icon [img]="iconMap[feature.icon]" class="w-9 h-9 mb-4 text-slate-300 stroke-[1.5]"></lucide-icon>
                         <h3 class="text-lg font-bold mb-2">{{ feature.title }}</h3>
                         <p class="text-sm text-slate-400 leading-relaxed">{{ feature.description }}</p>
                     </div>
@@ -91,7 +91,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @for (item of data().roadmap; track item.title) {
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/50 transition-all group">
-                        <div class="text-4xl mb-4 transition-transform">{{ item.icon }}</div>
+                        <lucide-icon [img]="iconMap[item.icon]" class="w-9 h-9 mb-4 text-slate-300 stroke-[1.5]"></lucide-icon>
                         <h3 class="text-lg font-bold mb-2">{{ item.title }}</h3>
                         <p class="text-sm text-slate-400 leading-relaxed">{{ item.description }}</p>
                     </div>

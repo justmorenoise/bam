@@ -16,7 +16,7 @@
         <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
             @for (feature of data().features; track feature.title) {
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/50 transition-all group">
-                    <span class="text-3xl mb-4 block">{{ feature.icon }}</span>
+                    <lucide-icon [img]="iconMap[feature.icon]" class="w-9 h-9 mb-4 text-slate-300 stroke-[1.5]"></lucide-icon>
                     <h3 class="text-lg font-bold text-white mb-2 group-hover:text-bam-primary transition-colors">{{ feature.title }}</h3>
                     <p class="text-sm text-slate-400 leading-relaxed">{{ feature.description }}</p>
                 </div>
@@ -108,7 +108,7 @@
         <!-- GDPR Info Box -->
         <section class="mb-24">
             <div class="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-6 flex gap-4">
-                <span class="text-2xl shrink-0">🇪🇺</span>
+                <lucide-icon [img]="Landmark" class="w-6 h-6 shrink-0 text-slate-400 stroke-[1.5]"></lucide-icon>
                 <div>
                     <h3 class="font-bold text-white mb-1">{{ 'SECURITY.GDPR.TITLE' | translate }}</h3>
                     <p class="text-sm text-slate-400 leading-relaxed">

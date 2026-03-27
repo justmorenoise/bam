@@ -1,8 +1,8 @@
 {
   "mission": [
-    { "icon": "🔐", "title": "Privacy First", "description": "Your files never touch our servers. Your privacy isn't a feature — it's the foundation of Bam!." },
-    { "icon": "☁️", "title": "Ephemeral Cloud", "description": "Files are split into encrypted chunks and temporarily stored on Cloudflare R2 only for the duration of the transfer. Each chunk is deleted immediately after download." },
-    { "icon": "🌐", "title": "Cloud Streaming", "description": "Bam! streams your file as encrypted chunks through Cloudflare R2 via HTTPS. Fast, secure, and accessible from any browser without plugins." }
+    { "icon": "lock", "title": "Privacy First", "description": "Your files never touch our servers. Your privacy isn't a feature — it's the foundation of Bam!." },
+    { "icon": "cloud", "title": "Ephemeral Cloud", "description": "Files are split into encrypted chunks and temporarily stored on Cloudflare R2 only for the duration of the transfer. Each chunk is deleted immediately after download." },
+    { "icon": "globe", "title": "Cloud Streaming", "description": "Bam! streams your file as encrypted chunks through Cloudflare R2 via HTTPS. Fast, secure, and accessible from any browser without plugins." }
   ],
   "steps": [
     { "number": "1", "title": "Select File", "description": "Choose the file you want to share. Up to 1 GB for Free users, unlimited with Premium. Any format." },
@@ -10,17 +10,17 @@
     { "number": "3", "title": "Secure Transfer", "description": "The file is transferred with end-to-end encryption over HTTPS. Chunks are deleted from Cloudflare R2 immediately after download." }
   ],
   "features": [
-    { "icon": "🔗", "title": "Secure Cloud Streaming", "description": "Files are split into encrypted chunks and streamed via Cloudflare R2 over HTTPS. Each chunk is permanently deleted immediately after download." },
-    { "icon": "🔒", "title": "Native Encryption", "description": "Every transfer is protected by TLS 1.3 over HTTPS. Premium users get an additional layer with AES-GCM password encryption and PBKDF2 key derivation." },
-    { "icon": "📦", "title": "Up to 1 GB Free", "description": "Transfer files up to 1 GB for free. Premium users enjoy unlimited file size." },
-    { "icon": "⚡", "title": "Maximum Speed", "description": "Cloudflare's global edge network delivers your chunks at maximum speed. No bottlenecks, no relay infrastructure to manage." },
-    { "icon": "🛡️", "title": "Total Privacy", "description": "Chunks are stored on Cloudflare R2 only during transfer and deleted immediately after download. Zero permanent access to your data." },
-    { "icon": "🖥️", "title": "Desktop App", "description": "Electron agent for persistent seeding, OS integration and native notifications. (Coming soon)" }
+    { "icon": "link", "title": "Secure Cloud Streaming", "description": "Files are split into encrypted chunks and streamed via Cloudflare R2 over HTTPS. Each chunk is permanently deleted immediately after download." },
+    { "icon": "lock", "title": "Native Encryption", "description": "Every transfer is protected by TLS 1.3 over HTTPS. Premium users get an additional layer with AES-GCM password encryption and PBKDF2 key derivation." },
+    { "icon": "package", "title": "Up to 1 GB Free", "description": "Transfer files up to 1 GB for free. Premium users enjoy unlimited file size." },
+    { "icon": "zap", "title": "Maximum Speed", "description": "Cloudflare's global edge network delivers your chunks at maximum speed. No bottlenecks, no relay infrastructure to manage." },
+    { "icon": "shield", "title": "Total Privacy", "description": "Chunks are stored on Cloudflare R2 only during transfer and deleted immediately after download. Zero permanent access to your data." },
+    { "icon": "monitor", "title": "Desktop App", "description": "Electron agent for persistent seeding, OS integration and native notifications. (Coming soon)" }
   ],
   "roadmap": [
-    { "icon": "🔥", "title": "Burn-on-Read", "description": "Self-destructing links that expire after the first completed download." },
-    { "icon": "🌱", "title": "Persistent Seeding", "description": "Continuous sharing to allow multiple downloads from the same link." },
-    { "icon": "📱", "title": "QR Quick-Share", "description": "Dynamic QR codes for instant desktop-to-mobile transfers." },
-    { "icon": "🎮", "title": "Gamification", "description": "XP system, levels and badges to reward active users." }
+    { "icon": "flame", "title": "Burn-on-Read", "description": "Self-destructing links that expire after the first completed download." },
+    { "icon": "sprout", "title": "Persistent Seeding", "description": "Continuous sharing to allow multiple downloads from the same link." },
+    { "icon": "smartphone", "title": "QR Quick-Share", "description": "Dynamic QR codes for instant desktop-to-mobile transfers." },
+    { "icon": "gamepad-2", "title": "Gamification", "description": "XP system, levels and badges to reward active users." }
   ]
 }
