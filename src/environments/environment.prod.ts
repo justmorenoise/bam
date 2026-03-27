@@ -2,9 +2,9 @@
 // I valori <PLACEHOLDER> vengono sostituiti a build-time dal workflow GitHub Actions
 export const environment = {
     production: true,
-    maintenanceMode: true,
+    maintenanceMode: false,
     appName: 'Bam! - File Sharing',
-    version: '1.1.10',
+    version: '1.1.11',
 
     // Supabase Configuration
     supabase: {
