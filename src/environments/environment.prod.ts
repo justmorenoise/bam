@@ -40,8 +40,8 @@ export const environment = {
         enabled: true,
         adsense: {
             publisherId: 'ca-pub-6681808248400224',
-            bannerSlot: 'XXXXXXXXXX',              // Da compilare dopo approvazione AdSense
-            interstitialSlot: 'XXXXXXXXXX',        // Da compilare dopo approvazione AdSense
+            bannerSlot: '7521901051',
+            interstitialSlot: '3139669467',
         },
     },
 
