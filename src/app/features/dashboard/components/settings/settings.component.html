@@ -149,6 +149,16 @@
                                 }
                             </button>
                         </div>
+                        @if (resetSent()) {
+                            <p class="text-xs text-green-400 mt-2">{{ 'SETTINGS.RESET_EMAIL_SENT' | translate }}</p>
+                        } @else {
+                            <button type="button"
+                                    (click)="sendPasswordReset()"
+                                    [disabled]="isSendingReset()"
+                                    class="text-xs text-slate-400 hover:text-bam-primary transition-colors mt-2 disabled:opacity-50">
+                                {{ 'SETTINGS.FORGOT_CURRENT_PASSWORD' | translate }}
+                            </button>
+                        }
                     </div>
 
                     <div>

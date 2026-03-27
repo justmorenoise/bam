@@ -428,6 +428,8 @@
     "GOOGLE_AUTH_MSG": "You signed in with Google. Password management is handled through your Google account.",
     "VALIDATION_FILL_ALL_PASSWORD": "Fill in all password fields",
     "VALIDATION_WRONG_PASSWORD": "Current password is incorrect",
+    "FORGOT_CURRENT_PASSWORD": "Don't remember your current password? Send a recovery link",
+    "RESET_EMAIL_SENT": "✅ Recovery email sent. Check your inbox and follow the link.",
     "ACTIONS_SECTION": "Account Actions",
     "LOGOUT_TITLE": "Log out",
     "LOGOUT_DESC": "Disconnect your account from this device",

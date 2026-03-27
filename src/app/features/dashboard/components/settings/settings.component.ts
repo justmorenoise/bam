@@ -33,6 +33,8 @@ export class SettingsComponent {
     showConfirmPassword = signal(false);
     isUpdatingPassword = signal(false);
     passwordMessage = signal('');
+    isSendingReset = signal(false);
+    resetSent = signal(false);
 
     constructor(
         private supabase: SupabaseService,
@@ -125,6 +127,21 @@ export class SettingsComponent {
             );
         } finally {
             this.isUpdatingPassword.set(false);
+        }
+    }
+
+    async sendPasswordReset() {
+        const email = this.supabase.currentUser()?.email;
+        if (!email) return;
+
+        this.isSendingReset.set(true);
+        try {
+            await this.supabase.resetPassword(email);
+        } catch (error) {
+            console.error('Password reset error:', error);
+        } finally {
+            this.isSendingReset.set(false);
+            this.resetSent.set(true);
         }
     }
 
