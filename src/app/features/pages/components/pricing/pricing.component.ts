@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from '@shared/components/header.component';
 import { LanguageService } from '@core/services/language.service';
 import { SeoService } from '@core/services/seo.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 
 interface PricingData {
     plans: {
@@ -31,9 +32,17 @@ const EMPTY: PricingData = { plans: [], faqs: [] };
     styleUrls: ['./pricing.component.css']
 })
 export class PricingComponent {
-    private http = inject(HttpClient);
-    private lang = inject(LanguageService);
-    private seo  = inject(SeoService);
+    private http      = inject(HttpClient);
+    private lang      = inject(LanguageService);
+    private seo       = inject(SeoService);
+    private analytics = inject(AnalyticsService);
+
+    onPricingCtaClick(planName: string, highlight: boolean): void {
+        this.analytics.trackEvent('pricing_cta_clicked', {
+            plan: planName,
+            highlight,
+        });
+    }
 
     data = toSignal(
         toObservable(this.lang.currentLang).pipe(

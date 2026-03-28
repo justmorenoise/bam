@@ -4,7 +4,7 @@ export const environment = {
     production: false,
     maintenanceMode: false,
     appName: 'Bam! - File Sharing [PREPROD]',
-    version: '1.1.15',
+    version: '1.1.17',
 
     // Supabase Configuration (Preprod)
     supabase: {
@@ -31,6 +31,12 @@ export const environment = {
             throughputRatio: 0.7,
             saturationThreshold: 0.1
         }
+    },
+
+    // Analytics Configuration (Preprod)
+    analytics: {
+        enabled: true,
+        gaId: '<PREPROD_GA_ID>',
     },
 
     // Ads Configuration (disabilitati in preprod)

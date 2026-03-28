@@ -9,6 +9,7 @@ import { SupabaseService } from '@core/services/supabase.service';
 import { Subscription } from 'rxjs';
 import { AdBannerComponent } from '@shared/components/ad-banner.component';
 import { R2TransferService } from '@core/services/r2-transfer.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 
 @Component({
     selector: 'app-download',
@@ -40,6 +41,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
         private supabase: SupabaseService,
         private translate: TranslateService,
         protected r2Transfer: R2TransferService,
+        private analytics: AnalyticsService,
     ) {}
 
     ngOnInit() {
@@ -94,6 +96,10 @@ export class DownloadComponent implements OnInit, OnDestroy {
                         if (!this.isDownloading()) {
                             this.isDownloading.set(true);
                             this.downloadStartTs = Date.now();
+                            this.analytics.trackEvent('download_started', {
+                                method: 'p2p',
+                                file_size_category: this.analytics.fileSizeCategory(updatedSession.fileInfo.size),
+                            });
                             this.startBurnProgressTracking();
                         }
                         break;
@@ -109,6 +115,11 @@ export class DownloadComponent implements OnInit, OnDestroy {
                             const size = this.session()!.fileInfo.size;
                             this.avgSpeed.set(Math.floor(size / elapsed));
                             this.isCompleted.set(true);
+                            this.analytics.trackEvent('download_completed', {
+                                method: 'p2p',
+                                file_size_category: this.analytics.fileSizeCategory(size),
+                                duration_seconds: elapsed,
+                            });
 
                             if (this.supabase.isAuthenticated()) {
                                 this.supabase.addXP(5).catch(() => {});
@@ -118,6 +129,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
 
                     case 'error':
                         this.clearProgressInterval();
+                        this.analytics.trackEvent('download_failed', { method: 'p2p' });
                         this.errorMessage.set(this.translate.instant('DOWNLOAD.ERROR_CONNECTION'));
                         this.isConnecting.set(false);
                         this.isDownloading.set(false);
@@ -144,6 +156,11 @@ export class DownloadComponent implements OnInit, OnDestroy {
         this.isDownloading.set(true);
         this.errorMessage.set('');
         this.downloadStartTs = Date.now();
+        const fileSize = this.session()?.fileInfo.size ?? 0;
+        this.analytics.trackEvent('download_started', {
+            method: 'cloud',
+            file_size_category: this.analytics.fileSizeCategory(fileSize),
+        });
 
         try {
             await this.supabase.sendDownloadNotification(this.linkId(), 'started', fileName).catch(() => {});
@@ -155,6 +172,11 @@ export class DownloadComponent implements OnInit, OnDestroy {
             this.avgSpeed.set(Math.floor(size / elapsed));
             this.isDownloading.set(false);
             this.isCompleted.set(true);
+            this.analytics.trackEvent('download_completed', {
+                method: 'cloud',
+                file_size_category: this.analytics.fileSizeCategory(size),
+                duration_seconds: elapsed,
+            });
 
             await this.supabase.sendDownloadNotification(this.linkId(), 'completed', fileName).catch(() => {});
             if (this.supabase.isAuthenticated()) {
@@ -163,6 +185,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
             await this.supabase.incrementDownloadCount(this.linkId()).catch(() => {});
         } catch (error: any) {
             this.isDownloading.set(false);
+            this.analytics.trackEvent('download_failed', { method: 'cloud' });
             this.errorMessage.set(this.translate.instant('DOWNLOAD.ERROR_CONNECTION'));
         }
     }

@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '@core/services/supabase.service';
 import { ModalService } from '@core/services/modal.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 
 @Component({
     selector: 'app-register',
@@ -28,7 +29,8 @@ export class RegisterComponent implements OnInit {
         private supabase: SupabaseService,
         private router: Router,
         private modal: ModalService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private analytics: AnalyticsService,
     ) {
     }
 
@@ -67,6 +69,7 @@ export class RegisterComponent implements OnInit {
                 this.fullName()
             );
 
+            this.analytics.trackEvent('sign_up', { method: 'email' });
             this.modal.showSuccess(
                 this.translate.instant('AUTH.MODAL_REGISTER_SUCCESS_TITLE'),
                 this.translate.instant('AUTH.MODAL_REGISTER_SUCCESS_MSG')
@@ -90,6 +93,7 @@ export class RegisterComponent implements OnInit {
         this.errorMessage.set('');
 
         try {
+            this.analytics.trackEvent('sign_up', { method: 'google' });
             await this.supabase.signInWithGoogle();
         } catch (error: any) {
             console.error('Google registration error:', error);

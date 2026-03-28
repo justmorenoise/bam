@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 import { PlatformService } from './platform.service';
+import { AnalyticsService } from './analytics.service';
 import { environment } from '@environments/environment';
 
 /**
@@ -29,6 +30,7 @@ export class AdService {
     constructor(
         private supabase: SupabaseService,
         private platform: PlatformService,
+        private analytics: AnalyticsService,
     ) {}
 
     /**
@@ -115,6 +117,7 @@ export class AdService {
         return new Promise(resolve => {
             this.interstitialResolve = resolve;
             this.showInterstitial.set(true);
+            this.analytics.trackEvent('ad_interstitial_shown');
             // Auto-close dopo 6 secondi
             setTimeout(() => this.closeInterstitial(), 6000);
         });
@@ -122,6 +125,7 @@ export class AdService {
 
     /** Chiude l'interstitial upsell e risolve la Promise pendente */
     closeInterstitial(): void {
+        this.analytics.trackEvent('ad_interstitial_closed');
         this.showInterstitial.set(false);
         if (this.interstitialResolve) {
             this.interstitialResolve();

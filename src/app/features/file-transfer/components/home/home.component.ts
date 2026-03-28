@@ -9,6 +9,7 @@ import { DropZoneComponent } from '@features/file-transfer/components/upload/dro
 import { AdPremiumBanner } from '@shared/components/ad-premium-banner/ad-premium-banner';
 import { LanguageService } from '@core/services/language.service';
 import { SeoService } from '@core/services/seo.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 
 type Feature = {
     icon?: string;
@@ -28,6 +29,7 @@ export class HomeComponent implements OnInit {
 
     private seo = inject(SeoService);
     private lang = inject(LanguageService);
+    private analytics = inject(AnalyticsService);
 
     constructor(
         private supabase: SupabaseService,
@@ -44,7 +46,14 @@ export class HomeComponent implements OnInit {
     }
 
     navigateToUploadWithFile(file: File) {
+        this.analytics.trackEvent('home_dropzone_used', {
+            file_size_category: this.analytics.fileSizeCategory(file.size),
+        });
         this.router.navigate(['/upload'], { state: { file } });
+    }
+
+    onUploadCtaClick() {
+        this.analytics.trackEvent('home_cta_clicked', { cta: 'upload_button' });
     }
 
     features = signal<Feature[]>([

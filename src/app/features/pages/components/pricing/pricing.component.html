@@ -59,11 +59,13 @@
 
                     <!-- CTA Button -->
                     @if (plan.highlight) {
-                        <button class="btn btn-primary w-full" routerLink="/auth/register">
+                        <button class="btn btn-primary w-full" routerLink="/auth/register"
+                                (click)="onPricingCtaClick(plan.name, true)">
                             {{ 'PRICING.CTA_PRIMARY' | translate }}
                         </button>
                     } @else {
-                        <button class="btn btn-secondary w-full" routerLink="/auth/register">
+                        <button class="btn btn-secondary w-full" routerLink="/auth/register"
+                                (click)="onPricingCtaClick(plan.name, false)">
                             {{ 'PRICING.CTA_FREE' | translate }}
                         </button>
                     }

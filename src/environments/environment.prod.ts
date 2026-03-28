@@ -4,7 +4,7 @@ export const environment = {
     production: true,
     maintenanceMode: false,
     appName: 'Bam! - File Sharing',
-    version: '1.1.15',
+    version: '1.1.17',
 
     // Supabase Configuration
     supabase: {
@@ -32,6 +32,12 @@ export const environment = {
             throughputRatio: 0.7,
             saturationThreshold: 0.1
         }
+    },
+
+    // Analytics Configuration (Production)
+    analytics: {
+        enabled: true,
+        gaId: '<PROD_GA_ID>',
     },
 
     // Ads Configuration (Production)

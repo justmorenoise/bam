@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupabaseService } from '@core/services/supabase.service';
 import { ModalService } from '@core/services/modal.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 
 @Component({
     selector: 'app-login',
@@ -24,7 +25,8 @@ export class LoginComponent implements OnInit {
         private supabase: SupabaseService,
         private router: Router,
         private modal: ModalService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private analytics: AnalyticsService,
     ) {
     }
 
@@ -46,6 +48,7 @@ export class LoginComponent implements OnInit {
 
         try {
             await this.supabase.signIn(this.email(), this.password());
+            this.analytics.trackEvent('login', { method: 'email' });
             this.router.navigate(['/dashboard']);
         } catch (error: any) {
             console.error('Login error:', error);
@@ -64,6 +67,7 @@ export class LoginComponent implements OnInit {
         this.errorMessage.set('');
 
         try {
+            this.analytics.trackEvent('login', { method: 'google' });
             await this.supabase.signInWithGoogle();
         } catch (error: any) {
             console.error('Google login error:', error);

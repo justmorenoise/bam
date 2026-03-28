@@ -41,6 +41,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+    <!-- Google tag (gtag.js) — Consent Mode v2 defaults PRIMA del caricamento di gtag.js.
+         La CMP Google (Funding Choices / IAB TCF 2.x) aggiornerà il consenso automaticamente.
+         <PROD_GA_ID> viene sostituito a build-time dal workflow GitHub Actions. -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('consent', 'default', {
+            analytics_storage:  'denied',
+            ad_storage:         'denied',
+            ad_user_data:       'denied',
+            ad_personalization: 'denied',
+            wait_for_update:    500
+        });
+        gtag('js', new Date());
+        // send_page_view: false — i page view sono inviati da AnalyticsService su NavigationEnd
+        gtag('config', '<PROD_GA_ID>', { send_page_view: false });
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<PROD_GA_ID>"></script>
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+
     <!-- Preconnect AdSense (caricato in modo lazy da AdService solo su web free) -->
     <link rel="preconnect" href="https://pagead2.googlesyndication.com">
     <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net">

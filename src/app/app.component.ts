@@ -9,6 +9,7 @@ import { ToastComponent } from '@shared/components/toast/toast.component';
 import { LanguageService } from '@core/services/language.service';
 import { AdService } from '@core/services/ad.service';
 import { DownloadNotificationService } from '@core/services/download-notification.service';
+import { AnalyticsService } from '@core/services/analytics.service';
 
 @Component({
     selector: 'app-root',
@@ -41,8 +42,9 @@ export class AppComponent implements OnInit {
         private languageService: LanguageService,
         private adService: AdService,
     ) {
-        // Attiva il servizio root che si auto-sottoscrive all'auth state
+        // Attiva i servizi root che si auto-iscrivono al loro avvio
         inject(DownloadNotificationService);
+        inject(AnalyticsService);
     }
 
     async ngOnInit(): Promise<void> {

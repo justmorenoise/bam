@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 import * as QRCode from 'qrcode';
 import { DropZoneComponent } from './drop-zone/drop-zone.component';
 import { AdBannerComponent } from '@shared/components/ad-banner.component';
+import { AnalyticsService } from '@core/services/analytics.service';
 
 @Component({
     selector: 'app-upload',
@@ -52,6 +53,7 @@ export class UploadComponent implements OnInit, OnDestroy {
     private sessionSub?: Subscription;
     private cloudProgressInterval: ReturnType<typeof setInterval> | null = null;
     private burnProgressInterval: ReturnType<typeof setInterval> | null = null;
+    private transferStartTs = 0;
 
     constructor(
         uploadState: UploadStateService,
@@ -63,6 +65,7 @@ export class UploadComponent implements OnInit, OnDestroy {
         private r2: R2TransferService,
         private hasher: HasherService,
         private crypto: CryptoService,
+        private analytics: AnalyticsService,
     ) {
         this.st = uploadState;
     }
@@ -127,6 +130,10 @@ export class UploadComponent implements OnInit, OnDestroy {
             return;
         }
         this.st.selectedFile.set(file);
+        this.analytics.trackEvent('file_selected', {
+            file_size_category: this.analytics.fileSizeCategory(file.size),
+            file_type: file.type || 'unknown',
+        });
     }
 
     clearFile() {
@@ -173,6 +180,10 @@ export class UploadComponent implements OnInit, OnDestroy {
         if (slug && !this.validateSlug(slug)) return;
 
         this.st.isGeneratingLink.set(true);
+        this.analytics.trackEvent('transfer_started', {
+            method: 'p2p',
+            file_size_category: this.analytics.fileSizeCategory(file.size),
+        });
 
         try {
             const { linkId, session } = await this.signaling.startSenderSession(
@@ -234,6 +245,11 @@ export class UploadComponent implements OnInit, OnDestroy {
         if (slug && !this.validateSlug(slug)) return;
 
         this.st.isGeneratingLink.set(true);
+        this.analytics.trackEvent('transfer_started', {
+            method: 'cloud',
+            file_size_category: this.analytics.fileSizeCategory(file.size),
+        });
+        this.transferStartTs = Date.now();
 
         try {
             const fileHash = await this.hasher.calculateHash(file, (p) => {
@@ -281,6 +297,11 @@ export class UploadComponent implements OnInit, OnDestroy {
             this.st.linkId.set(linkId);
             const linkPath = this.isPremium() && slug ? slug : linkId;
             await this.setLinkAndQR(linkPath);
+            this.analytics.trackEvent('transfer_completed', {
+                method: 'cloud',
+                file_size_category: this.analytics.fileSizeCategory(file.size),
+                duration_seconds: Math.round((Date.now() - this.transferStartTs) / 1000),
+            });
 
         } catch (error: any) {
             this.clearCloudProgressInterval();
@@ -303,6 +324,7 @@ export class UploadComponent implements OnInit, OnDestroy {
                 color: { dark: '#ffffff', light: '#0f172a' }
             });
             this.st.qrCodeUrl.set(qrUrl);
+            this.analytics.trackEvent('qr_generated');
         } catch (err) {
             console.error('QR Code generation failed', err);
         }
@@ -318,6 +340,7 @@ export class UploadComponent implements OnInit, OnDestroy {
             );
         } else if (status === 'transferring') {
             this.modal?.close();
+            this.transferStartTs = Date.now();
             this.st.isBurnUploading.set(true);
             // Start polling burn progress
             this.clearBurnProgressInterval();
@@ -339,6 +362,15 @@ export class UploadComponent implements OnInit, OnDestroy {
     }
 
     handleTransferComplete() {
+        const file = this.st.selectedFile();
+        const duration = this.transferStartTs > 0
+            ? Math.round((Date.now() - this.transferStartTs) / 1000)
+            : undefined;
+        this.analytics.trackEvent('transfer_completed', {
+            method: this.st.transferMethod(),
+            file_size_category: file ? this.analytics.fileSizeCategory(file.size) : 'unknown',
+            ...(duration !== undefined && { duration_seconds: duration }),
+        });
         const isBurnMode = this.st.mode() === 'burn';
 
         this.modal.showSuccess(
@@ -420,6 +452,7 @@ export class UploadComponent implements OnInit, OnDestroy {
         }
         this.st.transferMethod.set('cloud');
         this.st.retentionPolicy.set('burn');
+        this.analytics.trackEvent('transfer_method_selected', { method: 'cloud' });
     }
 
     protected setPersistentMode() {
@@ -459,6 +492,7 @@ export class UploadComponent implements OnInit, OnDestroy {
             await navigator.clipboard.writeText(link);
             this.st.linkCopied.set(true);
             setTimeout(() => this.st.linkCopied.set(false), 2000);
+            this.analytics.trackEvent('link_copied');
         } catch {
             this.modal.showError(this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'), 'Impossibile copiare il link');
         }
@@ -469,6 +503,7 @@ export class UploadComponent implements OnInit, OnDestroy {
         const fileName = this.st.selectedFile()?.name;
         if (!link) return;
         try {
+            this.analytics.trackEvent('link_shared');
             await navigator.share({
                 title: this.translate.instant('UPLOAD.SHARE_TITLE'),
                 text: fileName
