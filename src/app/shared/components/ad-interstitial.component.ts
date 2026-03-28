@@ -16,23 +16,19 @@ import { environment } from '@environments/environment';
     imports: [CommonModule],
     template: `
         @if (adService.adsEnabled && adService.showInterstitial()) {
-            <div
-                class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6"
-                (click)="adService.closeInterstitial()">
-
-                <div
-                    class="bg-white rounded-2xl p-4 relative shadow-2xl"
-                    (click)="$event.stopPropagation()">
+            <div class="fixed bottom-0 left-0 right-0 z-[9999] flex justify-center pb-4 pointer-events-none">
+                <div class="bg-white rounded-xl shadow-2xl p-3 relative pointer-events-auto"
+                     style="width:320px">
 
                     <!-- Close button — sempre visibile, richiesto da policy AdSense -->
                     <button
                         (click)="adService.closeInterstitial()"
-                        class="absolute top-2 right-2 text-slate-400 hover:text-slate-700 text-sm font-bold z-10">
+                        class="absolute -top-3 -right-3 w-6 h-6 bg-slate-600 text-white rounded-full text-xs font-bold flex items-center justify-center shadow-md z-10">
                         &#10005;
                     </button>
 
                     <!-- Label richiesta da Google AdSense ToS -->
-                    <p class="text-[9px] text-slate-400 uppercase tracking-widest text-right mb-1 pr-1">Annuncio</p>
+                    <p class="text-[9px] text-slate-400 uppercase tracking-widest text-right mb-1">Annuncio</p>
 
                     <!-- Slot AdSense rectangle 300×250 -->
                     <ins

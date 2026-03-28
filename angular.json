@@ -37,12 +37,52 @@
                 "output": "/"
               },
               {
+                "glob": "favicon-16x16.png",
+                "input": "src",
+                "output": "/"
+              },
+              {
+                "glob": "favicon-32x32.png",
+                "input": "src",
+                "output": "/"
+              },
+              {
+                "glob": "apple-touch-icon.png",
+                "input": "src",
+                "output": "/"
+              },
+              {
+                "glob": "android-chrome-192x192.png",
+                "input": "src",
+                "output": "/"
+              },
+              {
+                "glob": "android-chrome-512x512.png",
+                "input": "src",
+                "output": "/"
+              },
+              {
+                "glob": "site.webmanifest",
+                "input": "src",
+                "output": "/"
+              },
+              {
                 "glob": "_redirects",
                 "input": "src",
                 "output": "/"
               },
               {
                 "glob": "_headers",
+                "input": "src",
+                "output": "/"
+              },
+              {
+                "glob": "robots.txt",
+                "input": "src",
+                "output": "/"
+              },
+              {
+                "glob": "sitemap.xml",
                 "input": "src",
                 "output": "/"
               }
