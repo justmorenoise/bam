@@ -358,6 +358,7 @@ export class SignalingService {
             headers: {
                 'Content-Type': 'application/json',
                 'X-Bam-Api-Key': environment.r2.apiKey,
+                'X-Bam-Tier': this.supabase.isPremium() ? 'premium' : 'free',
             },
             body: JSON.stringify({
                 fileName: file.name,

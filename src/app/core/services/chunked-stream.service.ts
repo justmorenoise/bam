@@ -349,6 +349,9 @@ export class ChunkedStreamService {
     // ─── Common helpers ──────────────────────────────────────────
 
     private authHeaders(): Record<string, string> {
-        return { 'X-Bam-Api-Key': environment.r2.apiKey };
+        return {
+            'X-Bam-Api-Key': environment.r2.apiKey,
+            'X-Bam-Tier': this.supabase.isPremium() ? 'premium' : 'free',
+        };
     }
 }

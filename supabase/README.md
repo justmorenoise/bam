@@ -29,8 +29,11 @@ export const environment = {
 
 1. Vai su `SQL Editor` nel tuo progetto Supabase
 2. Crea una nuova query
-3. Copia e incolla il contenuto di `001_initial_schema.sql`
-4. Esegui la query
+3. Esegui le migration **nell'ordine**:
+   - `001_initial_schema.sql`
+   - `002_add_soft_delete.sql`
+   - `003_add_burn_transfer_type.sql`
+   - `004_add_missing_r2_columns.sql` ← **obbligatoria per gli upload R2**
 
 ### Opzione B: Tramite Supabase CLI
 
