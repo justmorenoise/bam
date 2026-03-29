@@ -24,7 +24,9 @@
     "TERMS": "Terms & Conditions",
     "PRIVACY": "Privacy Policy",
     "COPYRIGHT": "© {{year}} Bam! All rights reserved.",
-    "VERSION": "Version: {{version}}"
+    "VERSION": "Version: {{version}}",
+    "MADE_BY": "A project by",
+    "GITHUB": "Open source on GitHub"
   },
   "MODAL": {
     "CANCEL": "Cancel",
