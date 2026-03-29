@@ -8,6 +8,7 @@ import { SupabaseService } from '@core/services/supabase.service';
 import { DropZoneComponent } from '@features/file-transfer/components/upload/drop-zone/drop-zone.component';
 import { AdPremiumBanner } from '@shared/components/ad-premium-banner/ad-premium-banner';
 import { LanguageService } from '@core/services/language.service';
+import { HnNewsComponent } from '@shared/components/hn-news/hn-news.component';
 import { SeoService } from '@core/services/seo.service';
 import { AnalyticsService } from '@core/services/analytics.service';
 
@@ -20,7 +21,7 @@ type Feature = {
 @Component({
     selector: 'app-home',
     standalone: true,
-    imports: [CommonModule, HeaderComponent, AdBannerComponent, DropZoneComponent, TranslateModule, AdPremiumBanner],
+    imports: [CommonModule, HeaderComponent, AdBannerComponent, DropZoneComponent, TranslateModule, AdPremiumBanner, HnNewsComponent],
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.css']
 })

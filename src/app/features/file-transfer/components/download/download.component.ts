@@ -8,13 +8,14 @@ import { FileShareSession, SignalingService } from '@core/services/signaling.ser
 import { SupabaseService } from '@core/services/supabase.service';
 import { Subscription } from 'rxjs';
 import { AdBannerComponent } from '@shared/components/ad-banner.component';
+import { HnNewsComponent } from '@shared/components/hn-news/hn-news.component';
 import { R2TransferService } from '@core/services/r2-transfer.service';
 import { AnalyticsService } from '@core/services/analytics.service';
 
 @Component({
     selector: 'app-download',
     standalone: true,
-    imports: [CommonModule, FormsModule, HeaderComponent, RouterLink, AdBannerComponent, TranslateModule],
+    imports: [CommonModule, FormsModule, HeaderComponent, RouterLink, AdBannerComponent, TranslateModule, HnNewsComponent],
     templateUrl: './download.component.html',
     styleUrls: ['./download.component.css']
 })

@@ -46,7 +46,7 @@ interface CreateTransferBody {
 // ─── Size limits per tier ───────────────────────────────────
 
 const SIZE_LIMITS: Record<string, number> = {
-    free: 500 * 1024 * 1024,       // 500 MB
+    free: 1024 * 1024 * 1024,      // 1 GB
     premium: 2 * 1024 * 1024 * 1024, // 2 GB
 };
 

@@ -4,7 +4,7 @@ export const environment = {
     production: false,
     maintenanceMode: false,
     appName: 'Bam! - File Sharing [PREPROD]',
-    version: '1.1.18',
+    version: '1.1.19',
 
     // Supabase Configuration (Preprod)
     supabase: {
@@ -60,7 +60,7 @@ export const environment = {
         free: {
             maxFilesPerDay: 5,
             maxFileSize: 1 * 1024 * 1024 * 1024, // 1 GB
-            maxCloudFileSize: 500 * 1024 * 1024, // 500MB
+            maxCloudFileSize: 1024 * 1024 * 1024, // 1GB
         },
         premium: {
             maxFilesPerDay: null, // Unlimited

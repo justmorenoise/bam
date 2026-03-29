@@ -8,6 +8,7 @@ import { SignalingService } from '@core/services/signaling.service';
 import { SupabaseService } from '@core/services/supabase.service';
 import { ModalService } from '@core/services/modal.service';
 import { R2TransferService } from '@core/services/r2-transfer.service';
+import { HnNewsComponent } from '@shared/components/hn-news/hn-news.component';
 import { HasherService } from '@core/services/transfer/hasher.service';
 import { CryptoService } from '@core/services/crypto.service';
 import { UploadStateService } from '../../services/upload-state.service';
@@ -20,7 +21,7 @@ import { AnalyticsService } from '@core/services/analytics.service';
 @Component({
     selector: 'app-upload',
     standalone: true,
-    imports: [CommonModule, FormsModule, HeaderComponent, RouterLink, DropZoneComponent, TranslateModule, AdBannerComponent],
+    imports: [CommonModule, FormsModule, HeaderComponent, RouterLink, DropZoneComponent, TranslateModule, AdBannerComponent, HnNewsComponent],
     templateUrl: './upload.component.html',
     styleUrls: ['./upload.component.css']
 })
