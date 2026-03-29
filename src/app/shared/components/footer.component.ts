@@ -86,27 +86,9 @@ import { SupabaseService } from '@core/services/supabase.service';
                     <div class="flex flex-wrap items-center justify-center gap-4">
                         <!-- Made by Morenoise -->
                         <a href="https://morenoise.it" target="_blank" rel="noopener noreferrer"
-                           class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors">
+                           class="flex items-center gap-1.5 text-xs text-slate-400 hover:opacity-80 transition-opacity">
                             <span>{{ 'FOOTER.MADE_BY' | translate }}</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="18" height="18" aria-label="Morenoise">
-                                <!-- dot -->
-                                <circle cx="17" cy="69" r="10" fill="#12B5C4"/>
-                                <!-- left pill (teal) -->
-                                <rect x="-13" y="-33" width="26" height="66" rx="13"
-                                      transform="translate(43,49) rotate(10)" fill="#12B5C4"/>
-                                <!-- overlap shadow: left pill clipped to right pill -->
-                                <clipPath id="mn-rpc">
-                                    <rect x="-13" y="-33" width="26" height="66" rx="13"
-                                          transform="translate(66,49) rotate(5)"/>
-                                </clipPath>
-                                <rect x="-13" y="-33" width="26" height="66" rx="13"
-                                      transform="translate(43,49) rotate(10)" fill="#0A7A8A"
-                                      clip-path="url(#mn-rpc)"/>
-                                <!-- right pill (dark navy) -->
-                                <rect x="-13" y="-33" width="26" height="66" rx="13"
-                                      transform="translate(66,49) rotate(5)" fill="#0D4E6F"/>
-                            </svg>
-                            <span class="font-medium">morenoise.it</span>
+                            <img src="assets/morenoise_logo.svg" alt="Morenoise" height="22" class="inline-block brightness-110"/>
                         </a>
                         <!-- GitHub -->
                         <a href="https://github.com/justmorenoise/bam" target="_blank" rel="noopener noreferrer"
