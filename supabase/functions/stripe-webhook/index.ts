@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
 
     let event: Stripe.Event;
     try {
-        const rawBody = await req.arrayBuffer();
+        const rawBody = await req.text();
         const stripe = createStripeClient();
         event = await stripe.webhooks.constructEventAsync(
             rawBody,

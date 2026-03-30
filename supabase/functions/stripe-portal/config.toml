@@ -1,0 +1,2 @@
+[functions.stripe-portal]
+verify_jwt = false
