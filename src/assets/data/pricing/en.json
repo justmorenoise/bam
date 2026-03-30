@@ -48,6 +48,7 @@
       "price": "€4.99",
       "period": "/month",
       "highlight": true,
+      "planKey": "monthly",
       "features": [
         { "text": "Unlimited file transfer", "included": true },
         { "text": "Unlimited file size", "included": true },

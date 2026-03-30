@@ -27,6 +27,7 @@
       "@environments/*": ["src/environments/*"]
     }
   },
+  "exclude": ["supabase/functions"],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

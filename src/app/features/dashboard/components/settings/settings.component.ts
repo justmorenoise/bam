@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -6,6 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HeaderComponent } from '@shared/components/header.component';
 import { SupabaseService } from '@core/services/supabase.service';
 import { ModalService } from '@core/services/modal.service';
+import { StripeService } from '@core/services/stripe.service';
 
 @Component({
     selector: 'app-settings',
@@ -14,12 +15,25 @@ import { ModalService } from '@core/services/modal.service';
     templateUrl: './settings.component.html',
     styleUrls: ['./settings.component.css']
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit {
+    private supabase  = inject(SupabaseService);
+    private router    = inject(Router);
+    private modal     = inject(ModalService);
+    private translate = inject(TranslateService);
+    stripeService     = inject(StripeService);
+
     userProfile = this.supabase.currentProfile;
     isOAuthOnly = computed(() => {
         const identities = this.supabase.currentUser()?.identities ?? [];
         return identities.length > 0 && identities.every(i => i.provider !== 'email');
     });
+
+    subscription    = this.stripeService.subscription;
+    isLoadingPortal = this.stripeService.isLoadingPortal;
+    isOnTrial       = this.stripeService.isOnTrial;
+    trialEndsAt     = this.stripeService.trialEndsAt;
+    renewsAt        = this.stripeService.renewsAt;
+    willCancel      = this.stripeService.willCancel;
 
     fullName = signal('');
     isUpdatingProfile = signal(false);
@@ -36,13 +50,28 @@ export class SettingsComponent {
     isSendingReset = signal(false);
     resetSent = signal(false);
 
-    constructor(
-        private supabase: SupabaseService,
-        private router: Router,
-        private modal: ModalService,
-        private translate: TranslateService
-    ) {
+    constructor() {
         this.fullName.set(this.userProfile()?.full_name || '');
+    }
+
+    async ngOnInit(): Promise<void> {
+        if (this.supabase.isPremium()) {
+            await this.stripeService.loadSubscription();
+        }
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('checkout') === 'success') {
+            await this.stripeService.loadSubscription();
+            await this.supabase.reloadProfile();
+            this.modal.showSuccess(
+                this.translate.instant('SETTINGS.SUBSCRIPTION_CHECKOUT_SUCCESS_TITLE'),
+                this.translate.instant('SETTINGS.SUBSCRIPTION_CHECKOUT_SUCCESS_MSG')
+            );
+            this.router.navigate([], { replaceUrl: true, queryParams: {} });
+        }
+    }
+
+    async openPortal(): Promise<void> {
+        await this.stripeService.openPortal();
     }
 
     async updateProfile() {

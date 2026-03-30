@@ -462,7 +462,20 @@
     "MODAL_DELETE_CONFIRM_BTN": "Delete permanently",
     "MODAL_DELETE_CANCEL": "Cancel",
     "MODAL_DELETED_TITLE": "Account Deleted",
-    "MODAL_DELETED_MSG": "Your account has been permanently deleted"
+    "MODAL_DELETED_MSG": "Your account has been permanently deleted",
+    "SUBSCRIPTION_SECTION": "Subscription",
+    "SUBSCRIPTION_PLAN_LABEL": "Plan",
+    "SUBSCRIPTION_PLAN_MONTHLY": "Monthly Plan",
+    "SUBSCRIPTION_PLAN_ANNUAL": "Annual Plan",
+    "SUBSCRIPTION_STATUS_ACTIVE": "Active",
+    "SUBSCRIPTION_STATUS_TRIALING": "Free trial",
+    "SUBSCRIPTION_TRIAL_ENDS": "Free trial ends on {{date}}",
+    "SUBSCRIPTION_RENEWS": "Renews automatically on {{date}}",
+    "SUBSCRIPTION_CANCELS": "Access until {{date}}, then reverts to free plan",
+    "SUBSCRIPTION_MANAGE_BTN": "Manage Subscription",
+    "SUBSCRIPTION_LOADING": "Loading subscription...",
+    "SUBSCRIPTION_CHECKOUT_SUCCESS_TITLE": "Welcome to Premium!",
+    "SUBSCRIPTION_CHECKOUT_SUCCESS_MSG": "Your subscription is now active. Enjoy all premium features!"
   },
   "MAINTENANCE": {
     "TITLE": "We're working on it",

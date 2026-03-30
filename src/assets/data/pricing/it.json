@@ -48,6 +48,7 @@
       "price": "€4.99",
       "period": "/mese",
       "highlight": true,
+      "planKey": "monthly",
       "features": [
         { "text": "Trasferimento file illimitato", "included": true },
         { "text": "Dimensione file illimitata", "included": true },

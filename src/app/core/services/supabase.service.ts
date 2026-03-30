@@ -177,8 +177,9 @@ export class SupabaseService {
         return data;
     }
 
-    async upgradeToPremium() {
-        return this.updateProfile({ tier: 'premium' });
+    async reloadProfile(): Promise<void> {
+        const userId = this.currentUser()?.id;
+        if (userId) await this.loadUserProfile(userId);
     }
 
     async createFileTransfer(transfer: Omit<FileTransferRecord, 'id' | 'created_at' | 'downloads_count' | 'status'>) {

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { switchMap, catchError, tap } from 'rxjs/operators';
@@ -9,6 +9,8 @@ import { HeaderComponent } from '@shared/components/header.component';
 import { LanguageService } from '@core/services/language.service';
 import { SeoService } from '@core/services/seo.service';
 import { AnalyticsService } from '@core/services/analytics.service';
+import { SupabaseService } from '@core/services/supabase.service';
+import { StripeService } from '@core/services/stripe.service';
 
 interface PricingData {
     plans: {
@@ -17,6 +19,7 @@ interface PricingData {
         price: string;
         period: string;
         highlight: boolean;
+        planKey?: 'monthly' | 'annual';
         features: { text: string; included: boolean }[];
     }[];
     faqs: { question: string; answer: string }[];
@@ -36,12 +39,25 @@ export class PricingComponent {
     private lang      = inject(LanguageService);
     private seo       = inject(SeoService);
     private analytics = inject(AnalyticsService);
+    private supabase  = inject(SupabaseService);
+    private stripe    = inject(StripeService);
+    private router    = inject(Router);
+
+    isLoadingCheckout = this.stripe.isLoadingCheckout;
 
     onPricingCtaClick(planName: string, highlight: boolean): void {
         this.analytics.trackEvent('pricing_cta_clicked', {
             plan: planName,
             highlight,
         });
+    }
+
+    async onUpgradeClick(planKey: 'monthly' | 'annual'): Promise<void> {
+        if (!this.supabase.currentUser()) {
+            this.router.navigate(['/auth/register'], { queryParams: { next: 'pricing' } });
+            return;
+        }
+        await this.stripe.startCheckout(planKey);
     }
 
     data = toSignal(

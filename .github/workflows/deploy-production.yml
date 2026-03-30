@@ -31,6 +31,7 @@ jobs:
           sed -i "s|<PROD_TURN_API_KEY>|${{ secrets.PROD_TURN_API_KEY }}|g" src/environments/environment.prod.ts
           sed -i "s|<PROD_GA_ID>|${{ secrets.PROD_GA_ID }}|g" src/environments/environment.prod.ts
           sed -i "s|<PROD_GA_ID>|${{ secrets.PROD_GA_ID }}|g" src/index.html
+          sed -i "s|<PROD_STRIPE_PUBLISHABLE_KEY>|${{ secrets.PROD_STRIPE_PUBLISHABLE_KEY }}|g" src/environments/environment.prod.ts
 
       - name: Build production
         run: npm run build:prod

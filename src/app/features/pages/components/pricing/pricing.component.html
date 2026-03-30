@@ -58,7 +58,16 @@
                     </ul>
 
                     <!-- CTA Button -->
-                    @if (plan.highlight) {
+                    @if (plan.highlight && plan.planKey) {
+                        <button class="btn btn-primary w-full"
+                                [disabled]="isLoadingCheckout()"
+                                (click)="onPricingCtaClick(plan.name, true); onUpgradeClick(plan.planKey)">
+                            @if (isLoadingCheckout()) {
+                                <span class="spinner"></span>
+                            }
+                            {{ 'PRICING.CTA_PRIMARY' | translate }}
+                        </button>
+                    } @else if (plan.highlight) {
                         <button class="btn btn-primary w-full" routerLink="/auth/register"
                                 (click)="onPricingCtaClick(plan.name, true)">
                             {{ 'PRICING.CTA_PRIMARY' | translate }}

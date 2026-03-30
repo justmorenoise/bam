@@ -30,6 +30,7 @@ jobs:
           sed -i "s|<PREPROD_R2_API_KEY>|${{ secrets.PREPROD_R2_API_KEY }}|g" src/environments/environment.preprod.ts
           sed -i "s|<PREPROD_GA_ID>|${{ secrets.PREPROD_GA_ID }}|g" src/environments/environment.preprod.ts
           sed -i "s|<PROD_GA_ID>|${{ secrets.PREPROD_GA_ID }}|g" src/index.html
+          sed -i "s|<PREPROD_STRIPE_PUBLISHABLE_KEY>|${{ secrets.PREPROD_STRIPE_PUBLISHABLE_KEY }}|g" src/environments/environment.preprod.ts
 
       - name: Build preprod
         run: npm run build:preprod

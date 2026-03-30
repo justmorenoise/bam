@@ -4,12 +4,17 @@ export const environment = {
     production: true,
     maintenanceMode: false,
     appName: 'Bam! - File Sharing',
-    version: '1.1.21',
+    version: '1.1.22',
 
     // Supabase Configuration
     supabase: {
         url: '<PROD_SUPABASE_URL>',
         anonKey: '<PROD_SUPABASE_ANON_KEY>',
+    },
+
+    // Stripe Configuration
+    stripe: {
+        publishableKey: '<PROD_STRIPE_PUBLISHABLE_KEY>',
     },
 
     // WebRTC Configuration

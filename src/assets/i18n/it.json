@@ -462,7 +462,20 @@
     "MODAL_DELETE_CONFIRM_BTN": "Elimina definitivamente",
     "MODAL_DELETE_CANCEL": "Annulla",
     "MODAL_DELETED_TITLE": "Account Eliminato",
-    "MODAL_DELETED_MSG": "Il tuo account è stato eliminato definitivamente"
+    "MODAL_DELETED_MSG": "Il tuo account è stato eliminato definitivamente",
+    "SUBSCRIPTION_SECTION": "Abbonamento",
+    "SUBSCRIPTION_PLAN_LABEL": "Piano",
+    "SUBSCRIPTION_PLAN_MONTHLY": "Piano Mensile",
+    "SUBSCRIPTION_PLAN_ANNUAL": "Piano Annuale",
+    "SUBSCRIPTION_STATUS_ACTIVE": "Attivo",
+    "SUBSCRIPTION_STATUS_TRIALING": "Periodo di prova",
+    "SUBSCRIPTION_TRIAL_ENDS": "Prova gratuita termina il {{date}}",
+    "SUBSCRIPTION_RENEWS": "Rinnovo automatico il {{date}}",
+    "SUBSCRIPTION_CANCELS": "Accesso garantito fino al {{date}}, poi torna al piano gratuito",
+    "SUBSCRIPTION_MANAGE_BTN": "Gestisci Abbonamento",
+    "SUBSCRIPTION_LOADING": "Caricamento abbonamento...",
+    "SUBSCRIPTION_CHECKOUT_SUCCESS_TITLE": "Benvenuto in Premium!",
+    "SUBSCRIPTION_CHECKOUT_SUCCESS_MSG": "Il tuo abbonamento è attivo. Goditi tutte le funzionalità premium!"
   },
   "MAINTENANCE": {
     "TITLE": "Stiamo lavorando",
