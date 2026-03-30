@@ -58,6 +58,7 @@ export class SettingsComponent implements OnInit {
         if (this.supabase.isPremium()) {
             await this.stripeService.loadSubscription();
         }
+        // Ritorno da Stripe Checkout
         const params = new URLSearchParams(window.location.search);
         if (params.get('checkout') === 'success') {
             await this.stripeService.loadSubscription();
@@ -66,6 +67,7 @@ export class SettingsComponent implements OnInit {
                 this.translate.instant('SETTINGS.SUBSCRIPTION_CHECKOUT_SUCCESS_TITLE'),
                 this.translate.instant('SETTINGS.SUBSCRIPTION_CHECKOUT_SUCCESS_MSG')
             );
+            // Pulisce il query param dall'URL senza ricaricare la pagina
             this.router.navigate([], { replaceUrl: true, queryParams: {} });
         }
     }

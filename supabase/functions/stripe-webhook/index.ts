@@ -17,7 +17,11 @@ Deno.serve(async (req) => {
     try {
         const rawBody = await req.arrayBuffer();
         const stripe = createStripeClient();
-        event = await stripe.webhooks.constructEventAsync(rawBody, signature, webhookSecret);
+        event = await stripe.webhooks.constructEventAsync(
+            rawBody,
+            signature,
+            webhookSecret
+        );
     } catch (err) {
         console.error('[stripe-webhook] Signature verification failed:', err);
         return new Response('Webhook signature verification failed', { status: 400 });
@@ -34,12 +38,17 @@ Deno.serve(async (req) => {
                 const supabaseUid = session.metadata?.supabase_uid;
                 const plan = (session.metadata?.plan ?? 'monthly') as 'monthly' | 'annual';
                 const subscriptionId = session.subscription as string;
+
                 if (!supabaseUid || !subscriptionId) break;
 
+                // Recupera i dettagli completi della subscription
                 const stripe = createStripeClient();
                 const sub = await stripe.subscriptions.retrieve(subscriptionId);
+
                 await upsertSubscription(supabaseAdmin, supabaseUid, sub, plan);
-                await syncTier(supabaseAdmin, supabaseUid, resolveNewTier(sub.status));
+
+                const tier = resolveNewTier(sub.status);
+                await syncTier(supabaseAdmin, supabaseUid, tier);
                 break;
             }
 
@@ -50,7 +59,9 @@ Deno.serve(async (req) => {
 
                 const plan = (sub.metadata?.plan ?? 'monthly') as 'monthly' | 'annual';
                 await upsertSubscription(supabaseAdmin, userId, sub, plan);
-                await syncTier(supabaseAdmin, userId, resolveNewTier(sub.status));
+
+                const tier = resolveNewTier(sub.status);
+                await syncTier(supabaseAdmin, userId, tier);
                 break;
             }
 
@@ -63,6 +74,7 @@ Deno.serve(async (req) => {
                     .from('subscriptions')
                     .update({ status: 'canceled', canceled_at: new Date().toISOString() })
                     .eq('id', sub.id);
+
                 await syncTier(supabaseAdmin, userId, 'free');
                 break;
             }
@@ -74,6 +86,9 @@ Deno.serve(async (req) => {
 
                 const stripe = createStripeClient();
                 const sub = await stripe.subscriptions.retrieve(subscriptionId);
+                const userId = await getUserIdByCustomer(supabaseAdmin, sub.customer as string);
+                if (!userId) break;
+
                 await supabaseAdmin
                     .from('subscriptions')
                     .update({
@@ -97,15 +112,17 @@ Deno.serve(async (req) => {
                     .from('subscriptions')
                     .update({ status: 'past_due' })
                     .eq('id', subscriptionId);
+
                 await syncTier(supabaseAdmin, userId, 'free');
                 break;
             }
 
             default:
-                console.log(`[stripe-webhook] Unhandled event: ${event.type}`);
+                console.log(`[stripe-webhook] Unhandled event type: ${event.type}`);
         }
     } catch (err) {
         console.error('[stripe-webhook] Error processing event:', event.type, err);
+        // Ritorna 200 comunque per evitare che Stripe riprovi all'infinito
         return new Response(JSON.stringify({ received: true, error: 'Processing error' }), {
             status: 200, headers: { 'Content-Type': 'application/json' },
         });
@@ -115,6 +132,8 @@ Deno.serve(async (req) => {
         status: 200, headers: { 'Content-Type': 'application/json' },
     });
 });
+
+// --- Helper functions ---
 
 async function upsertSubscription(
     adminClient: ReturnType<typeof createAdminClient>,
@@ -143,7 +162,10 @@ async function syncTier(
     userId: string,
     tier: 'free' | 'premium'
 ) {
-    await adminClient.from('user_profiles').update({ tier }).eq('id', userId);
+    await adminClient
+        .from('user_profiles')
+        .update({ tier })
+        .eq('id', userId);
 }
 
 async function getUserIdByCustomer(

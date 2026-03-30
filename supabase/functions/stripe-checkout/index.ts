@@ -1,5 +1,5 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2';
-import { createStripeClient, createAdminClient, corsHeaders } from '../_shared/stripe.ts';
+import { createStripeClient, corsHeaders } from '../_shared/stripe.ts';
 
 Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') {
@@ -7,6 +7,7 @@ Deno.serve(async (req) => {
     }
 
     try {
+        // Autenticazione via JWT Supabase
         const authHeader = req.headers.get('Authorization');
         if (!authHeader) {
             return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
@@ -37,12 +38,14 @@ Deno.serve(async (req) => {
         const stripe = createStripeClient();
         const appUrl = Deno.env.get('APP_URL') ?? 'https://bamfile.com';
 
+        // Recupera il profilo per ottenere email e stripe_customer_id esistente
         const { data: profile } = await supabaseClient
             .from('user_profiles')
             .select('stripe_customer_id, email, full_name')
             .eq('id', user.id)
             .single();
 
+        // Controlla se esiste già una subscription attiva o in trial
         const { data: existingSub } = await supabaseClient
             .from('subscriptions')
             .select('id, status')
@@ -56,6 +59,7 @@ Deno.serve(async (req) => {
             });
         }
 
+        // Crea o recupera il Stripe Customer
         let stripeCustomerId = profile?.stripe_customer_id;
         if (!stripeCustomerId) {
             const customer = await stripe.customers.create({
@@ -65,6 +69,8 @@ Deno.serve(async (req) => {
             });
             stripeCustomerId = customer.id;
 
+            // Salva stripe_customer_id nel profilo (service role necessario per bypass trigger tier)
+            const { createAdminClient } = await import('../_shared/stripe.ts');
             const adminClient = createAdminClient();
             await adminClient
                 .from('user_profiles')

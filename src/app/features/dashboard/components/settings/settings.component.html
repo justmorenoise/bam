@@ -115,9 +115,10 @@
 
                 @if (subscription()) {
                     <div class="space-y-4">
+                        <!-- Piano e stato -->
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">
+                                <p class="text-sm font-bold text-slate-300 uppercase tracking-wide text-[10px] mb-1">
                                     {{ 'SETTINGS.SUBSCRIPTION_PLAN_LABEL' | translate }}
                                 </p>
                                 <p class="font-bold text-white">
@@ -136,6 +137,7 @@
                             </span>
                         </div>
 
+                        <!-- Data rinnovo / fine trial / cancellazione -->
                         <div class="p-4 bg-slate-800/50 rounded-2xl border border-slate-700">
                             @if (willCancel()) {
                                 <p class="text-sm text-amber-400">
@@ -152,7 +154,9 @@
                             }
                         </div>
 
-                        <button class="btn btn-secondary w-full md:w-auto"
+                        <!-- Pulsante portale -->
+                        <button
+                                class="btn btn-secondary w-full md:w-auto"
                                 [disabled]="isLoadingPortal()"
                                 (click)="openPortal()">
                             @if (isLoadingPortal()) {
