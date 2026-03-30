@@ -1,5 +1,5 @@
 export interface BurnChunkSignal {
-    type: 'chunk-ready' | 'chunk-ack' | 'burn-complete' | 'hash-error';
+    type: 'chunk-ready' | 'chunk-ack' | 'burn-complete' | 'hash-error' | 'sender-reconnected';
     from: 'sender' | 'receiver';
     chunkIndex?: number;
     totalChunks?: number;

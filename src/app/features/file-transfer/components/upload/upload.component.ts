@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HeaderComponent } from '@shared/components/header.component';
-import { SignalingService } from '@core/services/signaling.service';
+import { PendingBurnSession, SignalingService } from '@core/services/signaling.service';
 import { SupabaseService } from '@core/services/supabase.service';
 import { ModalService } from '@core/services/modal.service';
 import { R2TransferService } from '@core/services/r2-transfer.service';
@@ -72,6 +72,16 @@ export class UploadComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        // Check for pending burn session from page refresh
+        const pending = this.signaling.getPendingSession();
+        if (pending) {
+            this.st.linkId.set(pending.linkId);
+            this.st.generatedLink.set(pending.generatedLink);
+            this.st.hasPendingBurnSession.set(true);
+            this.st.pendingSessionFileName.set(pending.fileName);
+            return;
+        }
+
         if (this.st.hasActiveSession()) {
             this.reattachSessionSubscription();
         } else {
@@ -94,16 +104,19 @@ export class UploadComponent implements OnInit, OnDestroy {
                 this.st.isGeneratingLink.set(false);
             }
         } else {
-            // Burn: chiudi sessione solo se non in trasferimento attivo
-            if (!this.st.isBurnUploading()) {
+            const isActive = this.st.isBurnUploading();
+            const hasLink = !!this.st.generatedLink();
+
+            if (!isActive && !hasLink) {
+                // No active transfer and no link generated — safe to tear down completely
                 if (this.st.linkId()) {
                     this.signaling.closeSession(this.st.linkId());
                 }
                 this.signaling.terminateWorkers();
-                if (!this.st.generatedLink()) {
-                    this.st.reset();
-                }
+                this.st.reset();
             }
+            // If link generated or transfer active: keep session alive for re-attach/resume.
+            // sessionStorage persists the session info for page-refresh scenario.
         }
     }
 
@@ -122,6 +135,23 @@ export class UploadComponent implements OnInit, OnDestroy {
 
     handleFileSelection(file: File) {
         if (this.st.isGeneratingLink()) return;
+
+        // Case 3: pending session resume — check if file matches
+        if (this.st.hasPendingBurnSession()) {
+            const pending = this.signaling.getPendingSession();
+            if (pending && file.name === pending.fileName && file.size === pending.fileSize) {
+                this.resumePendingSession(file, pending);
+                return;
+            } else {
+                // Wrong file — discard pending session and start fresh
+                this.signaling.clearPendingSession();
+                this.st.hasPendingBurnSession.set(false);
+                this.st.pendingSessionFileName.set('');
+                this.st.generatedLink.set('');
+                this.st.linkId.set('');
+            }
+        }
+
         const maxSize = this.r2.getMaxFileSize();
         if (maxSize !== null && file.size > maxSize) {
             this.modal.showWarning(
@@ -135,6 +165,43 @@ export class UploadComponent implements OnInit, OnDestroy {
             file_size_category: this.analytics.fileSizeCategory(file.size),
             file_type: file.type || 'unknown',
         });
+    }
+
+    cancelResume(): void {
+        this.signaling.clearPendingSession();
+        this.st.hasPendingBurnSession.set(false);
+        this.st.pendingSessionFileName.set('');
+        this.st.generatedLink.set('');
+        this.st.linkId.set('');
+    }
+
+    private async resumePendingSession(file: File, pending: PendingBurnSession): Promise<void> {
+        this.st.selectedFile.set(file);
+        this.st.isGeneratingLink.set(true);
+        try {
+            await this.signaling.resumeBurnSession(file, pending.linkId, pending.r2Token, pending.fileHash);
+            this.st.hasPendingBurnSession.set(false);
+
+            const linkId = pending.linkId;
+            this.st.linkId.set(linkId);
+            this.sessionSub?.unsubscribe();
+            this.sessionSub = this.signaling.getSessionUpdates$().subscribe(updatedSession => {
+                if (updatedSession.linkId === linkId) {
+                    this.st.session.set(updatedSession);
+                    this.handleSessionStatus(updatedSession.status);
+                }
+            });
+        } catch (error: any) {
+            console.error('Error resuming burn session:', error);
+            this.signaling.clearPendingSession();
+            this.st.hasPendingBurnSession.set(false);
+            this.modal.showError(
+                this.translate.instant('UPLOAD.MODAL_ERROR_TITLE'),
+                this.translate.instant('UPLOAD.MODAL_ERROR_MSG')
+            );
+        } finally {
+            this.st.isGeneratingLink.set(false);
+        }
     }
 
     clearFile() {

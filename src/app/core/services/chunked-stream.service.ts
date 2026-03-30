@@ -48,6 +48,7 @@ export class ChunkedStreamService {
     // ─── Sender state ────────────────────────────────────────────
     private cancelled = false;
     private ackResolvers = new Map<number, () => void>();
+    private ackTimers = new Map<number, ReturnType<typeof setTimeout>>();
 
     // ─── Receiver state ──────────────────────────────────────────
     private receivedChunks = new Map<number, ArrayBuffer>();
@@ -59,6 +60,9 @@ export class ChunkedStreamService {
     private sessionInfo: BurnSessionInfo | null = null;
     private receiverLinkId: string | null = null;
     private receiverStartTime = 0;
+    private lastChunkNotifiedAt = 0;
+    private stallDetectorInterval: ReturnType<typeof setInterval> | null = null;
+    private assemblyTriggered = false;
 
     constructor(
         private supabase: SupabaseService,
@@ -149,8 +153,9 @@ export class ChunkedStreamService {
 
     cancelUpload(): void {
         this.cancelled = true;
-        // Unblock all pending ack waiters so the upload loop can exit
-        this.ackResolvers.forEach(resolve => resolve());
+        this.ackTimers.forEach(t => clearTimeout(t));
+        this.ackTimers.clear();
+        this.ackResolvers.forEach(r => r());
         this.ackResolvers.clear();
         this.senderState.set('idle');
         this.senderProgress.set(null);
@@ -158,11 +163,10 @@ export class ChunkedStreamService {
 
     /** Called by SignalingService when a chunk-ack signal is received. */
     notifyChunkAck(chunkIndex: number): void {
+        const timer = this.ackTimers.get(chunkIndex);
+        if (timer !== undefined) { clearTimeout(timer); this.ackTimers.delete(chunkIndex); }
         const resolve = this.ackResolvers.get(chunkIndex);
-        if (resolve) {
-            this.ackResolvers.delete(chunkIndex);
-            resolve();
-        }
+        if (resolve) { this.ackResolvers.delete(chunkIndex); resolve(); }
     }
 
     // ─── Receiver API ────────────────────────────────────────────
@@ -183,6 +187,7 @@ export class ChunkedStreamService {
         this.receiverStartTime = Date.now();
         this.errorMessage.set('');
 
+        this.lastChunkNotifiedAt = 0;
         this.receiverState.set('downloading');
         this.receiverProgress.set({
             chunksTransferred: 0,
@@ -192,22 +197,43 @@ export class ChunkedStreamService {
             percentage: 0,
             speedBps: 0,
         });
+        this.startStallDetector();
     }
 
     /** Called by SignalingService when a chunk-ready signal is received. */
     notifyChunkReady(chunkIndex: number): void {
+        this.lastChunkNotifiedAt = Date.now();
         this.downloadQueue.push(chunkIndex);
         this.drainDownloadQueue();
     }
 
     /** Called by SignalingService when a burn-complete signal is received. */
     notifyBurnComplete(fileHash: string, totalChunks: number): void {
+        this.clearStallDetector();
         this.expectedFileHash = fileHash;
         this.expectedTotalChunks = totalChunks;
         this.checkAssemblyReady();
     }
 
+    /** Resets receiver state for a mid-session sender reconnect, keeping sessionInfo alive. */
+    resetReceiverForResume(): void {
+        this.clearStallDetector();
+        this.lastChunkNotifiedAt = 0;
+        this.assemblyTriggered = false;
+        this.receivedChunks.clear();
+        this.downloadQueue = [];
+        this.activeDownloads = 0;
+        this.expectedTotalChunks = null;
+        this.expectedFileHash = null;
+        this.receiverStartTime = Date.now();
+        this.receiverState.set('downloading');
+        this.startStallDetector();
+    }
+
     resetReceiver(): void {
+        this.clearStallDetector();
+        this.lastChunkNotifiedAt = 0;
+        this.assemblyTriggered = false;
         this.receivedChunks.clear();
         this.downloadQueue = [];
         this.activeDownloads = 0;
@@ -218,6 +244,34 @@ export class ChunkedStreamService {
         this.onCompleteCallback = null;
         this.receiverState.set('idle');
         this.receiverProgress.set(null);
+    }
+
+    // ─── Stall detector ──────────────────────────────────────────
+
+    private startStallDetector(): void {
+        this.clearStallDetector();
+        this.stallDetectorInterval = setInterval(() => {
+            if (this.receiverState() !== 'downloading') {
+                this.clearStallDetector();
+                return;
+            }
+            const noFirstChunk = this.lastChunkNotifiedAt === 0 &&
+                (Date.now() - this.receiverStartTime) > 120_000;
+            const midTransferStall = this.lastChunkNotifiedAt > 0 &&
+                (Date.now() - this.lastChunkNotifiedAt) > 60_000;
+            if (noFirstChunk || midTransferStall) {
+                this.clearStallDetector();
+                this.receiverState.set('error');
+                this.errorMessage.set('Il mittente si è disconnesso');
+            }
+        }, 5_000);
+    }
+
+    private clearStallDetector(): void {
+        if (this.stallDetectorInterval !== null) {
+            clearInterval(this.stallDetectorInterval);
+            this.stallDetectorInterval = null;
+        }
     }
 
     // ─── Sender internals ────────────────────────────────────────
@@ -243,7 +297,13 @@ export class ChunkedStreamService {
     }
 
     private waitForAck(chunkIndex: number): Promise<void> {
-        return new Promise<void>(resolve => {
+        return new Promise<void>((resolve, reject) => {
+            const timer = setTimeout(() => {
+                this.ackResolvers.delete(chunkIndex);
+                this.ackTimers.delete(chunkIndex);
+                reject(new Error('Il destinatario si è disconnesso'));
+            }, 45_000);
+            this.ackTimers.set(chunkIndex, timer);
             this.ackResolvers.set(chunkIndex, resolve);
         });
     }
@@ -306,9 +366,11 @@ export class ChunkedStreamService {
 
     private checkAssemblyReady(): void {
         if (
+            !this.assemblyTriggered &&
             this.expectedTotalChunks !== null &&
             this.receivedChunks.size >= this.expectedTotalChunks
         ) {
+            this.assemblyTriggered = true;
             this.assemble();
         }
     }

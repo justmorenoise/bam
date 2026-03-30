@@ -3,8 +3,42 @@
 
     <main class="max-w-5xl mx-auto">
 
+        <!-- STATO RESUME: Sessione burn in sospeso (dopo ricarica pagina) -->
+        @if (st.hasPendingBurnSession()) {
+            <div class="space-y-8">
+                <div class="card border border-orange-500/30 bg-orange-500/5">
+                    <div class="flex items-start gap-4 mb-5">
+                        <div class="text-orange-400 mt-0.5 shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"/>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-orange-400 mb-1">
+                                {{ 'UPLOAD.RESUME_PENDING_TITLE' | translate }}
+                            </p>
+                            <p class="text-xs text-slate-300">
+                                {{ 'UPLOAD.RESUME_PENDING_DESC' | translate: { fileName: st.pendingSessionFileName() } }}
+                            </p>
+                            <p class="text-xs text-slate-500 mt-1">
+                                {{ 'UPLOAD.RESUME_PENDING_HINT' | translate }}
+                            </p>
+                        </div>
+                    </div>
+                    <app-drop-zone (fileSelected)="handleFileSelection($event)"></app-drop-zone>
+                    <button
+                        (click)="cancelResume()"
+                        class="mt-4 text-xs text-slate-500 hover:text-red-400 transition-colors">
+                        {{ 'UPLOAD.RESUME_CANCEL' | translate }}
+                    </button>
+                </div>
+            </div>
+        }
+
         <!-- STATO A: Nessun file selezionato -->
-        @if (!selectedFile()) {
+        @if (!selectedFile() && !st.hasPendingBurnSession()) {
             <div class="space-y-8">
                 <div class="card">
                     <h2 class="text-2xl font-black mb-6 flex items-center gap-3">

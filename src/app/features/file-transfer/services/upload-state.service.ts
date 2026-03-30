@@ -28,6 +28,10 @@ export class UploadStateService {
     readonly isBurnUploading = signal(false);
     readonly burnUploadProgress = signal<BurnProgress | null>(null);
 
+    // Pending session resume (page refresh)
+    readonly hasPendingBurnSession = signal(false);
+    readonly pendingSessionFileName = signal<string>('');
+
     // Cloud transfer state
     readonly isCloudUploading = signal(false);
     readonly cloudUploadProgress = signal<R2UploadProgress | null>(null);
@@ -63,5 +67,7 @@ export class UploadStateService {
         this.burnUploadProgress.set(null);
         this.isCloudUploading.set(false);
         this.cloudUploadProgress.set(null);
+        this.hasPendingBurnSession.set(false);
+        this.pendingSessionFileName.set('');
     }
 }

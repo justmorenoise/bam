@@ -10,6 +10,18 @@ import { ReplaySubject, Subject } from 'rxjs';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
+const PENDING_BURN_KEY = 'bam_pending_burn_session';
+
+export interface PendingBurnSession {
+    linkId: string;
+    r2Token: string;
+    fileName: string;
+    fileSize: number;
+    fileHash: string;
+    generatedLink: string;
+    createdAt: number;
+}
+
 export type ConnectionStatus =
     | 'waiting'
     | 'connecting'
@@ -42,6 +54,7 @@ export class SignalingService {
     private activeSessions = new Map<string, FileShareSession>();
     private sessionUpdates$ = new ReplaySubject<FileShareSession>(10);
     private signalingErrors$ = new Subject<{ linkId: string; error: string }>();
+    private receiverStateMonitors = new Map<string, ReturnType<typeof setInterval>>();
 
     /** Expose stream progress for UI binding */
     readonly senderProgress = this.stream.senderProgress;
@@ -161,6 +174,17 @@ export class SignalingService {
 
         // Emit session so UI can show the shareable link
         this.sessionUpdates$.next(session);
+
+        // Persist session for page-refresh resume
+        this.savePendingSession({
+            linkId,
+            r2Token: token,
+            fileName: file.name,
+            fileSize: file.size,
+            fileHash,
+            generatedLink: `${window.location.origin}/download/${linkId}`,
+            createdAt: Date.now(),
+        });
     }
 
     private runBurnUpload(
@@ -187,6 +211,7 @@ export class SignalingService {
             clearInterval(interval);
             this.updateSessionStatus(linkId, 'error');
             this.signalingErrors$.next({ linkId, error: err.message });
+            this.clearPendingSession();
         });
     }
 
@@ -304,8 +329,19 @@ export class SignalingService {
             this.onBurnReceiveComplete(blob, name, linkId, session);
         });
 
+        // Monitor receiver state for stall-detector errors
+        const stateMonitor = setInterval(() => {
+            if (this.stream.receiverState() === 'error') {
+                clearInterval(stateMonitor);
+                this.receiverStateMonitors.delete(linkId);
+                this.updateSessionStatus(linkId, 'error');
+                this.signalingErrors$.next({ linkId, error: this.stream.errorMessage() });
+            }
+        }, 200);
+        this.receiverStateMonitors.set(linkId, stateMonitor);
+
         // Subscribe to sender signals
-        await this.supabase.subscribeToSignaling(linkId, (payload) => {
+        await this.supabase.subscribeToSignaling(linkId, async (payload) => {
             const msg = payload.payload;
             if (!msg || msg.from !== 'sender') return;
 
@@ -316,6 +352,17 @@ export class SignalingService {
                 }
             } else if (msg.type === 'burn-complete') {
                 this.stream.notifyBurnComplete(msg.fileHash, msg.totalChunks);
+            } else if (msg.type === 'sender-reconnected') {
+                // Sender refreshed the page and is reconnecting
+                if (this.stream.receiverState() !== 'completed') {
+                    await this.supabase.sendSignal(linkId, {
+                        type: 'receiver-ready',
+                        from: 'receiver',
+                        timestamp: Date.now(),
+                    });
+                    // Reset stall detector so the new upload gets a fresh window
+                    this.stream.resetReceiverForResume();
+                }
             }
         });
 
@@ -389,7 +436,8 @@ export class SignalingService {
         return Math.ceil(fileSize / (5 * 1024 * 1024));
     }
 
-    private async postTransferCleanup(linkId: string, session: FileShareSession): Promise<void> {
+    private async postTransferCleanup(linkId: string, _session: FileShareSession): Promise<void> {
+        this.clearPendingSession();
         if (this.supabase.isAuthenticated()) {
             await this.supabase.addXP(10).catch(() => {});
         }
@@ -410,6 +458,10 @@ export class SignalingService {
         this.stream.resetReceiver();
         this.supabase.removeSignalingChannel(linkId).catch(() => {});
         this.activeSessions.delete(linkId);
+        // Clear state monitor if present
+        const monitor = this.receiverStateMonitors.get(linkId);
+        if (monitor) { clearInterval(monitor); this.receiverStateMonitors.delete(linkId); }
+        this.clearPendingSession();
     }
 
     terminateWorkers(): void {
@@ -430,6 +482,72 @@ export class SignalingService {
 
     cleanup(): void {
         this.activeSessions.forEach((_, linkId) => this.closeSession(linkId));
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // SESSION STORAGE — BURN RESUME
+    // ═══════════════════════════════════════════════════════
+
+    savePendingSession(data: PendingBurnSession): void {
+        try { sessionStorage.setItem(PENDING_BURN_KEY, JSON.stringify(data)); } catch { /* unavailable */ }
+    }
+
+    clearPendingSession(): void {
+        try { sessionStorage.removeItem(PENDING_BURN_KEY); } catch { /* unavailable */ }
+    }
+
+    getPendingSession(): PendingBurnSession | null {
+        try {
+            const raw = sessionStorage.getItem(PENDING_BURN_KEY);
+            if (!raw) return null;
+            const data = JSON.parse(raw) as PendingBurnSession;
+            if (Date.now() - data.createdAt > 24 * 60 * 60 * 1000) {
+                this.clearPendingSession();
+                return null;
+            }
+            return data;
+        } catch { return null; }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // RESUME — mittente ricarica la pagina
+    // ═══════════════════════════════════════════════════════
+
+    async resumeBurnSession(
+        file: File,
+        linkId: string,
+        r2Token: string,
+        fileHash: string,
+    ): Promise<void> {
+        const session: FileShareSession = {
+            linkId,
+            fileInfo: { name: file.name, size: file.size, hash: fileHash },
+            mode: 'burn',
+            passwordProtected: false,
+            status: 'waiting',
+            createdAt: new Date(),
+            transferType: 'burn',
+            r2Token,
+        };
+        this.activeSessions.set(linkId, session);
+
+        await this.supabase.subscribeToSignaling(linkId, async (payload) => {
+            const msg = payload.payload;
+            if (!msg || msg.from !== 'receiver') return;
+            if (msg.type === 'receiver-ready' && session.status === 'waiting') {
+                this.updateSessionStatus(linkId, 'transferring');
+                this.runBurnUpload(file, fileHash, r2Token, linkId, session);
+            } else if (msg.type === 'chunk-ack') {
+                this.stream.notifyChunkAck(msg.chunkIndex);
+            }
+        });
+
+        this.sessionUpdates$.next(session);
+        await this.supabase.sendSignal(linkId, {
+            type: 'sender-reconnected',
+            from: 'sender',
+            timestamp: Date.now(),
+        });
     }
 }
 
