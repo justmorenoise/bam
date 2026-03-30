@@ -47,11 +47,19 @@ export class StripeService {
         this.subscription.set(data as SubscriptionInfo | null);
     }
 
+    private async getAuthHeader(): Promise<{ Authorization: string } | undefined> {
+        const { data: { session } } = await this.supabase.supabase.auth.getSession();
+        if (!session?.access_token) return undefined;
+        return { Authorization: `Bearer ${session.access_token}` };
+    }
+
     async startCheckout(plan: 'monthly' | 'annual'): Promise<void> {
         this.isLoadingCheckout.set(true);
         try {
+            const headers = await this.getAuthHeader();
             const { data, error } = await this.supabase.supabase.functions.invoke('stripe-checkout', {
                 body: { plan },
+                headers,
             });
 
             if (error || !data?.url) {
@@ -67,7 +75,10 @@ export class StripeService {
     async openPortal(): Promise<void> {
         this.isLoadingPortal.set(true);
         try {
-            const { data, error } = await this.supabase.supabase.functions.invoke('stripe-portal');
+            const headers = await this.getAuthHeader();
+            const { data, error } = await this.supabase.supabase.functions.invoke('stripe-portal', {
+                headers,
+            });
 
             if (error || !data?.url) {
                 console.error('[StripeService] openPortal error:', error ?? 'No URL returned');
