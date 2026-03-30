@@ -88,8 +88,8 @@ import { SupabaseService } from '@core/services/supabase.service';
                         <a href="https://morenoise.it" target="_blank" rel="noopener noreferrer"
                            class="flex items-center gap-1.5 text-xs text-slate-400 hover:opacity-80 transition-opacity">
                             <span>{{ 'FOOTER.MADE_BY' | translate }}</span>
-                            <span class="inline-flex items-center justify-center rounded-full bg-white p-1">
-                                <img src="assets/morenoise_logo.svg" alt="Morenoise" class="h-[18px] w-auto block"/>
+                            <span class="inline-flex items-center justify-center rounded-full">
+                                <img src="assets/morenoise_logo_extended_small_white.svg" alt="Morenoise" class="h-[30px] w-auto block"/>
                             </span>
                         </a>
                         <!-- GitHub -->
