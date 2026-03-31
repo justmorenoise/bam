@@ -234,6 +234,54 @@ export class R2TransferService {
         }
     }
 
+    async downloadToBuffer(token: string): Promise<ArrayBuffer> {
+        this.isDownloading.set(true);
+        this.downloadProgress.set({ loaded: 0, total: 0, percent: 0, speedBps: 0 });
+
+        try {
+            const res = await fetch(`${this.baseUrl}/transfer/${token}`, {
+                headers: this.headers(),
+            });
+
+            if (!res.ok) {
+                const body = await res.text();
+                throw new Error(`Download failed (${res.status}): ${body}`);
+            }
+
+            const contentLength = parseInt(res.headers.get('Content-Length') || '0', 10);
+            const reader = res.body?.getReader();
+            if (!reader) throw new Error('No response body');
+
+            const chunks: Uint8Array[] = [];
+            let loaded = 0;
+            const startTime = Date.now();
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                chunks.push(value);
+                loaded += value.byteLength;
+
+                const elapsed = (Date.now() - startTime) / 1000;
+                this.downloadProgress.set({
+                    loaded,
+                    total: contentLength,
+                    percent: contentLength > 0 ? Math.round((loaded / contentLength) * 100) : 0,
+                    speedBps: elapsed > 0 ? loaded / elapsed : 0,
+                });
+            }
+
+            const total = chunks.reduce((s, c) => s + c.byteLength, 0);
+            const result = new Uint8Array(total);
+            let offset = 0;
+            for (const c of chunks) { result.set(c, offset); offset += c.byteLength; }
+            return result.buffer;
+        } finally {
+            this.isDownloading.set(false);
+        }
+    }
+
     // ─── Status & Delete ─────────────────────────────────────
 
     async checkStatus(token: string): Promise<R2TransferMeta | null> {

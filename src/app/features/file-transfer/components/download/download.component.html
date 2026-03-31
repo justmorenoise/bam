@@ -84,6 +84,40 @@
                     </div>
                 </div>
 
+                <!-- Password Decryption (file protetto da password) -->
+                @if (showPasswordInput() && !isCompleted()) {
+                    <div class="mb-6 p-6 bg-blue-500/5 border border-blue-500/20 rounded-2xl">
+                        <p class="text-sm font-bold text-blue-400 mb-1">{{ 'DOWNLOAD.PASSWORD_LABEL' | translate }}</p>
+                        <p class="text-xs text-slate-400 mb-4">{{ 'DOWNLOAD.PASSWORD_HINT' | translate }}</p>
+                        <div class="relative mb-3">
+                            <input
+                                    [type]="showDownloadPasswordVisible() ? 'text' : 'password'"
+                                    [ngModel]="downloadPassword()"
+                                    (ngModelChange)="downloadPassword.set($event)"
+                                    [placeholder]="'DOWNLOAD.PASSWORD_PLACEHOLDER' | translate"
+                                    class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all pr-20">
+                            <button
+                                    type="button"
+                                    (click)="toggleDownloadPasswordVisible()"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-white transition-colors px-2 py-1">
+                                {{ (showDownloadPasswordVisible() ? 'UPLOAD.PASSWORD_HIDE' : 'UPLOAD.PASSWORD_SHOW') | translate }}
+                            </button>
+                        </div>
+                        @if (passwordError()) {
+                            <p class="text-xs text-red-400 mb-3">{{ passwordError() }}</p>
+                        }
+                        <button
+                                (click)="decryptAndDownload()"
+                                [disabled]="isDecrypting() || !downloadPassword()"
+                                class="btn btn-primary w-full">
+                            @if (isDecrypting()) {
+                                <span class="spinner"></span>
+                            }
+                            {{ 'DOWNLOAD.PASSWORD_DECRYPT_BTN' | translate }}
+                        </button>
+                    </div>
+                }
+
                 <!-- Connection Status -->
                 @if (isConnecting()) {
                     <div class="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-2xl">

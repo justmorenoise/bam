@@ -4,7 +4,7 @@ export const environment = {
     production: false,
     maintenanceMode: false,
     appName: 'Bam! - File Sharing [PREPROD]',
-    version: '1.1.24',
+    version: '1.1.25',
 
     // Supabase Configuration (Preprod)
     supabase: {

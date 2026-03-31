@@ -40,6 +40,9 @@ export class UploadComponent implements OnInit, OnDestroy {
     get customSlug() { return this.st.customSlug; }
     get showCustomSlug() { return this.st.showCustomSlug; }
     get customSlugError() { return this.st.customSlugError; }
+    get uploadPassword() { return this.st.uploadPassword; }
+    get showPasswordVisible() { return this.st.showPasswordVisible; }
+    togglePasswordVisible() { this.st.showPasswordVisible.update(v => !v); }
     get session() { return this.st.session; }
     get transferMethod() { return this.st.transferMethod; }
     get retentionPolicy() { return this.st.retentionPolicy; }
@@ -329,12 +332,29 @@ export class UploadComponent implements OnInit, OnDestroy {
             const expiryDays = retentionPolicy === '3day' ? 3 : 1;
             const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000).toISOString();
 
+            // Password encryption (cloud only, premium)
+            const password = this.st.uploadPassword();
+            let uploadBlob: File = file;
+            let isPasswordProtected = false;
+
+            if (password) {
+                const arrayBuffer = await file.arrayBuffer();
+                const encrypted = await this.crypto.encryptWithPassword(arrayBuffer, password);
+                // Format: [salt (16B)] + [iv (12B)] + [ciphertext]
+                const header = new Uint8Array(16 + 12);
+                header.set(encrypted.salt, 0);
+                header.set(encrypted.iv, 16);
+                const encryptedBlob = new Blob([header, encrypted.ciphertext]);
+                uploadBlob = new File([encryptedBlob], file.name, { type: file.type || 'application/octet-stream' });
+                isPasswordProtected = true;
+            }
+
             this.st.isCloudUploading.set(true);
             this.cloudProgressInterval = setInterval(() => {
                 this.st.cloudUploadProgress.set(this.r2.uploadProgress());
             }, 200);
 
-            const meta = await this.r2.upload(file, retentionPolicy, fileHash);
+            const meta = await this.r2.upload(uploadBlob, retentionPolicy, fileHash);
 
             this.clearCloudProgressInterval();
             this.st.isCloudUploading.set(false);
@@ -348,7 +368,7 @@ export class UploadComponent implements OnInit, OnDestroy {
                 file_hash: fileHash,
                 mode: 'seed',
                 link_id: linkId,
-                password_protected: false,
+                password_protected: isPasswordProtected,
                 transfer_type: 'cloud',
                 retention_policy: retentionPolicy,
                 r2_token: meta.token,

@@ -6,6 +6,7 @@
       "price": "Gratis",
       "period": "",
       "highlight": false,
+      "anonymous": true,
       "features": [
         { "text": "Trasferimento file illimitato", "included": true },
         { "text": "File fino a 1 GB", "included": true },
@@ -15,9 +16,8 @@
         { "text": "Link monouso", "included": true },
         { "text": "Link persistenti", "included": false },
         { "text": "Resume download", "included": false },
-        { "text": "Cifratura password", "included": false },
+        { "text": "Cifratura password AES-GCM", "included": false },
         { "text": "URL personalizzati", "included": false },
-        { "text": "Ricevute di consegna", "included": false },
         { "text": "Zero pubblicità", "included": false }
       ]
     },
@@ -36,9 +36,8 @@
         { "text": "Link monouso", "included": true },
         { "text": "Link persistenti", "included": true },
         { "text": "Resume download", "included": true },
-        { "text": "Cifratura password", "included": false },
+        { "text": "Cifratura password AES-GCM", "included": false },
         { "text": "URL personalizzati", "included": false },
-        { "text": "Ricevute di consegna", "included": false },
         { "text": "Zero pubblicità", "included": false }
       ]
     },
@@ -49,6 +48,7 @@
       "period": "/mese",
       "highlight": true,
       "planKey": "monthly",
+      "savingsBadge": "",
       "features": [
         { "text": "Trasferimento file illimitato", "included": true },
         { "text": "Dimensione file illimitata", "included": true },
@@ -60,7 +60,28 @@
         { "text": "Resume download", "included": true },
         { "text": "Cifratura password AES-GCM", "included": true },
         { "text": "URL personalizzati", "included": true },
-        { "text": "Ricevute di consegna PDF", "included": true },
+        { "text": "Zero pubblicità", "included": true }
+      ]
+    },
+    {
+      "name": "Pro Premium",
+      "subtitle": "Esperienza completa",
+      "price": "€49.99",
+      "period": "/anno",
+      "highlight": true,
+      "planKey": "annual",
+      "savingsBadge": "2 mesi GRATIS!",
+      "features": [
+        { "text": "Trasferimento file illimitato", "included": true },
+        { "text": "Dimensione file illimitata", "included": true },
+        { "text": "Crittografia E2EE nativa", "included": true },
+        { "text": "Verifica integrità xxHash128", "included": true },
+        { "text": "File illimitati al giorno", "included": true },
+        { "text": "Link monouso", "included": true },
+        { "text": "Link persistenti", "included": true },
+        { "text": "Resume download", "included": true },
+        { "text": "Cifratura password AES-GCM", "included": true },
+        { "text": "URL personalizzati", "included": true },
         { "text": "Zero pubblicità", "included": true }
       ]
     }

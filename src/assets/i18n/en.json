@@ -78,6 +78,10 @@
     "PASSWORD_ACTIVE": "Active",
     "PASSWORD_DISABLED": "Disabled",
     "PASSWORD_PLACEHOLDER": "Enter a password...",
+    "PASSWORD_LABEL": "Password Protection",
+    "PASSWORD_HINT": "Only cloud transfers support password encryption (AES-GCM)",
+    "PASSWORD_SHOW": "Show",
+    "PASSWORD_HIDE": "Hide",
     "CUSTOM_URL": "Custom URL",
     "CUSTOM_URL_ACTIVE": "Active",
     "CUSTOM_URL_DISABLED": "Disabled",
@@ -174,9 +178,11 @@
     "MODE_BURN": "🔥 Burn",
     "MODE_SEED": "🌱 Persistent",
     "MODE_PROTECTED": "🔒 Protected",
-    "PASSWORD_LABEL": "Password Required",
-    "PASSWORD_PLACEHOLDER": "Enter the password",
-    "PASSWORD_HINT": "This file is password protected",
+    "PASSWORD_LABEL": "Password Protected File",
+    "PASSWORD_PLACEHOLDER": "Enter the password...",
+    "PASSWORD_HINT": "This file was encrypted with AES-GCM. Enter the password to download it.",
+    "PASSWORD_DECRYPT_BTN": "Decrypt & Download",
+    "PASSWORD_ERROR": "Wrong password or corrupted file. Please try again.",
     "CONNECTING": "Connecting...",
     "CONNECTING_DESC": "Waiting for connection with the sender",
     "WAITING_SENDER": "Waiting for the sender...",
@@ -350,7 +356,10 @@
     "CTA_PRIMARY": "Get started",
     "CTA_FREE": "Start free",
     "FAQ_LABEL": "FAQ",
-    "FAQ_TITLE": "Frequently asked questions"
+    "FAQ_TITLE": "Frequently asked questions",
+    "BILLING_MONTHLY": "Monthly",
+    "BILLING_ANNUAL": "Annual",
+    "SAVE_BADGE": "2 months FREE!"
   },
   "SECURITY": {
     "HERO": {

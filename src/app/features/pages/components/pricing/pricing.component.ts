@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -20,6 +20,8 @@ interface PricingData {
         period: string;
         highlight: boolean;
         planKey?: 'monthly' | 'annual';
+        savingsBadge?: string;
+        anonymous?: boolean;
         features: { text: string; included: boolean }[];
     }[];
     faqs: { question: string; answer: string }[];
@@ -44,6 +46,11 @@ export class PricingComponent {
     private router    = inject(Router);
 
     isLoadingCheckout = this.stripe.isLoadingCheckout;
+    billingPeriod = signal<'monthly' | 'annual'>('monthly');
+    visiblePlans = computed(() => {
+        const period = this.billingPeriod();
+        return this.data().plans.filter(p => !p.planKey || p.planKey === period);
+    });
 
     onPricingCtaClick(planName: string, highlight: boolean): void {
         this.analytics.trackEvent('pricing_cta_clicked', {

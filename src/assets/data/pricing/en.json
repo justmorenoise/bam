@@ -6,6 +6,7 @@
       "price": "Free",
       "period": "",
       "highlight": false,
+      "anonymous": true,
       "features": [
         { "text": "Unlimited file transfer", "included": true },
         { "text": "File up to 1 GB", "included": true },
@@ -15,9 +16,8 @@
         { "text": "One-time link", "included": true },
         { "text": "Persistent links", "included": false },
         { "text": "Resume download", "included": false },
-        { "text": "Password encryption", "included": false },
+        { "text": "AES-GCM password encryption", "included": false },
         { "text": "Custom URLs", "included": false },
-        { "text": "Delivery receipts", "included": false },
         { "text": "Zero ads", "included": false }
       ]
     },
@@ -36,9 +36,8 @@
         { "text": "One-time link", "included": true },
         { "text": "Persistent links", "included": true },
         { "text": "Resume download", "included": true },
-        { "text": "Password encryption", "included": false },
+        { "text": "AES-GCM password encryption", "included": false },
         { "text": "Custom URLs", "included": false },
-        { "text": "Delivery receipts", "included": false },
         { "text": "Zero ads", "included": false }
       ]
     },
@@ -49,6 +48,7 @@
       "period": "/month",
       "highlight": true,
       "planKey": "monthly",
+      "savingsBadge": "",
       "features": [
         { "text": "Unlimited file transfer", "included": true },
         { "text": "Unlimited file size", "included": true },
@@ -60,7 +60,28 @@
         { "text": "Resume download", "included": true },
         { "text": "AES-GCM password encryption", "included": true },
         { "text": "Custom URLs", "included": true },
-        { "text": "PDF delivery receipts", "included": true },
+        { "text": "Zero ads", "included": true }
+      ]
+    },
+    {
+      "name": "Pro Premium",
+      "subtitle": "Full experience",
+      "price": "€49.99",
+      "period": "/year",
+      "highlight": true,
+      "planKey": "annual",
+      "savingsBadge": "2 months FREE!",
+      "features": [
+        { "text": "Unlimited file transfer", "included": true },
+        { "text": "Unlimited file size", "included": true },
+        { "text": "Native E2EE encryption", "included": true },
+        { "text": "xxHash128 integrity verification", "included": true },
+        { "text": "Unlimited files per day", "included": true },
+        { "text": "One-time link", "included": true },
+        { "text": "Persistent links", "included": true },
+        { "text": "Resume download", "included": true },
+        { "text": "AES-GCM password encryption", "included": true },
+        { "text": "Custom URLs", "included": true },
         { "text": "Zero ads", "included": true }
       ]
     }

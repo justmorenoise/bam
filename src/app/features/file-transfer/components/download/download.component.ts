@@ -11,6 +11,7 @@ import { AdBannerComponent } from '@shared/components/ad-banner.component';
 import { HnNewsComponent } from '@shared/components/hn-news/hn-news.component';
 import { R2TransferService } from '@core/services/r2-transfer.service';
 import { AnalyticsService } from '@core/services/analytics.service';
+import { CryptoService } from '@core/services/crypto.service';
 
 @Component({
     selector: 'app-download',
@@ -31,6 +32,15 @@ export class DownloadComponent implements OnInit, OnDestroy {
     avgSpeed = signal(0);
     elapsedSeconds = signal(0);
 
+    // Password decryption
+    showPasswordInput = signal(false);
+    downloadPassword = signal('');
+    showDownloadPasswordVisible = signal(false);
+    isDecrypting = signal(false);
+    passwordError = signal('');
+
+    toggleDownloadPasswordVisible() { this.showDownloadPasswordVisible.update(v => !v); }
+
     private sessionSub?: Subscription;
     private downloadStartTs = 0;
     private progressInterval: ReturnType<typeof setInterval> | null = null;
@@ -43,6 +53,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
         private translate: TranslateService,
         protected r2Transfer: R2TransferService,
         private analytics: AnalyticsService,
+        private crypto: CryptoService,
     ) {}
 
     ngOnInit() {
@@ -154,6 +165,13 @@ export class DownloadComponent implements OnInit, OnDestroy {
      * Cloud (premium): full file download from R2.
      */
     private async startCloudDownload(r2Token: string, fileName: string) {
+        // Password-protected: show input form instead of auto-downloading
+        if (this.session()?.passwordProtected) {
+            this.isConnecting.set(false);
+            this.showPasswordInput.set(true);
+            return;
+        }
+
         this.isDownloading.set(true);
         this.errorMessage.set('');
         this.downloadStartTs = Date.now();
@@ -188,6 +206,59 @@ export class DownloadComponent implements OnInit, OnDestroy {
             this.isDownloading.set(false);
             this.analytics.trackEvent('download_failed', { method: 'cloud' });
             this.errorMessage.set(this.translate.instant('DOWNLOAD.ERROR_CONNECTION'));
+        }
+    }
+
+    /**
+     * Password-protected cloud file: decrypt in-browser then trigger save.
+     */
+    async decryptAndDownload(): Promise<void> {
+        const token = this.session()?.r2Token;
+        const fileName = this.session()?.fileInfo.name;
+        if (!token || !fileName) return;
+
+        this.isDecrypting.set(true);
+        this.passwordError.set('');
+        this.isDownloading.set(true);
+        this.downloadStartTs = Date.now();
+
+        try {
+            const encryptedBuffer = await this.r2Transfer.downloadToBuffer(token);
+
+            // Header: [salt 16B][iv 12B][ciphertext...]
+            const salt = new Uint8Array(encryptedBuffer, 0, 16);
+            const iv = new Uint8Array(encryptedBuffer, 16, 12);
+            const ciphertext = encryptedBuffer.slice(28);
+
+            const decrypted = await this.crypto.decryptWithPassword(
+                { ciphertext, iv, salt },
+                this.downloadPassword()
+            );
+
+            // Trigger browser download of decrypted content
+            const blob = new Blob([decrypted]);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            const elapsed = Math.max(1, Math.round((Date.now() - this.downloadStartTs) / 1000));
+            this.elapsedSeconds.set(elapsed);
+            this.avgSpeed.set(Math.floor((this.session()?.fileInfo.size ?? 0) / elapsed));
+            this.isDownloading.set(false);
+            this.isCompleted.set(true);
+
+            await this.supabase.incrementDownloadCount(this.linkId()).catch(() => {});
+            if (this.supabase.isAuthenticated()) this.supabase.addXP(5).catch(() => {});
+        } catch {
+            this.isDownloading.set(false);
+            this.passwordError.set(this.translate.instant('DOWNLOAD.PASSWORD_ERROR'));
+        } finally {
+            this.isDecrypting.set(false);
         }
     }
 

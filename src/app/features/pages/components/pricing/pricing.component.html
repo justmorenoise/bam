@@ -12,9 +12,28 @@
             </p>
         </section>
 
+        <!-- Billing Period Toggle -->
+        <div class="flex items-center justify-center gap-2 mb-10">
+            <button
+                    (click)="billingPeriod.set('monthly')"
+                    class="px-5 py-2 rounded-xl font-bold text-sm transition-all"
+                    [class]="billingPeriod() === 'monthly' ? 'bg-bam-primary text-white shadow-lg shadow-bam-primary/30' : 'bg-slate-800 text-slate-400 hover:text-white'">
+                {{ 'PRICING.BILLING_MONTHLY' | translate }}
+            </button>
+            <button
+                    (click)="billingPeriod.set('annual')"
+                    class="relative px-5 py-2 rounded-xl font-bold text-sm transition-all"
+                    [class]="billingPeriod() === 'annual' ? 'bg-bam-primary text-white shadow-lg shadow-bam-primary/30' : 'bg-slate-800 text-slate-400 hover:text-white'">
+                {{ 'PRICING.BILLING_ANNUAL' | translate }}
+                <span class="absolute -bottom-4 left-1/3  whitespace-nowrap px-2.5 py-0.5 bg-green-500 text-white rounded-full font-black text-[9px] uppercase tracking-tight">
+                    {{ 'PRICING.SAVE_BADGE' | translate }}
+                </span>
+            </button>
+        </div>
+
         <!-- Plans Grid -->
         <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
-            @for (plan of data().plans; track plan.name) {
+            @for (plan of visiblePlans(); track plan.name + plan.planKey) {
                 <div
                         class="relative bg-slate-900 rounded-3xl p-8 flex flex-col"
                         [class]="plan.highlight
@@ -39,6 +58,13 @@
                         <span class="text-4xl font-black text-white">{{ plan.price }}</span>
                         @if (plan.period) {
                             <span class="text-slate-400 text-sm">{{ plan.period }}</span>
+                        }
+                        @if (plan.savingsBadge) {
+                            <div class="mt-2">
+                                <span class="text-xs bg-green-500/20 text-green-400 px-3 py-1 rounded-full font-bold border border-green-500/30">
+                                    {{ plan.savingsBadge }}
+                                </span>
+                            </div>
                         }
                     </div>
 
@@ -73,7 +99,8 @@
                             {{ 'PRICING.CTA_PRIMARY' | translate }}
                         </button>
                     } @else {
-                        <button class="btn btn-secondary w-full" routerLink="/auth/register"
+                        <button class="btn btn-secondary w-full"
+                                [routerLink]="plan.anonymous ? '/' : '/auth/register'"
                                 (click)="onPricingCtaClick(plan.name, false)">
                             {{ 'PRICING.CTA_FREE' | translate }}
                         </button>

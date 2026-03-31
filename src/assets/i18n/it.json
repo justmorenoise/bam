@@ -78,6 +78,10 @@
     "PASSWORD_ACTIVE": "Attiva",
     "PASSWORD_DISABLED": "Disattivata",
     "PASSWORD_PLACEHOLDER": "Inserisci una password...",
+    "PASSWORD_LABEL": "Protezione Password",
+    "PASSWORD_HINT": "Solo i trasferimenti cloud supportano la cifratura con password (AES-GCM)",
+    "PASSWORD_SHOW": "Mostra",
+    "PASSWORD_HIDE": "Nascondi",
     "CUSTOM_URL": "URL Personalizzato",
     "CUSTOM_URL_ACTIVE": "Attivo",
     "CUSTOM_URL_DISABLED": "Disattivato",
@@ -174,9 +178,6 @@
     "MODE_BURN": "🔥 Usa e Getta",
     "MODE_SEED": "🌱 Persistente",
     "MODE_PROTECTED": "🔒 Protetto",
-    "PASSWORD_LABEL": "Password Richiesta",
-    "PASSWORD_PLACEHOLDER": "Inserisci la password",
-    "PASSWORD_HINT": "Questo file è protetto da password",
     "CONNECTING": "Connessione in corso...",
     "CONNECTING_DESC": "Attendere la connessione con il sender",
     "WAITING_SENDER": "In attesa del mittente...",
@@ -201,7 +202,12 @@
     "ERROR_NOT_FOUND": "File non trovato o scaduto",
     "WARN_COMPLETED_TITLE": "Trasferimento già completato",
     "WARN_COMPLETED_MSG": "Siamo spiacenti. Il file richiesto non è più disponibile in quanto il trasferimento è già stato completato.\n\nSe hai necessità di ricevere nuovamente il file, contatta il mittente.",
-    "WARN_COMPLETED_SUPPORT_PREFIX": "Se hai verificato dei problemi durante il trasferimento, scrivi all'assistenza:"
+    "WARN_COMPLETED_SUPPORT_PREFIX": "Se hai verificato dei problemi durante il trasferimento, scrivi all'assistenza:",
+    "PASSWORD_LABEL": "File protetto da password",
+    "PASSWORD_PLACEHOLDER": "Inserisci la password...",
+    "PASSWORD_HINT": "Questo file è stato cifrato con AES-GCM. Inserisci la password per scaricarlo.",
+    "PASSWORD_DECRYPT_BTN": "Decifra e Scarica",
+    "PASSWORD_ERROR": "Password errata o file corrotto. Riprova."
   },
   "AUTH": {
     "LOGIN_TITLE": "Bentornato!",
@@ -350,7 +356,10 @@
     "CTA_PRIMARY": "Inizia ora",
     "CTA_FREE": "Inizia gratis",
     "FAQ_LABEL": "FAQ",
-    "FAQ_TITLE": "Domande frequenti"
+    "FAQ_TITLE": "Domande frequenti",
+    "BILLING_MONTHLY": "Mensile",
+    "BILLING_ANNUAL": "Annuale",
+    "SAVE_BADGE": "2 mesi GRATIS!"
   },
   "SECURITY": {
     "HERO": {

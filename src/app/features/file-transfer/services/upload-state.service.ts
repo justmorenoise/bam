@@ -41,6 +41,10 @@ export class UploadStateService {
     readonly showCustomSlug = signal(false);
     readonly customSlugError = signal('');
 
+    // Password protection (cloud only, premium)
+    readonly uploadPassword = signal<string>('');
+    readonly showPasswordVisible = signal<boolean>(false);
+
     // Session
     readonly session = signal<FileShareSession | null>(null);
 
@@ -58,6 +62,8 @@ export class UploadStateService {
         this.customSlug.set('');
         this.showCustomSlug.set(false);
         this.customSlugError.set('');
+        this.uploadPassword.set('');
+        this.showPasswordVisible.set(false);
         this.isGeneratingLink.set(false);
         this.session.set(null);
         this.mode.set('burn');
