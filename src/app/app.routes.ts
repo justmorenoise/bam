@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard, electronPremiumGuard, maintenanceGuard } from '@core/guards/auth.guard';
+import { langResolverFor } from '@core/guards/lang-route.resolver';
 
 export const routes: Routes = [
     {
@@ -86,6 +87,26 @@ export const routes: Routes = [
         path: 'pricing',
         loadComponent: () => import('./features/pages/components/pricing/pricing.component').then(m => m.PricingComponent),
         canActivate: [maintenanceGuard],
+    },
+    {
+        path: 'en',
+        children: [
+            { path: 'about',    loadComponent: () => import('./features/pages/components/about/about.component').then(m => m.AboutComponent),    resolve: { _: langResolverFor('en') } },
+            { path: 'security', loadComponent: () => import('./features/pages/components/security/security.component').then(m => m.SecurityComponent), resolve: { _: langResolverFor('en') } },
+            { path: 'pricing',  loadComponent: () => import('./features/pages/components/pricing/pricing.component').then(m => m.PricingComponent),  resolve: { _: langResolverFor('en') } },
+            { path: 'terms',    loadComponent: () => import('./features/pages/components/terms/terms.component').then(m => m.TermsComponent),    resolve: { _: langResolverFor('en') } },
+            { path: 'privacy',  loadComponent: () => import('./features/pages/components/privacy/privacy.component').then(m => m.PrivacyComponent),  resolve: { _: langResolverFor('en') } },
+        ],
+    },
+    {
+        path: 'it',
+        children: [
+            { path: 'about',    loadComponent: () => import('./features/pages/components/about/about.component').then(m => m.AboutComponent),    resolve: { _: langResolverFor('it') } },
+            { path: 'security', loadComponent: () => import('./features/pages/components/security/security.component').then(m => m.SecurityComponent), resolve: { _: langResolverFor('it') } },
+            { path: 'pricing',  loadComponent: () => import('./features/pages/components/pricing/pricing.component').then(m => m.PricingComponent),  resolve: { _: langResolverFor('it') } },
+            { path: 'terms',    loadComponent: () => import('./features/pages/components/terms/terms.component').then(m => m.TermsComponent),    resolve: { _: langResolverFor('it') } },
+            { path: 'privacy',  loadComponent: () => import('./features/pages/components/privacy/privacy.component').then(m => m.PrivacyComponent),  resolve: { _: langResolverFor('it') } },
+        ],
     },
     {
         path: '**',

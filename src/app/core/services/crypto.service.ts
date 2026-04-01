@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { environment } from '@environments/environment';
 
 export interface EncryptedData {
@@ -17,8 +18,10 @@ export class CryptoService {
     private readonly SALT_LENGTH = environment.encryption.saltLength;
     private readonly PBKDF2_ITERATIONS = environment.encryption.pbkdf2Iterations;
 
+    private readonly platformId = inject(PLATFORM_ID);
+
     constructor() {
-        if (!window.crypto || !window.crypto.subtle) {
+        if (isPlatformBrowser(this.platformId) && (!window.crypto || !window.crypto.subtle)) {
             throw new Error('Web Crypto API not supported in this browser');
         }
     }

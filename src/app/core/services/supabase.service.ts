@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { createClient, RealtimeChannel, Session, SupabaseClient, User } from '@supabase/supabase-js';
 import { environment } from '@environments/environment';
 import { BehaviorSubject } from 'rxjs';
@@ -54,9 +55,19 @@ export class SupabaseService {
         session: null
     });
 
+    private readonly platformId = inject(PLATFORM_ID);
+
     constructor() {
-        this.supabase = createClient(environment.supabase.url, environment.supabase.anonKey);
-        this.authReady = this.initAuth();
+        // In SSR/prerender: skip createClient entirely (URL may be a placeholder and Supabase
+        // is never used during static rendering). Cast to satisfy TypeScript — safe because
+        // all methods that access this.supabase are guarded by isPlatformBrowser or
+        // are only called from browser-only contexts (auth, upload, dashboard).
+        this.supabase = isPlatformBrowser(this.platformId)
+            ? createClient(environment.supabase.url, environment.supabase.anonKey)
+            : null as unknown as SupabaseClient;
+        this.authReady = isPlatformBrowser(this.platformId)
+            ? this.initAuth()
+            : Promise.resolve();
     }
 
     private async initAuth() {

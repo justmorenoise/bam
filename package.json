@@ -1,6 +1,6 @@
 {
   "name": "bam-p2p-file-sharing",
-  "version": "1.1.25",
+  "version": "1.1.26",
   "description": "Bam - P2P File Sharing Ecosystem with Angular 20+ and Electron",
   "scripts": {
     "ng": "ng",
@@ -34,7 +34,9 @@
     "@angular/forms": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
     "@angular/platform-browser-dynamic": "^20.0.0",
+    "@angular/platform-server": "^20.3.16",
     "@angular/router": "^20.0.0",
+    "@angular/ssr": "^20.3.16",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@supabase/supabase-js": "^2.39.0",

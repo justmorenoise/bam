@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../services/supabase.service';
-import { environment } from '../../../environments/environment';
+import { environment } from '@environments/environment';
 
 export const maintenanceGuard = () => {
     const router = inject(Router);

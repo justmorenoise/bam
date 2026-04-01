@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { environment } from '@environments/environment';
@@ -18,10 +19,11 @@ export class AnalyticsService {
 
     constructor() {
         const router = inject(Router);
+        const doc = inject(DOCUMENT);
         router.events
             .pipe(filter(e => e instanceof NavigationEnd))
             .subscribe((e: NavigationEnd) =>
-                this.trackPageView(e.urlAfterRedirects, document.title));
+                this.trackPageView(e.urlAfterRedirects, doc.title));
 
         if (this.active) {
             this.initWebVitals();

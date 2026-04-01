@@ -88,7 +88,12 @@
               }
             ],
             "styles": ["src/styles.css"],
-            "scripts": []
+            "scripts": [],
+            "server": "src/main.server.ts",
+            "prerender": {
+              "discoverRoutes": false,
+              "routesFile": "prerender-routes.txt"
+            }
           },
           "configurations": {
             "production": {

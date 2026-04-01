@@ -1,0 +1,15 @@
+/about
+/security
+/pricing
+/terms
+/privacy
+/en/about
+/en/security
+/en/pricing
+/en/terms
+/en/privacy
+/it/about
+/it/security
+/it/pricing
+/it/terms
+/it/privacy

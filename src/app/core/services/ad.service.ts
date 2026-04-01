@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { SupabaseService } from './supabase.service';
 import { PlatformService } from './platform.service';
 import { AnalyticsService } from './analytics.service';
@@ -19,6 +20,7 @@ import { environment } from '@environments/environment';
     providedIn: 'root'
 })
 export class AdService {
+    private readonly platformId = inject(PLATFORM_ID);
     private transferCount = 0;
     private readonly TRANSFERS_BETWEEN_ADS = 2;
     private adsenseLoaded = false;
@@ -52,6 +54,7 @@ export class AdService {
      * In development (enabled: false) non fa nulla.
      */
     async initialize(): Promise<void> {
+        if (!isPlatformBrowser(this.platformId)) return;
         if (!this.adsEnabled || this.adsenseLoaded) return;
 
         // Script già caricato da index.html: non iniettarlo una seconda volta
