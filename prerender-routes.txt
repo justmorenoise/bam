@@ -1,13 +1,16 @@
+/
 /about
 /security
 /pricing
 /terms
 /privacy
+/en
 /en/about
 /en/security
 /en/pricing
 /en/terms
 /en/privacy
+/it
 /it/about
 /it/security
 /it/pricing

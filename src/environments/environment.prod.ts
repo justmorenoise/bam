@@ -4,7 +4,7 @@ export const environment = {
     production: true,
     maintenanceMode: false,
     appName: 'Bam! - File Sharing',
-    version: '1.1.26',
+    version: '1.1.27',
 
     // Supabase Configuration
     supabase: {

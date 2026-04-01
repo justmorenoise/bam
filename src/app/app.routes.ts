@@ -91,6 +91,7 @@ export const routes: Routes = [
     {
         path: 'en',
         children: [
+            { path: '',         loadComponent: () => import('./features/file-transfer/components/home/home.component').then(m => m.HomeComponent),    resolve: { _: langResolverFor('en') } },
             { path: 'about',    loadComponent: () => import('./features/pages/components/about/about.component').then(m => m.AboutComponent),    resolve: { _: langResolverFor('en') } },
             { path: 'security', loadComponent: () => import('./features/pages/components/security/security.component').then(m => m.SecurityComponent), resolve: { _: langResolverFor('en') } },
             { path: 'pricing',  loadComponent: () => import('./features/pages/components/pricing/pricing.component').then(m => m.PricingComponent),  resolve: { _: langResolverFor('en') } },
@@ -101,6 +102,7 @@ export const routes: Routes = [
     {
         path: 'it',
         children: [
+            { path: '',         loadComponent: () => import('./features/file-transfer/components/home/home.component').then(m => m.HomeComponent),    resolve: { _: langResolverFor('it') } },
             { path: 'about',    loadComponent: () => import('./features/pages/components/about/about.component').then(m => m.AboutComponent),    resolve: { _: langResolverFor('it') } },
             { path: 'security', loadComponent: () => import('./features/pages/components/security/security.component').then(m => m.SecurityComponent), resolve: { _: langResolverFor('it') } },
             { path: 'pricing',  loadComponent: () => import('./features/pages/components/pricing/pricing.component').then(m => m.PricingComponent),  resolve: { _: langResolverFor('it') } },

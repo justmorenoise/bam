@@ -1,4 +1,5 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, signal, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { HnNewsService, HnStory } from '@core/services/hn-news.service';
 
@@ -50,6 +51,7 @@ import { HnNewsService, HnStory } from '@core/services/hn-news.service';
     `,
 })
 export class HnNewsComponent implements OnInit {
+    private readonly platformId = inject(PLATFORM_ID);
     private hnNews = inject(HnNewsService);
 
     stories = signal<HnStory[]>([]);
@@ -57,6 +59,7 @@ export class HnNewsComponent implements OnInit {
     readonly skeletons = [1, 2, 3];
 
     async ngOnInit(): Promise<void> {
+        if (!isPlatformBrowser(this.platformId)) return;
         const result = await this.hnNews.getTopStories(3);
         this.stories.set(result);
         this.isLoading.set(false);

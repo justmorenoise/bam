@@ -8,12 +8,14 @@ const serverConfig: ApplicationConfig = {
     providers: [
         provideServerRendering(
             withRoutes([
-                { path: '',             renderMode: RenderMode.Client },
+                { path: '',             renderMode: RenderMode.Prerender },
                 { path: 'about',        renderMode: RenderMode.Prerender },
                 { path: 'security',     renderMode: RenderMode.Prerender },
                 { path: 'pricing',      renderMode: RenderMode.Prerender },
                 { path: 'terms',        renderMode: RenderMode.Prerender },
                 { path: 'privacy',      renderMode: RenderMode.Prerender },
+                { path: 'en',           renderMode: RenderMode.Prerender },
+                { path: 'it',           renderMode: RenderMode.Prerender },
                 { path: 'en/about',     renderMode: RenderMode.Prerender },
                 { path: 'en/security',  renderMode: RenderMode.Prerender },
                 { path: 'en/pricing',   renderMode: RenderMode.Prerender },
