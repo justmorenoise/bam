@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -25,7 +25,7 @@ type Feature = {
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
     isFreeTier = computed(() => this.supabase.currentProfile()?.tier !== 'premium');
 
     private seo = inject(SeoService);
@@ -37,13 +37,6 @@ export class HomeComponent implements OnInit {
         private router: Router
     ) {
         effect(() => { this.lang.currentLang(); this.seo.set('SEO.HOME.TITLE', 'SEO.HOME.DESC', ''); });
-    }
-
-    ngOnInit() {
-        // If already authenticated, redirect to dashboard
-        if (this.supabase.isAuthenticated()) {
-            this.router.navigate(['/dashboard']);
-        }
     }
 
     navigateToUploadWithFile(file: File) {

@@ -13,11 +13,18 @@ export class LanguageService {
     private readonly platformId = inject(PLATFORM_ID);
     private readonly document = inject(DOCUMENT);
     readonly currentLang = signal<Lang>(DEFAULT_LANG);
+    private initialized = false;
 
     constructor(private translate: TranslateService) {
+        // Init immediato: i guard vengono eseguiti prima di AppComponent.ngOnInit,
+        // quindi il signal deve essere già corretto al momento della loro esecuzione.
+        this.init();
     }
 
     init(): void {
+        if (this.initialized) return;
+        this.initialized = true;
+
         if (!isPlatformBrowser(this.platformId)) {
             this.translate.use(DEFAULT_LANG);
             return;
