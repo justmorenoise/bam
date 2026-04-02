@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from './language.service';
 
 const SUPPORTED_LANGS = ['en', 'it'] as const;
+const OG_IMAGE_LANGS  = ['en', 'it'] as const;
 
 @Injectable({ providedIn: 'root' })
 export class SeoService {
@@ -15,7 +16,11 @@ export class SeoService {
     private langSvc   = inject(LanguageService);
 
     set(titleKey: string, descKey: string, pagePath?: string): void {
-        const lang = this.langSvc.currentLang();
+        const lang    = this.langSvc.currentLang();
+        const imgLang = (OG_IMAGE_LANGS as readonly string[]).includes(lang) ? lang : 'en';
+        const origin  = this.document.location.origin;
+        this.meta.updateTag({ property: 'og:image', content: `${origin}/assets/imgs/share/bamfile_${imgLang}.jpg` });
+
         this.translate.use(lang).subscribe(translations => {
             const t = this.resolve(translations, titleKey);
             const d = this.resolve(translations, descKey);
