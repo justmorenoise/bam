@@ -47,6 +47,7 @@ export class LanguageService {
         this.currentLang.set(lang);
         if (isPlatformBrowser(this.platformId)) {
             localStorage.setItem(STORAGE_KEY, lang);
+            this.document.cookie = `${STORAGE_KEY}=${lang}; path=/; max-age=31536000; SameSite=Lax`;
         }
     }
 
