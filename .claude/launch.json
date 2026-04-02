@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "Angular (no SSL)",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start:nossl"],
+      "runtimeExecutable": "/usr/local/bin/node",
+      "runtimeArgs": ["node_modules/.bin/ng", "serve", "--port", "4202"],
       "port": 4202
     },
     {

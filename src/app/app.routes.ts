@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard, electronPremiumGuard, maintenanceGuard } from '@core/guards/auth.guard';
 import { langResolverFor } from '@core/guards/lang-route.resolver';
+import { langRedirectGuard } from '@core/guards/lang-redirect.guard';
 
 export const routes: Routes = [
     {
@@ -10,7 +11,7 @@ export const routes: Routes = [
     {
         path: '',
         loadComponent: () => import('./features/file-transfer/components/home/home.component').then(m => m.HomeComponent),
-        canActivate: [maintenanceGuard, electronPremiumGuard],
+        canActivate: [maintenanceGuard, electronPremiumGuard, langRedirectGuard('')],
     },
     {
         path: 'upload',
@@ -66,27 +67,27 @@ export const routes: Routes = [
     {
         path: 'terms',
         loadComponent: () => import('./features/pages/components/terms/terms.component').then(m => m.TermsComponent),
-        canActivate: [maintenanceGuard],
+        canActivate: [maintenanceGuard, langRedirectGuard('terms')],
     },
     {
         path: 'privacy',
         loadComponent: () => import('./features/pages/components/privacy/privacy.component').then(m => m.PrivacyComponent),
-        canActivate: [maintenanceGuard],
+        canActivate: [maintenanceGuard, langRedirectGuard('privacy')],
     },
     {
         path: 'about',
         loadComponent: () => import('./features/pages/components/about/about.component').then(m => m.AboutComponent),
-        canActivate: [maintenanceGuard],
+        canActivate: [maintenanceGuard, langRedirectGuard('about')],
     },
     {
         path: 'security',
         loadComponent: () => import('./features/pages/components/security/security.component').then(m => m.SecurityComponent),
-        canActivate: [maintenanceGuard],
+        canActivate: [maintenanceGuard, langRedirectGuard('security')],
     },
     {
         path: 'pricing',
         loadComponent: () => import('./features/pages/components/pricing/pricing.component').then(m => m.PricingComponent),
-        canActivate: [maintenanceGuard],
+        canActivate: [maintenanceGuard, langRedirectGuard('pricing')],
     },
     {
         path: 'en',
