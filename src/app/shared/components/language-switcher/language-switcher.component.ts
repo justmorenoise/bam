@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Lang, LanguageService, SUPPORTED_LANGS } from '@core/services/language.service';
 
 @Component({
@@ -24,8 +25,17 @@ import { Lang, LanguageService, SUPPORTED_LANGS } from '@core/services/language.
 export class LanguageSwitcherComponent {
     readonly languageService = inject(LanguageService);
     readonly langs: Lang[] = [...SUPPORTED_LANGS];
+    private readonly router = inject(Router);
 
     setLang(lang: Lang): void {
         this.languageService.setLanguage(lang);
+
+        // Se la route corrente ha un prefisso lingua (/it/about, /en, ecc.)
+        // naviga verso la stessa pagina con il nuovo prefisso
+        const segments = this.router.url.split('?')[0].split('/').filter(Boolean);
+        if (SUPPORTED_LANGS.includes(segments[0] as Lang)) {
+            const pageParts = segments.slice(1); // rimuove il prefisso lingua corrente
+            this.router.navigate(['/', lang, ...pageParts]);
+        }
     }
 }
