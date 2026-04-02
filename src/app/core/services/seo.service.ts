@@ -13,12 +13,14 @@ export class SeoService {
     private document  = inject(DOCUMENT);
 
     set(titleKey: string, descKey: string, pagePath?: string): void {
-        const t = this.translate.instant(titleKey);
-        const d = this.translate.instant(descKey);
-        this.title.setTitle(t);
-        this.meta.updateTag({ name: 'description', content: d });
-        this.meta.updateTag({ property: 'og:title', content: t });
-        this.meta.updateTag({ property: 'og:description', content: d });
+        this.translate.get([titleKey, descKey]).subscribe(tr => {
+            const t = tr[titleKey];
+            const d = tr[descKey];
+            this.title.setTitle(t);
+            this.meta.updateTag({ name: 'description', content: d });
+            this.meta.updateTag({ property: 'og:title', content: t });
+            this.meta.updateTag({ property: 'og:description', content: d });
+        });
 
         if (pagePath !== undefined) {
             this.setHreflang(pagePath);
