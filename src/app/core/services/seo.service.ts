@@ -3,6 +3,7 @@ import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from './language.service';
+import { environment } from '@environments/environment';
 
 const SUPPORTED_LANGS = ['en', 'it'] as const;
 const OG_IMAGE_LANGS  = ['en', 'it'] as const;
@@ -18,7 +19,7 @@ export class SeoService {
     set(titleKey: string, descKey: string, pagePath?: string): void {
         const lang    = this.langSvc.currentLang();
         const imgLang = (OG_IMAGE_LANGS as readonly string[]).includes(lang) ? lang : 'en';
-        const origin  = this.document.location.origin;
+        const origin  = environment.api.baseUrl || `https://bamfile.com`;
         this.meta.updateTag({ property: 'og:image', content: `${origin}/assets/imgs/share/bamfile_${imgLang}.jpg` });
 
         this.translate.use(lang).subscribe(translations => {
