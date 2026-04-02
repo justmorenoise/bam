@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { LanguageService } from './language.service';
 
 const SUPPORTED_LANGS = ['en', 'it'] as const;
 
@@ -11,11 +12,13 @@ export class SeoService {
     private meta      = inject(Meta);
     private translate = inject(TranslateService);
     private document  = inject(DOCUMENT);
+    private langSvc   = inject(LanguageService);
 
     set(titleKey: string, descKey: string, pagePath?: string): void {
-        this.translate.get([titleKey, descKey]).subscribe(tr => {
-            const t = tr[titleKey];
-            const d = tr[descKey];
+        const lang = this.langSvc.currentLang();
+        this.translate.use(lang).subscribe(translations => {
+            const t = this.resolve(translations, titleKey);
+            const d = this.resolve(translations, descKey);
             this.title.setTitle(t);
             this.meta.updateTag({ name: 'description', content: d });
             this.meta.updateTag({ property: 'og:title', content: t });
@@ -25,6 +28,11 @@ export class SeoService {
         if (pagePath !== undefined) {
             this.setHreflang(pagePath);
         }
+    }
+
+    private resolve(translations: Record<string, unknown>, key: string): string {
+        const result = key.split('.').reduce<unknown>((obj, k) => (obj as Record<string, unknown>)?.[k], translations);
+        return typeof result === 'string' ? result : key;
     }
 
     private setHreflang(pagePath: string): void {
