@@ -69,7 +69,7 @@ export class PricingComponent {
 
     data = toSignal(
         toObservable(this.lang.currentLang).pipe(
-            tap(() => this.seo.set('SEO.PRICING.TITLE', 'SEO.PRICING.DESC')),
+            tap(() => this.seo.set('SEO.PRICING.TITLE', 'SEO.PRICING.DESC', 'pricing')),
             switchMap(lang =>
                 this.http.get<PricingData>(`/assets/data/pricing/${lang}.json`).pipe(
                     catchError(() => this.http.get<PricingData>('/assets/data/pricing/en.json'))

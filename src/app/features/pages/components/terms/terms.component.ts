@@ -23,7 +23,7 @@ export class TermsComponent {
 
     content = toSignal(
         toObservable(this.lang.currentLang).pipe(
-            tap(() => this.seo.set('SEO.TERMS.TITLE', 'SEO.TERMS.DESC')),
+            tap(() => this.seo.set('SEO.TERMS.TITLE', 'SEO.TERMS.DESC', 'terms')),
             switchMap(lang =>
                 this.http.get(`/assets/content/terms/${lang}.html`, { responseType: 'text' }).pipe(
                     catchError(() => this.http.get('/assets/content/terms/en.html', { responseType: 'text' }))

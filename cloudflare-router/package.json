@@ -1,0 +1,15 @@
+{
+  "name": "bam-lang-router",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:preprod": "wrangler deploy --config wrangler.preprod.toml"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240909.0",
+    "wrangler": "^3.78.0",
+    "typescript": "^5.5.0"
+  }
+}

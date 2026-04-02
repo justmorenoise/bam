@@ -38,7 +38,7 @@ export class AboutComponent {
 
     data = toSignal(
         toObservable(this.lang.currentLang).pipe(
-            tap(() => this.seo.set('SEO.ABOUT.TITLE', 'SEO.ABOUT.DESC')),
+            tap(() => this.seo.set('SEO.ABOUT.TITLE', 'SEO.ABOUT.DESC', 'about')),
             switchMap(lang =>
                 this.http.get<AboutData>(`/assets/data/about/${lang}.json`).pipe(
                     catchError(() => this.http.get<AboutData>('/assets/data/about/en.json'))

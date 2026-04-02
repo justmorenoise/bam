@@ -23,7 +23,7 @@ export class PrivacyComponent {
 
     content = toSignal(
         toObservable(this.lang.currentLang).pipe(
-            tap(() => this.seo.set('SEO.PRIVACY.TITLE', 'SEO.PRIVACY.DESC')),
+            tap(() => this.seo.set('SEO.PRIVACY.TITLE', 'SEO.PRIVACY.DESC', 'privacy')),
             switchMap(lang =>
                 this.http.get(`/assets/content/privacy/${lang}.html`, { responseType: 'text' }).pipe(
                     catchError(() => this.http.get('/assets/content/privacy/en.html', { responseType: 'text' }))

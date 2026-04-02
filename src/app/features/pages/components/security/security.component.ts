@@ -35,7 +35,7 @@ export class SecurityComponent {
 
     data = toSignal(
         toObservable(this.lang.currentLang).pipe(
-            tap(() => this.seo.set('SEO.SECURITY.TITLE', 'SEO.SECURITY.DESC')),
+            tap(() => this.seo.set('SEO.SECURITY.TITLE', 'SEO.SECURITY.DESC', 'security')),
             switchMap(lang =>
                 this.http.get<SecurityData>(`/assets/data/security/${lang}.json`).pipe(
                     catchError(() => this.http.get<SecurityData>('/assets/data/security/en.json'))

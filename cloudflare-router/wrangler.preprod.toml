@@ -1,0 +1,27 @@
+name = "bam-lang-router-pre"
+main = "src/index.ts"
+compatibility_date = "2024-09-01"
+
+[[routes]]
+pattern = "pre.bamfile.com/"
+zone_name = "bamfile.com"
+
+[[routes]]
+pattern = "pre.bamfile.com/about"
+zone_name = "bamfile.com"
+
+[[routes]]
+pattern = "pre.bamfile.com/pricing"
+zone_name = "bamfile.com"
+
+[[routes]]
+pattern = "pre.bamfile.com/security"
+zone_name = "bamfile.com"
+
+[[routes]]
+pattern = "pre.bamfile.com/privacy"
+zone_name = "bamfile.com"
+
+[[routes]]
+pattern = "pre.bamfile.com/terms"
+zone_name = "bamfile.com"

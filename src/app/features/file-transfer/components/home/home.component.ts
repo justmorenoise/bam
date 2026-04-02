@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit {
         private supabase: SupabaseService,
         private router: Router
     ) {
-        effect(() => { this.lang.currentLang(); this.seo.set('SEO.HOME.TITLE', 'SEO.HOME.DESC'); });
+        effect(() => { this.lang.currentLang(); this.seo.set('SEO.HOME.TITLE', 'SEO.HOME.DESC', ''); });
     }
 
     ngOnInit() {

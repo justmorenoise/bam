@@ -1,0 +1,32 @@
+name = "bam-lang-router"
+main = "src/index.ts"
+compatibility_date = "2024-09-01"
+
+# Worker routes — intercept only the bare page routes on the main domain.
+# All other traffic (static assets, /en/*, /it/*, /upload, /download/*…)
+# passes through to Firebase Hosting without hitting this worker.
+# Requires bamfile.com to be on Cloudflare with Proxy enabled (orange cloud).
+
+[[routes]]
+pattern = "bamfile.com/"
+zone_name = "bamfile.com"
+
+[[routes]]
+pattern = "bamfile.com/about"
+zone_name = "bamfile.com"
+
+[[routes]]
+pattern = "bamfile.com/pricing"
+zone_name = "bamfile.com"
+
+[[routes]]
+pattern = "bamfile.com/security"
+zone_name = "bamfile.com"
+
+[[routes]]
+pattern = "bamfile.com/privacy"
+zone_name = "bamfile.com"
+
+[[routes]]
+pattern = "bamfile.com/terms"
+zone_name = "bamfile.com"
