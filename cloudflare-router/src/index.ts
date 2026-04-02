@@ -31,12 +31,11 @@ function detectLang(request: Request): Lang {
         return cookieMatch[1] as Lang;
     }
 
-    // 2. Accept-Language header — use the first preferred language
-    const acceptLang = (request.headers.get('Accept-Language') ?? '').toLowerCase();
-    for (const lang of SUPPORTED_LANGS) {
-        if (acceptLang.startsWith(lang) || acceptLang.includes(`,${lang}`) || acceptLang.includes(` ${lang}`)) {
-            return lang;
-        }
+    // 2. Accept-Language header — parse entries in priority order, match first supported lang
+    const acceptLang = request.headers.get('Accept-Language') ?? '';
+    for (const entry of acceptLang.split(',')) {
+        const code = entry.trim().split(';')[0].trim().substring(0, 2).toLowerCase();
+        if (SUPPORTED_LANGS.includes(code as Lang)) return code as Lang;
     }
 
     return 'en'; // default
